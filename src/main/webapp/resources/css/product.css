@@ -1,0 +1,23 @@
+#product-div {
+
+    overflow:hidden;
+
+}
+
+#product-picture-div{
+
+    max-width: 400px;
+    float: left;
+    padding-right:15px;
+}
+
+.product-picture{
+    max-width:100%;
+}
+
+#product-info-div {
+
+    width: 50%;
+    float: left;
+    padding-left:15px;
+}

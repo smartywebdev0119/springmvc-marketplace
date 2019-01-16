@@ -1,0 +1,105 @@
+
+TODO:
+
+current:
+
+- pagination for products page
+- create a converter for user model as in the PR service project
+- user should not be able to add to cart when product quantity
+- SearchController
+- PaymentController
+- replace plain jdbc to JdbcTemplate
+- pagination for shopping cart page
+- changing user's info in profile
+- move project to java configuration
+- make constants for paths to pages in controllers
+
+DONE:
+- 16.01.2019 - add redirect to error page in all catch blocks
+- 12.01.2019 - wrap exception in the service layer
+- 12.01.2019 - wrap exception in the dao layer into DaoException
+- 12.01.2019 - decrement quantity of product when your created an order
+- 12.01.2019 - ErrorController added
+- 12.01.2019 - apply Post/Redirect/Get (PRG) for all post forms
+- 12.01.2019 - navigator menu refactored
+- 12.01.2019 - make more or less decent product page
+- 05.01.2019 - fix services that return Views. Services should return only DTOs (models)
+- 28.12.2018 - make more or less decent orders page
+- 28.12.2018 - calculate total price for all products in shopping cart
+- 27.12.2018 - imp OrderDao
+- 27.12.2018 - imp OrderItemDao
+- 26.12.2018 - feature for removing item from shopping cart
+- 26.12.2018 - split one css file into many. one for each page.
+- 26.12.2018 - logging services with log4j
+- 25.12.2018 - changing site lang in footer
+- 25.12.2018 - logging controllers with log4j
+- 12.22.2018 - add picture to the right side of the login and regist forms
+- 12.22.2018 - add default user picture
+- 12.22.2018 - how to validate login form ? - via javascript
+- 11.22.2018 - update numb of products in shopping cart and story current number in cookie it in cookie
+- registration form validation
+- move all implemented daos to services
+- rewrite all jsp to thymeleaf
+- make i18n work !
+- add thymeleaf deps
+- Create bar that will be on all pages with the foll bttns : shopping cart, product search, user profile, orders
+
+
+General TODO:
+
+1) Registration. What to imp:
+-1. UserDaoImpMySQL
+-2. User model
+-3. UserDTO
+-4. Registration jsp page
+-5. Registration controller
+-6. User model validation (using spring form)
+-7. Registration html page and css
+8. tests
+
+2) Login. What to imp:
+-1. LoginController
+-2. Login jsp page
+-3. Check if the user already logged in
+-4. Login html page and css
+5. tests
+
+3) Product:
+-1. ProductController
+-2. Products jsp page.
+-3. Product model
+-4. Product DTO
+5. Model validation
+-6. Product dao
+7. Products html page and css
+8. tests
+
+4) UserPage:
+-1. userPageController
+-2. user jsp page
+-3. user html page and css
+4. tests
+- 5. upload user image
+
+5) Shopping cart
+-1. ShoppingCart controller
+-2. ShoppingCart jsp page
+-3. ShoppingCart model
+-5. ShoppingCartItem model
+-6. ShoppingCartItem dao
+7. ShoppingCart model validation
+-8. ShoppingCart dao
+9. ShoppingCart html page css and html
+
+6) Order:
+-1. OrderDao
+-2. Order model
+-3. Order dto
+4. order model validation
+-6. orders html page and css
+-7. Order service
+
+7) Session:
+-1. SessionDao
+-2. session model
+-4. SessionService

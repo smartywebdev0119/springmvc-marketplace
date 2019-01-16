@@ -1,0 +1,11 @@
+
+IDEA:
+
+This project is a trade system which is basically
+a marketplace where whether a entrepreneur or a regular person
+can sell or buy something from someone
+
+
+Rules of the trade system:
+
+1. Quantity of the product decrements when user created order.

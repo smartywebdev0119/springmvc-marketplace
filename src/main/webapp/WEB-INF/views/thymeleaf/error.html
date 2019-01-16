@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{error.name}">Title</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="/resources/css/error.css" media="screen" />
+</head>
+<body>
+<div class="main-div">
+    <h3 th:text="#{error.general_desc}">Seems like something went wrong...</h3>
+    <div class="error-message-div">Message: <span th:text="${error_message}">error message</span></div>
+    <a href="/">Back to the main page</a>
+</div>
+</body>
+</html>

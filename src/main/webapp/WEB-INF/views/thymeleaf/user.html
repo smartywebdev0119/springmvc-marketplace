@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="#{user.title}">User page</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/user.css" media="screen"/>
+</head>
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <div class="root-user-div">
+        <div class="user-picture-div" th:switch="${user.imageId}">
+            <div th:case="0">
+
+                <img th:src="@{/resources/image/default-user-picture.png}" alt="default user picture"
+                     class="user-image">
+
+            </div>
+            <div th:case="*">
+
+                <img th:src="@{/user/picture/{user_id}(user_id=${user.imageId})}" alt="user's picture"
+                     class="user-image">
+
+                <br>
+            </div>
+        </div>
+        <div class="user-info-div">
+            <h3 th:text="${user.name + ' ' + user.surname}">Profile</h3>
+            <br>
+            <span th:inline="text">username: [[${user.username}]]</span>
+        </div>
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>

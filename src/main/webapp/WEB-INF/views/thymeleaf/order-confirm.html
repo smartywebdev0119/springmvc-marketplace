@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm order</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/order-confirm.css" media="screen"/>
+</head>
+<body>
+<div class="main-div">
+    <div th:replace="common/header-menu :: header"></div>
+
+    <input type="hidden" name="order_id" th:value="${order_id}">
+
+    <div class="order-confirm-div">
+
+        <div class="order-number-div" th:inline="text">Order number: [[${order_id}]]</div>
+
+        <table class="confirm-shopping-cart-items-table">
+            <tr>
+                <th th:text="#{products.name}">Name:</th>
+                <th th:text="#{products.product_desc}">Desc:</th>
+                <th th:text="#{products.quantity}">Quantity:</th>
+                <th th:text="#{products.to_product_page}">To product:</th>
+                <th th:text="#{products.seller}">Seller:</th>
+                <th th:text="#{products.price}">Price:</th>
+            </tr>
+            <tr th:each="orderItem : ${orderItems}">
+                <td th:text="${orderItem.name}"></td>
+                <td th:text="${orderItem.description}"></td>
+                <td th:text="${orderItem.quantity}"></td>
+                <td>
+                    <a th:href="@{/products/{product_id}(product_id=${orderItem.productId})}"
+                       th:text="#{products.to_full_desc_link}">to full desc</a>
+                </td>
+                <td>
+                    <a th:href="@{/user/{user_id}(user_id=${orderItem.seller})}"
+                       th:text="#{products.to_seller_page_link}">seller</a>
+                </td>
+                <td th:text="${orderItem.price}"></td>
+            </tr>
+        </table>
+
+        <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
+
+        <div>
+            <form action="/order/shipping-details" method="get">
+                <button type="submit">Next to shipping details</button>
+            </form>
+        </div>
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>

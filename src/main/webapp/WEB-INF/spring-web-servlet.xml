@@ -1,0 +1,129 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.trade.controller"/>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+    <!--  =========== JSP ================= -->
+    <!--<bean-->
+    <!--class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+    <!--<property name="prefix" value="/WEB-INF/views/jsp/"/>-->
+    <!--<property name="suffix" value=".jsp"/>-->
+    <!--</bean>-->
+    <!--  =========== JSP ================= -->
+
+    <!-- =========== Thymeleaf ================= -->
+    <!--Thymeleaf View Resolver - implementation of Spring's ViewResolver interface-->
+    <bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+        <property name="templateEngine" ref="templateEngine"/>
+        <property name="characterEncoding" value="UTF-8"/>
+    </bean>
+    <!-- Thymeleaf Template Engine (Spring4-specific version) -->
+    <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <property name="templateResolvers">
+            <set>
+                <ref bean="templateResolver"/>
+            </set>
+        </property>
+    </bean>
+    <!-- Thymeleaf Template Resolver -->
+    <bean id="templateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+        <property name="prefix" value="/WEB-INF/views/thymeleaf/"/>
+        <property name="suffix" value=".html"/>
+        <property name="templateMode" value="HTML5"/>
+    </bean>
+    <!-- =========== Thymeleaf ================= -->
+
+
+    <!-- i18n -->
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="message"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+    <bean id="localeResolver"
+          class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        <property name="defaultLocale" value="en"/>
+        <property name="cookieName" value="lang"/>
+        <property name="cookieMaxAge" value="100000"/>
+    </bean>
+    <bean name="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="lang"/>
+    </bean>
+    <!-- i18n -->
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1024000"/> <!-- 1 MB -->
+    </bean>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <ref bean="localeChangeInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.trade.interceptor.HeaderMenuInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/login"/>
+            <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/registration"/>
+            <bean class="com.trade.interceptor.AuthInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <bean name="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg>
+            <bean class="com.zaxxer.hikari.HikariConfig">
+                <constructor-arg name="propertyFileName" value="db.properties"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+
+    <!-- dao services -->
+    <bean name="orderItemService" class="com.trade.service.dao.OrderItemService"/>
+    <bean name="orderService" class="com.trade.service.dao.OrderService"/>
+    <bean name="shoppingCartItemService" class="com.trade.service.dao.ShoppingCartItemService"/>
+    <bean name="productService" class="com.trade.service.dao.ProductService"/>
+    <bean name="userService" class="com.trade.service.dao.UserService"/>
+    <bean name="sessionService" class="com.trade.service.dao.SessionService"/>
+    <!-- dao services -->
+
+    <!-- services -->
+    <bean name="shoppingCartService" class="com.trade.service.ShoppingCartService"/>
+    <bean name="cookieService" class="com.trade.service.CookieService"/>
+    <bean name="topNavigationMenuUpdateService" class="com.trade.service.HeaderMenuUpdateService"/>
+    <bean name="loginService" class="com.trade.service.AuthorizationService"/>
+    <bean name="authenticationService" class="com.trade.service.AuthenticationService"/>
+    <!-- services -->
+
+    <!-- DTO converters-->
+    <bean name="orderToOrderDTOConverter" class="com.trade.model.converter.OrderToOrderDTOConverter"/>
+    <bean name="productToOrderItemDTOConverter" class="com.trade.model.converter.ProductToOrderItemDTOConverter"/>
+    <bean name="userModelToDTOConverter" class="com.trade.model.converter.UserModelToDTOConverter"/>
+    <bean name="productToShoppingCartItemDTOConverter"
+          class="com.trade.model.converter.ProductToShoppingCartItemDTOConverter"/>
+    <!-- DTO converters-->
+
+    <!-- DAOs -->
+    <bean name="orderItemDaoImpMySQL" class="com.trade.data.OrderItemDaoImpMySQL"/>
+    <bean name="orderDaoImpMySQL" class="com.trade.data.OrderDaoImpMySQL"/>
+    <bean name="shoppingCartItemDaoImpMySQL" class="com.trade.data.ShoppingCartItemDaoImpMySQL"/>
+    <bean name="userDaoImpMySQL" class="com.trade.data.UserDaoImpMySQL"/>
+    <bean name="sessionDaoImpMySQL" class="com.trade.data.SessionDaoImpMySQL"/>
+    <bean name="productDaoImpMySQL" class="com.trade.data.ProductDaoImpMySQL"/>
+    <!-- DAOs -->
+
+</beans>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Shopping cart</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/shopping_cart.css" media="screen"/>
+</head>
+
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <h3 th:text="#{shopping_cart.page_desc}">Your shopping cart:</h3>
+    <div class="shopping-cart-div">
+        <div>
+            <table class="shopping-cart-table">
+                <tr>
+                    <th th:text="#{shopping_cart.name}">Name:</th>
+                    <th th:text="#{shopping_cart.desc}">Desc:</th>
+                    <th th:text="#{shopping_cart.quantity}">Quantity:</th>
+                    <th th:text="#{shopping_cart.to_product}">To product:</th>
+                    <th th:text="#{shopping_cart.seller}">Seller:</th>
+                    <th th:text="#{shopping_cart.price}">Price:</th>
+                    <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
+                </tr>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.getProductName()}">name</td>
+                    <td th:text="${item.getProductDescription()}">desc</td>
+                    <td th:text="${item.getProductQuantity()}">100</td>
+                    <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
+                           th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
+                    <td><a th:href="@{/user/{product_seller}(product_seller=${item.getSellerId()})}">seller</a></td>
+                    <td th:text="${item.getPrice()}"></td>
+                    <td>
+                        <form method="post"
+                              th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getShoppingCartItemId()})}">
+                            <button type="submit" class="remove-item-button" th:text="#{shopping_cart.remove_button}">
+                                remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
+        <div class="create-order-button-div">
+            <form th:action="@{/order}" method="post">
+                <button type="submit" class="create-order-button" th:text="#{shopping_cart.created_order_button}">
+                    Create order
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="#{user.title}">User page</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/profile.css" media="screen"/>
+</head>
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <div class="root-profile-div">
+
+        <div class="profile-picture-div" th:switch="${user.imageId}">
+            <div th:case="0">
+
+                <img th:src="@{/resources/image/default-user-picture.png}" alt="default user picture"
+                     class="user-image">
+
+            </div>
+            <div th:case="*">
+
+                <img th:src="@{/user/picture/{user_id}(user_id=${user.imageId})}" alt="user's picture"
+                     class="user-image">
+
+            </div>
+            <div>
+                <form method="post" th:action="@{/profile/picture}" enctype="multipart/form-data">
+                    <div style="vertical-align: middle;">
+                        <input type="file" name="user_image" th:value="#{profile.choose_image}">
+                        <br>
+                        <button type="submit" th:text="#{profile.upload_image}">Upload image</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="profile-info-div">
+            <h3 th:text="${user.name + ' ' + user.surname}">Jack Johns</h3>
+            <br>
+            <span th:inline="text">Username: [[${user.username}]]</span>
+        </div>
+    </div>
+
+    <div th:replace="common/footer :: footer"></div>
+
+</div>
+</body>
+</html>

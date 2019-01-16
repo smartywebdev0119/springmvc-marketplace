@@ -1,0 +1,37 @@
+.root-profile-div {
+
+    padding-top: 16px;
+
+    width: 90%;
+    position: relative;
+}
+
+.profile-picture-div {
+
+    padding-right: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+
+    width: 40%;
+    display: inline-block
+
+}
+
+.profile-info-div {
+
+    position: absolute;
+    top: 0;
+
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+
+    width: 50%;
+    display: inline-block
+
+}
+
+.user-image {
+    width: 100%;
+    max-width: 300px;
+}

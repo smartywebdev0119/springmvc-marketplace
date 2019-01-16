@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer" class="footer">
+    <label for="change-lang-dropdown-list">Change language: </label>
+    <select id="change-lang-dropdown-list" name="lang" onchange="location = this.value;">
+        <option value="${current_lang}"></option>
+        <option value="?lang=ru">Русский</option>
+        <option value="?lang=en">English</option>
+    </select>
+</div>
+
+</body>
+</html>

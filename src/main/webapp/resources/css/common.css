@@ -1,0 +1,156 @@
+body {
+    background-color: #f9f5f3;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:16px;
+}
+
+table {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+.main-div {
+
+    width: 850px;
+    height: 100%;
+   /* alignment: center;*/
+    margin: auto;
+    padding: 20px;
+    background-color: white;
+}
+
+
+/* header. */
+.top-bar table,
+.top-bar th,
+.top-bar td {
+    border: 1px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+}
+
+#header {
+
+    width: 890px;
+    height: auto;
+
+    margin: auto;
+    background-color: #4CAF50;
+}
+
+#header ul{
+    margin: 0;
+    padding: 0;
+}
+
+#header li{
+
+    height: 40px;
+    width: auto;
+
+    padding: 5px 10px;
+
+    list-style-type:none;
+    float:left;
+    display:block;
+
+    line-height: 2.5em;
+    text-align: center;
+    font-size:16px;
+}
+
+#header li a{
+
+    display: block;
+    color: #FFF;
+    font-weight: bold;
+}
+
+#header li:Hover {
+    background-color: #55c159;
+}
+
+
+#site-logo{
+
+    height:auto;
+    width:70px;
+
+}
+
+#search-field{
+
+    padding : 13px;
+    background-color: #4CAF50;
+}
+
+#search-field input {
+
+     height: 40px;
+     width: 550px;
+     box-sizing: border-box;
+     border: 1px solid #cbc;
+     border-radius: 4px;
+     font-size: 16px;
+     background-color: white;
+     background-position: 10px 10px;
+     background-repeat: no-repeat;
+     padding-left: 5px;
+    /* -webkit-transition: width 0.4s ease-in-out;
+     transition: width 0.4s ease-in-out;*/
+}
+
+#search-field button {
+
+   height: 40px;
+   border:none;
+   border-radius: 4px;
+
+}
+
+/* search field */
+.search-textfield {
+    height: 30px;
+    width: 180px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+/*
+    border-radius: 4px;
+*/
+    font-size: 16px;
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding-left: 5px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+.search-button {
+    height: 30px;
+}
+/* search field */
+/* header*/
+
+
+.footer {
+    left: 0;
+    height: 40px;
+    border-top-color: #4CAF50;
+    border-top: 1px;
+    text-align: center;
+
+
+    alignment: center;
+    padding-top: 20px;
+}
+
+.error-text{
+
+    color: red;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="#{product.title}">Product page</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/product.css" media="screen"/>
+</head>
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <!--<div th:inline="text">-->
+        <!--Description: [[${product.description}]]-->
+        <!--<br>-->
+        <!--Price: [[${product.price}]]-->
+        <!--<br>-->
+        <!--Quantity: [[${product.quantity}]]-->
+        <!--<br>-->
+        <!--Seller: [[${product.seller}]]-->
+        <!--<br>-->
+    <!--</div>-->
+
+    <div id="product-div">
+        <div id="product-picture-div" th:switch="${product.image}">
+            <div th:case="null">
+
+                <img th:src="@{/resources/image/default-product-picture.png}"
+                     alt="default product picture" class="product-picture">
+
+            </div>
+            <div th:case="*">
+
+                <img th:src="@{/products/picture/{product_id}(product_id=${user.id})}"
+                     alt="product's picture" class="product-picture">
+                <br>
+            </div>
+        </div>
+        <div id="product-info-div">
+
+            <h3 th:text="${product.name}">Product name</h3>
+            <span>Description: [[${product.description}]]</span>
+            <br>
+            <span>Price: [[${product.price}]]</span>
+            <br>
+            <span>Quantity: [[${product.quantity}]]</span>
+            <br>
+            <span><a th:href="@{/user/{user_id}(user_id=${product.seller})}" th:text="#{products.to_seller_page_link}">seller</a></span>
+        </div>
+    </div>
+
+    <br>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>

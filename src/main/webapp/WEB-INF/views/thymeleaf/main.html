@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="#{main.title}">Main page</title>
+
+    <link href="/resources/css/common.css" rel="stylesheet" type="text/css"/>
+    <link href="/resources/css/main.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="main-div">
+    <h2>Main page</h2>
+    <a href="/products" th:text="#{main.products}">To page with products</a>
+    <div><img class="welcome-div" src="/resources/image/welcome.jpg" alt="welcome image"></div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{registration.title}"></title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/registration.css" media="screen"/>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div>
+        <div class="left-block">
+            <h2 th:text="#{registration.title}"></h2>
+            <h2 th:text="#{registration.description}"></h2>
+            <form id="user_form" method="post" th:action="@{/registration}" th:object="${user}">
+                <div>
+                    <label for="email" th:text="#{registration.email}">Email*:</label>
+                    <input type="text" th:field="*{email}" th:placeholder="#{registration.email_hint}" id="email"
+                           name="email"
+                           autofocus="autofocus"/>
+                    <span class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+                <br>
+                <div>
+                    <label for="username" th:text="#{registration.username}">Username*:</label>
+                    <input type="text" th:field="*{username}" th:placeholder="#{registration.username_hint}"
+                           id="username"
+                           name="username"/>
+                    <span class="error-text" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                </div>
+                <br>
+                <div>
+                    <label for="password" th:text="#{registration.password}">Password*:</label>
+                    <input type="password" th:field="*{password}" th:placeholder="#{registration.password_hint}"
+                           id="password"
+                           name="password"/>
+                    <span class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                </div>
+                <br>
+                <div>
+                    <label for="password2" th:text="#{registration.password_again}">Password (again)*:</label>
+                    <input type="password" th:placeholder="#{registration.password_again_hint}" id="password2"
+                           name="password2"/>
+                </div>
+                <br>
+                <div>
+                    <label for="role" th:text="#{registration.role}">Role*:</label>
+                    <select id="role" th:field="*{role}" name="role">
+                        <option value="seller" th:text="#{registration.role.seller}">Seller</option>
+                        <option value="customer" th:text="#{registration.role.customer}">Customer</option>
+                    </select>
+                    <span class="error-text" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
+                </div>
+                <br>
+                <br>
+                <button type="submit" th:text="#{registration.submit}">Sign up</button>
+            </form>
+            <p th:utext="${message}"></p>
+            <p th:utext="#{registration.message_to_user}">If you already have an account then <a href="/login">log
+                in</a>
+            </p>
+        </div>
+
+        <div class="right-block">
+            <img src="/resources/image/welcome.jpg">
+        </div>
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+
+</body>
+</html>

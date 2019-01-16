@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title th:text="#{orders.title}">Orders</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/orders.css" media="screen"/>
+</head>
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <h3 th:text="#{orders.page_desc}"></h3>
+
+    <div class="all-orders-div">
+
+        <div class="order-div" th:each="order : ${orders}">
+            <div class="order-info-div">
+
+                <div th:inline="text">created: [[${order.orderCreationDateTime}]]</div>
+                <div th:inline="text">closed: [[${order.orderClosedDateTime}]]</div>
+                <div th:inline="text">address: [[${order.address}]]</div>
+                <div th:inline="text">paid: [[${order.paid}]]</div>
+
+            </div>
+
+            <div class="product-div" th:each="orderItem, iterStat : ${order.getOrderItems()}">
+                <span th:text="${iterStat.count}"></span>
+                <div class="product-picture-div">
+                    product picture
+                </div>
+                <div class="product-info-div" th:text="${orderItem}">
+                    product info
+                </div>
+                <hr>
+            </div>
+
+        </div>
+
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>

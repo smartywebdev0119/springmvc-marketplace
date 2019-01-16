@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" content="text/html">
+    <title th:text="#{login.title}"></title>
+
+    <link href="/resources/css/login.css" rel="stylesheet" type="text/css" media="screen"/>
+
+    <script src="/resources/js/login.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="left-block">
+        <h2 th:text="#{login.title}"></h2>
+        <form method="post" action="/login" name="loginForm" onsubmit="return validateForm()">
+            <div>
+                <label for="username" th:text="#{login.username}"></label>
+                <input type="text" th:placeholder="#{login.username_hint}" placeholder="enter username" id="username"
+                       name="username" autofocus="autofocus"/>
+                <span style="color: red" id="username-error"></span>
+            </div>
+            <br>
+            <div>
+                <label for="password" th:text="#{login.password}"></label>
+                <input type="password" th:placeholder="#{login.password_hint}" placeholder="enter password"
+                       id="password"
+                       name="password"/>
+                <span style="color: red" id="password-error"></span>
+            </div>
+            <br>
+            <button type="submit" th:text="#{login.submit}"></button>
+        </form>
+        <div class="container" th:utext="${message}"></div>
+        <div class="container">
+            <p th:utext="#{login.signup_message}"></p>
+        </div>
+    </div>
+    <div class="right-block">
+        <img src="/resources/image/welcome.jpg">
+    </div>
+
+    <div th:replace="common/footer :: footer"></div>
+
+</div>
+</body>
+</html>
