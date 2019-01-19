@@ -4,6 +4,8 @@ import com.trade.exception.DaoException;
 import com.trade.model.Product;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.*;
+import org.springframework.jdbc.core.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpMySQL implements ProductDao {
+
+    private static final int NUMBER_OF_PRODUCTS_ON_PAGE = 10;
 
     private static final String ID_C_L = "id";
     private static final String NAME_C_L = "name";
@@ -31,6 +35,9 @@ public class ProductDaoImpMySQL implements ProductDao {
 
     @Autowired
     private HikariDataSource hikariDataSource;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public List<Product> findAll() throws DaoException {
@@ -62,6 +69,38 @@ public class ProductDaoImpMySQL implements ProductDao {
         }
     }
 
+    /**
+     *
+     * Default number of products on a page is 10
+     *
+     */
+    @Override
+    public List<Product> findByPage(int pageNumber) throws DaoException {
+
+        final int startID = NUMBER_OF_PRODUCTS_ON_PAGE * (pageNumber - 1);
+
+        System.out.println("paging from "+ startID+ " to "+NUMBER_OF_PRODUCTS_ON_PAGE);
+
+        try {
+
+            List<Product> products = jdbcTemplate
+                    .query("select*from product limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE, new ProductRowMapper());
+
+            if (!products.isEmpty()){
+
+                return products;
+
+            } else {
+
+                return null;
+            }
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+
+    }
+
     @Override
     public Product findById(long id) throws DaoException {
 
@@ -89,6 +128,12 @@ public class ProductDaoImpMySQL implements ProductDao {
 
             throw new DaoException(e);
         }
+    }
+
+    @Override
+    public int findTotalProductsNumber() throws DaoException {
+
+        return jdbcTemplate.queryForObject("select COUNT(*) from product", Integer.class);
     }
 
     @Override
@@ -176,5 +221,23 @@ public class ProductDaoImpMySQL implements ProductDao {
         }
 
         return product;
+    }
+
+    @SuppressWarnings("Duplicates")
+    private class ProductRowMapper implements RowMapper<Product> {
+
+        @Override
+        public Product mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+
+            Product product = new Product();
+            product.setId(resultSet.getLong(ID_C_L));
+            product.setName(resultSet.getString(NAME_C_L));
+            product.setDescription(resultSet.getString(DESCRIPTION_C_L));
+            product.setSeller(resultSet.getLong(SELLER_C_L));
+            product.setPrice(resultSet.getDouble(PRICE_C_L));
+            product.setQuantity(resultSet.getInt(QUANTITY_C_L));
+
+            return product;
+        }
     }
 }

@@ -12,3 +12,54 @@
     cursor: pointer;
     width: 100px;
 }
+
+
+#pagination-div{
+
+    padding-top: 20px;
+}
+
+#pagination-div ul{
+
+    display:table;
+    margin:0 auto;
+
+    height: 40px;
+    width: auto;
+
+}
+
+#pagination-div li{
+
+    padding: 5px 10px;
+
+    margin-right: 3px;
+
+    list-style-type:none;
+    display: block;
+    float:left;
+    text-align: center;
+    font-size:15px;
+}
+
+
+#next-page-li {
+
+}
+
+#current-page-li{
+
+    background: #e3e8e0;
+
+}
+
+#pagination-div li a{
+
+    display: block;
+
+}
+
+
+#pagination-div li:Hover {
+    background-color: #e3e8e0;
+}

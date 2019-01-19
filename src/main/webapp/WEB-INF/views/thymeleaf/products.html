@@ -29,7 +29,7 @@
             <td th:text="${product.description}"></td>
             <td th:text="${product.quantity}"></td>
             <td th:text="${product.price}"></td>
-            <td><a th:href="@{products/{product_id}(product_id=${product.id})}" th:text="#{products.to_full_desc_link}">to
+            <td><a th:href="@{/products/{product_id}(product_id=${product.id})}" th:text="#{products.to_full_desc_link}">to
                 full desc</a></td>
             <td><a th:href="@{/user/{user_id}(user_id=${product.seller})}" th:text="#{products.to_seller_page_link}">seller</a>
             </td>
@@ -42,8 +42,19 @@
             </td>
         </tr>
     </table>
+    <div id="pagination-div">
+        <ul>
+            <li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
 
-    <br>
+                <th:block th:switch="${page_number}">
+                    <span th:case="${current_page}" th:text="${page_number}">current</span>
+                    <a th:case="*" th:href="@{/products/page/{page_number}(page_number=${page_number})}" th:text="${page_number}"></a>
+                </th:block>
+
+            </li>
+        </ul>
+    </div>
+
     <div th:replace="common/footer :: footer"></div>
 </div>
 </body>

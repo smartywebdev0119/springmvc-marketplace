@@ -1,6 +1,6 @@
 package com.trade.controller;
 
-import com.trade.ExceptionUtils;
+import com.trade.utils.ExceptionUtils;
 import com.trade.exception.ServiceException;
 import com.trade.service.AuthorizationService;
 import com.trade.service.CookieService;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import static com.trade.utils.HtmlUtils.makeTextColorful;
 
 @Controller
-public class LoginController {
+public class LoginController implements ILoginController {
 
     private final static Logger logger = Logger.getLogger(LoginController.class);
 
@@ -37,6 +37,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
+    @Override
     public ModelAndView login(@RequestParam("username") String username,
                               @RequestParam("password") String password,
                               HttpServletRequest request,
@@ -81,6 +82,7 @@ public class LoginController {
     }
 
     @GetMapping("/logout")
+    @Override
     public ModelAndView logout(@CookieValue("userID") long userID) {
 
         logger.info("user with id [" + userID + "] is logging out");

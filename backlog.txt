@@ -1,20 +1,26 @@
 
 TODO:
 
-current:
+current: - - handling of hundreds of pages
 
-- pagination for products page
 - create a converter for user model as in the PR service project
 - user should not be able to add to cart when product quantity
 - SearchController
 - PaymentController
-- replace plain jdbc to JdbcTemplate
+- testing with Mockito
+- replace plain jdbc with JdbcTemplate
+- when changing language all parameters in the url are deleted. it causes errors.
 - pagination for shopping cart page
 - changing user's info in profile
 - move project to java configuration
 - make constants for paths to pages in controllers
 
 DONE:
+- 18.01.2019 - refactoring of site header (2h)
+- 18.01.2019 - pagination for products page (2.5 h)
+- 18.01.2019 - - add highlighting for selected page (~1h)
+- 17.01.2019 - some of UserDao methods were migrated to JdbcTemplate
+- 16.01.2019 - create a separate repo for this project
 - 16.01.2019 - add redirect to error page in all catch blocks
 - 12.01.2019 - wrap exception in the service layer
 - 12.01.2019 - wrap exception in the dao layer into DaoException

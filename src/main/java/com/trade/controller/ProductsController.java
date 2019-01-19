@@ -1,6 +1,6 @@
 package com.trade.controller;
 
-import com.trade.ExceptionUtils;
+import com.trade.utils.ExceptionUtils;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.service.dao.ProductService;
@@ -32,21 +32,49 @@ public class ProductsController {
     @GetMapping
     public ModelAndView getProductsList() {
 
-        List<Product> products = null;
+        final int FIRST_PAGE = 1;
 
-        // TODO implement pagination
+//        List<Product> products = null;
+//
+
+//        try {
+//
+//            products = productService.findAll();
+//
+//        } catch (ServiceException e) {
+//            logger.info("Error while reading all products");
+//            e.printStackTrace();
+//            return ExceptionUtils.getErrorPage("Error while reading all products");
+//        }
+
+        return new ModelAndView("redirect:/products/page/"+FIRST_PAGE);
+    }
+
+    @GetMapping("/page/{page_number}")
+    public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber){
 
         try {
 
-            products = productService.findAll();
+            List<Product> productsOnPage = productService.findByPage(pageNumber);
+
+            final int totalProductsNumber = productService.findTotalProductsNumber();
+            final int numberOfPages = (int) Math.ceil(totalProductsNumber / 10.0);
+
+            ModelAndView modelAndView = new ModelAndView("products");
+            modelAndView.addObject("products", productsOnPage);
+            modelAndView.addObject("number_of_pages", numberOfPages);
+            modelAndView.addObject("current_page", pageNumber);
+
+            return modelAndView;
 
         } catch (ServiceException e) {
-            logger.info("Error while reading all products");
+
+            logger.error("not managed to read products from table by page");
             e.printStackTrace();
-            return ExceptionUtils.getErrorPage("Error while reading all products");
+
+            return ExceptionUtils.getErrorPage("not managed to get products by page");
         }
 
-        return new ModelAndView("products", "products", products);
     }
 
     @GetMapping("/{id}")

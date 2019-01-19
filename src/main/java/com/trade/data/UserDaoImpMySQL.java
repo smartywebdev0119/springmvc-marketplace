@@ -4,6 +4,8 @@ import com.trade.exception.DaoException;
 import com.trade.model.User;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.*;
+import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.*;
 
 @Repository
 public class UserDaoImpMySQL implements UserDao {
@@ -33,60 +36,82 @@ public class UserDaoImpMySQL implements UserDao {
     @Autowired
     private HikariDataSource hikariDataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     @SuppressWarnings("Duplicates")
     public User findByUsername(String username) throws DaoException {
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_USERNAME)
-        ) {
 
-            statement.setString(1, username);
+        try {
 
-            User user = null;
+            return jdbcTemplate.queryForObject(FIND_BY_USERNAME, new UserRowMapper(), username);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                if (resultSet.next()) {
-
-                    user = parseUser(resultSet);
-                }
-
-            }
-
-            return user;
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
+
+
+//        try (
+//                Connection connection = hikariDataSource.getConnection();
+//                PreparedStatement statement = connection.prepareStatement(FIND_BY_USERNAME)
+//        ) {
+//
+//            statement.setString(1, username);
+//
+//            User user = null;
+//
+//            try (ResultSet resultSet = statement.executeQuery()) {
+//
+//                if (resultSet.next()) {
+//
+//                    user = parseUser(resultSet);
+//                }
+//
+//            }
+//
+//            return user;
+//        } catch (SQLException e) {
+//
+//            throw new DaoException(e);
+//        }
     }
 
     @Override
     @SuppressWarnings("Duplicates")
     public User findById(long id) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
-        ) {
+        try {
 
-            statement.setLong(1, id);
+            return jdbcTemplate.queryForObject(FIND_BY_ID, new UserRowMapper(), id);
 
-            User user = null;
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                if (resultSet.next()) {
-
-                    user = parseUser(resultSet);
-                }
-            }
-
-            return user;
-        } catch (SQLException e) {
-
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
+
+//        try (
+//                Connection connection = hikariDataSource.getConnection();
+//                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
+//        ) {
+//
+//            statement.setLong(1, id);
+//
+//            User user = null;
+//
+//            try (ResultSet resultSet = statement.executeQuery()) {
+//
+//                if (resultSet.next()) {
+//
+//                    user = parseUser(resultSet);
+//                }
+//            }
+//
+//            return user;
+//        } catch (SQLException e) {
+//
+//            throw new DaoException(e);
+//        }
     }
 
     @Override
@@ -129,22 +154,35 @@ public class UserDaoImpMySQL implements UserDao {
     @Override
     public void updateImage(User user) throws DaoException {
 
-        try (Connection connection = hikariDataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_IMAGE)) {
+        try {
 
-            preparedStatement.setBlob(1, user.getImage());
-            preparedStatement.setLong(2, user.getId());
+            int numberOfAffectedRows = jdbcTemplate.update(UPDATE_USER_IMAGE, user.getImage(), user.getId());
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows == 0) {
+            if (numberOfAffectedRows == 0) {
                 throw new DaoException("Updating user's image failed, no rows affected.");
             }
 
-        } catch (SQLException e) {
-
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
+
+
+//        try (Connection connection = hikariDataSource.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_IMAGE)) {
+//
+//            preparedStatement.setBlob(1, user.getImage());
+//            preparedStatement.setLong(2, user.getId());
+//
+//            int affectedRows = preparedStatement.executeUpdate();
+//
+//            if (affectedRows == 0) {
+//                throw new DaoException("Updating user's image failed, no rows affected.");
+//            }
+//
+//        } catch (SQLException e) {
+//
+//            throw new DaoException(e);
+//        }
 
     }
 
@@ -178,5 +216,28 @@ public class UserDaoImpMySQL implements UserDao {
         }
 
         return user;
+    }
+
+
+    @SuppressWarnings("Duplicates")
+    public static class UserRowMapper implements RowMapper<User> {
+
+        @Override
+        public User mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+
+            User user = new User();
+            user.setId(resultSet.getLong(ID_COLUMN_LABEL));
+            user.setUsername(resultSet.getString(USERNAME_C_L));
+            user.setPassword(resultSet.getString(PASS_C_L));
+            user.setName(resultSet.getString(NAME_C_L));
+            user.setSurname(resultSet.getString(SURNAME_C_L));
+            user.setRole(resultSet.getString(ROLE_C_L));
+            user.setImage(resultSet.getBlob(IMAGE_C_L));
+            user.setEmail(resultSet.getString(EMAIL_C_L));
+
+            return user;
+
+
+        }
     }
 }

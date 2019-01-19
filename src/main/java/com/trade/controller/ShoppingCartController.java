@@ -1,6 +1,6 @@
 package com.trade.controller;
 
-import com.trade.ExceptionUtils;
+import com.trade.utils.ExceptionUtils;
 import com.trade.dto.ShoppingCartItemDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;

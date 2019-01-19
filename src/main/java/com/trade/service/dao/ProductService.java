@@ -31,6 +31,26 @@ public class ProductService {
         }
     }
 
+    public List<Product> findByPage(int pageNumber) throws ServiceException{
+
+        try {
+            return productDao.findByPage(pageNumber);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+
+    }
+
+    public int findTotalProductsNumber() throws ServiceException{
+
+        try {
+            return productDao.findTotalProductsNumber();
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+
+    }
+
     public long create(Product product) throws ServiceException {
 
         try {

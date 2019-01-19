@@ -1,4 +1,4 @@
-package com.trade;
+package com.trade.utils;
 
 import org.springframework.web.servlet.ModelAndView;
 
