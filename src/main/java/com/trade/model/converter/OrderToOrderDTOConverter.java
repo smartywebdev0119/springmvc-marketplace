@@ -1,14 +1,14 @@
 package com.trade.model.converter;
 
 import com.trade.dto.OrderDTO;
-import com.trade.dto.OrderItemDTO;
+import com.trade.enums.*;
 import com.trade.model.Order;
 
-import java.util.List;
+import java.util.*;
 
 public class OrderToOrderDTOConverter {
 
-    public OrderDTO convert(Order order, List<OrderItemDTO> orderItemDTOList){
+    public OrderDTO convert(Order order){
 
         OrderDTO orderDTO = new OrderDTO();
 
@@ -19,8 +19,23 @@ public class OrderToOrderDTOConverter {
         orderDTO.setAddress(order.getAddress());
         orderDTO.setPaid(order.isPaid());
         orderDTO.setStatus(order.getStatus());
-        orderDTO.setOrderItems(orderItemDTOList);
+
+        Objects.requireNonNull(OrderStage.numberToEnum(order.getStage()));
+        orderDTO.setStage(OrderStage.numberToEnum(order.getStage()).asString());
 
         return orderDTO;
+    }
+
+
+    public List<OrderDTO> convertAll(List<Order> orders){
+
+        List<OrderDTO> dtos = new ArrayList<>();
+
+        for (Order order : orders){
+
+            dtos.add(convert(order));
+        }
+
+        return dtos;
     }
 }

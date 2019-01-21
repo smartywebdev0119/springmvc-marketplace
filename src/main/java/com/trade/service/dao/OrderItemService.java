@@ -34,6 +34,15 @@ public class OrderItemService {
         }
     }
 
+    public List<OrderItem> findAllByUserId(long userId) throws ServiceException {
+
+        try {
+            return orderItemDao.findAllByUserId(userId);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     public long create(OrderItem orderItem) throws ServiceException {
 
         try {

@@ -1,24 +1,26 @@
 package com.trade.dto;
 
-import com.trade.model.IPrice;
+public class OrderItemDTO {
 
-public class OrderItemDTO implements IPrice {
-
-    private long orderItemId;
+    private long id;
+    private long orderId;
     private long productId;
-    private String name;
-    private String description;
-    private long seller;
-    private double price;
-    private int quantity;
-    private long imageId;
+    private long productsQuantity;
 
-    public long getOrderItemId() {
-        return orderItemId;
+    public long getId() {
+        return id;
     }
 
-    public void setOrderItemId(long orderItemId) {
-        this.orderItemId = orderItemId;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public long getProductId() {
@@ -29,65 +31,21 @@ public class OrderItemDTO implements IPrice {
         this.productId = productId;
     }
 
-    public String getName() {
-        return name;
+    public long getProductsQuantity() {
+        return productsQuantity;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public long getSeller() {
-        return seller;
-    }
-
-    public void setSeller(long seller) {
-        this.seller = seller;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public long getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(long imageId) {
-        this.imageId = imageId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setProductsQuantity(long productsQuantity) {
+        this.productsQuantity = productsQuantity;
     }
 
     @Override
     public String toString() {
         return "OrderItemDTO{" +
-                "orderItemId=" + orderItemId +
+                "id=" + id +
+                ", orderId=" + orderId +
                 ", productId=" + productId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", seller=" + seller +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", imageId=" + imageId +
+                ", productsQuantity=" + productsQuantity +
                 '}';
     }
 }

@@ -9,6 +9,8 @@ public interface OrderItemDao {
 
     OrderItem findById(long id) throws DaoException;
 
+    List<OrderItem> findAllByUserId(long userId) throws DaoException;
+
     long create(OrderItem orderItem) throws DaoException;
 
     void update(OrderItem orderItem) throws DaoException;

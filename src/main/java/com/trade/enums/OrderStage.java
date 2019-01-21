@@ -5,19 +5,25 @@ package com.trade.enums;
  */
 public enum OrderStage {
 
-    CREATED(1),
-    SHIPPING_DETAILS_PROVIDED(2),
-    ORDER_PAID(3);
+    CREATED(1, "created"),
+    SHIPPING_DETAILS_PROVIDED(2, "shipping details provided"),
+    ORDER_PAID(3, "order paid");
 
     private final int stage;
+    private final String stageAsString;
 
-    OrderStage(int stage) {
+    OrderStage(int stage, String stageAsString) {
 
         this.stage = stage;
+        this.stageAsString = stageAsString;
     }
 
     public int asInt() {
         return stage;
+    }
+
+    public String asString(){
+        return stageAsString;
     }
 
     public static OrderStage numberToEnum(int stage) {

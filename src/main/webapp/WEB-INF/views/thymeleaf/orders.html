@@ -23,15 +23,17 @@
                 <div th:inline="text">closed: [[${order.orderClosedDateTime}]]</div>
                 <div th:inline="text">address: [[${order.address}]]</div>
                 <div th:inline="text">paid: [[${order.paid}]]</div>
+                <div th:inline="text">order id: [[${order.id}]]</div>
+                <div th:inline="text">total price, $: [[${orderIdAndTotalPriceMap.get(order.id)}]]</div>
 
             </div>
 
-            <div class="product-div" th:each="orderItem, iterStat : ${order.getOrderItems()}">
+            <div class="product-div" th:each="orderItem, iterStat : ${mapWithOrderItems.get(order.getId())}">
                 <span th:text="${iterStat.count}"></span>
                 <div class="product-picture-div">
                     product picture
                 </div>
-                <div class="product-info-div" th:text="${orderItem}">
+                <div class="product-info-div" th:text="${productsMap.get(orderItem.getProductId())}">
                     product info
                 </div>
                 <hr>

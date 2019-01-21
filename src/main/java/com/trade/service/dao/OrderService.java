@@ -10,8 +10,8 @@ import com.trade.model.ShoppingCartItem;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 public class OrderService {
 
@@ -55,13 +55,13 @@ public class OrderService {
 
         logger.info("creating order for user id = " + userID);
 
-        List<ShoppingCartItem> cartItems = null;
+        List<ShoppingCartItem> shoppingCartItems = null;
 
         try {
 
             logger.info("get all shopping cart items for user id = " + userID);
 
-            cartItems = shoppingCartItemService.findAllById(userID);
+            shoppingCartItems = shoppingCartItemService.findAllById(userID);
 
         } catch (ServiceException e) {
 
@@ -71,28 +71,34 @@ public class OrderService {
             throw new ServiceException("order not created", e);
         }
 
+        Map<Long, Product> productsFromShoppingCartMap = new HashMap<>();
+        try {
+
+            // find all unique products from user's shopping cart
+            List<Product> productsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userID);
+
+            for (Product product : productsFromUserShoppingCart) {
+                productsFromShoppingCartMap.put(product.getId(), product);
+            }
+
+        } catch (ServiceException e) {
+            e.printStackTrace();
+
+            throw new ServiceException("order not created", e);
+        }
+
+
         List<Product> productsInOrder = null;
 
-        if (cartItems != null) {
+        if (shoppingCartItems != null) {
 
             productsInOrder = new ArrayList<>();
 
-            // get products that are in the shopping cart
-            for (ShoppingCartItem item : cartItems) {
+            // get products
+            for (ShoppingCartItem item : shoppingCartItems) {
 
-                try {
-
-                    Product product = productService.findById(item.getProductId());
-
-                    productsInOrder.add(product);
-
-                } catch (ServiceException e) {
-
-                    logger.error("not managed to find product using shopping cart item");
-                    e.printStackTrace();
-
-                    throw new ServiceException("order not created", e);
-                }
+                Product product = productsFromShoppingCartMap.get(item.getProductId());
+                productsInOrder.add(product);
             }
 
         } else {

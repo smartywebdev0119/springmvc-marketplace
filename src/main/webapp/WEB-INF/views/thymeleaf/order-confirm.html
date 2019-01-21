@@ -26,18 +26,18 @@
                 <th th:text="#{products.price}">Price:</th>
             </tr>
             <tr th:each="orderItem : ${orderItems}">
-                <td th:text="${orderItem.name}"></td>
-                <td th:text="${orderItem.description}"></td>
-                <td th:text="${orderItem.quantity}"></td>
+                <td th:text="${productsMap.get(orderItem.getProductId()).getName()}"></td>
+                <td th:text="${productsMap.get(orderItem.getProductId()).getDescription()}"></td>
+                <td th:text="${orderItem.getProductsQuantity()}"></td>
                 <td>
-                    <a th:href="@{/products/{product_id}(product_id=${orderItem.productId})}"
+                    <a th:href="@{/products/{product_id}(product_id=${orderItem.getProductId()})}"
                        th:text="#{products.to_full_desc_link}">to full desc</a>
                 </td>
                 <td>
-                    <a th:href="@{/user/{user_id}(user_id=${orderItem.seller})}"
+                    <a th:href="@{/user/{user_id}(user_id=${productsMap.get(orderItem.getProductId()).getSeller()})}"
                        th:text="#{products.to_seller_page_link}">seller</a>
                 </td>
-                <td th:text="${orderItem.price}"></td>
+                <td th:text="${productsMap.get(orderItem.getProductId()).getPrice()}"></td>
             </tr>
         </table>
 

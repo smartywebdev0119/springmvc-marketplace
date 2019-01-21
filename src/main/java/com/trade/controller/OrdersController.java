@@ -1,5 +1,6 @@
 package com.trade.controller;
 
+import com.trade.model.converter.*;
 import com.trade.utils.ExceptionUtils;
 import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
@@ -7,8 +8,6 @@ import com.trade.exception.ServiceException;
 import com.trade.model.Order;
 import com.trade.model.OrderItem;
 import com.trade.model.Product;
-import com.trade.model.converter.OrderToOrderDTOConverter;
-import com.trade.model.converter.ProductToOrderItemDTOConverter;
 import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
@@ -26,8 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class OrdersController {
@@ -47,46 +45,84 @@ public class OrdersController {
     private OrderItemService orderItemService;
 
     @Autowired
-    private ProductToOrderItemDTOConverter productToOrderItemDTOConverter;
-
-    @Autowired
     private OrderToOrderDTOConverter orderToOrderDTOConverter;
 
+    @Autowired
+    private OrderItemToDTOConverter orderItemToDTOConverter;
+
     @GetMapping("/orders")
-    public ModelAndView getMessage(@CookieValue("userID") long userID) {
-
-        ModelAndView modelAndView = new ModelAndView("orders");
-
-        List<OrderDTO> orders = new ArrayList<>();
+    public ModelAndView getOrders(@CookieValue("userID") long userID) {
 
         try {
 
-            List<Order> orderList = orderService.findAllByUserId(userID);
+            ModelAndView modelAndView = new ModelAndView("orders");
 
-            for (Order order : orderList) {
 
-                List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+            List<Order> orders1 = orderService.findAllByUserId(userID);
+            List<OrderDTO> orderDTOList = orderToOrderDTOConverter.convertAll(orders1);
 
-                for (OrderItem orderItem : orderItemService.findAllByOrderId(order.getId())) {
 
-                    Product product = productService.findById(orderItem.getProductId());
+            List<OrderItem> orderItemList = orderItemService.findAllByUserId(userID);
+            Map<Long, List<OrderItemDTO>> orderIdAndListOfOrderItemsMap = new HashMap<>();
+            for (OrderItem orderItem : orderItemList) {
 
-                    OrderItemDTO orderItemDTO = productToOrderItemDTOConverter.convert(product, orderItem.getId());
-                    orderItemDTOList.add(orderItemDTO);
+                OrderItemDTO orderItemDTO = orderItemToDTOConverter.convert(orderItem);
+
+                if (orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()) == null) {
+
+                    List<OrderItemDTO> itms = new ArrayList<>();
+                    itms.add(orderItemDTO);
+                    orderIdAndListOfOrderItemsMap.put(orderItem.getOrderId(), itms);
+
+                } else {
+
+                    orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()).add(orderItemDTO);
+                }
+            }
+
+            List<Product> productsList = productService.findAllByUserId(userID);
+            Map<Long, Product> productsMap = new HashMap<>();
+            for (Product product : productsList) {
+                productsMap.put(product.getId(), product);
+            }
+
+
+            // count total price
+            Map<Long, Double> orderIdAndTotalPriceMap = new HashMap<>();
+            for (Order order : orders1) {
+
+                double orderPrice = 0;
+
+                List<OrderItemDTO> orderItemDTOS = orderIdAndListOfOrderItemsMap.get(order.getId());
+
+                for (OrderItemDTO orderItemDTO : orderItemDTOS) {
+
+                    Product product = productsMap.get(orderItemDTO.getProductId());
+                    orderPrice += product.getPrice();
                 }
 
-                orders.add(orderToOrderDTOConverter.convert(order, orderItemDTOList));
+                orderIdAndTotalPriceMap.put(order.getId(), orderPrice);
             }
+
+            // list with orders
+            modelAndView.addObject("orders", orderDTOList);
+
+            // map with order items where K = order id V = list of order items
+            modelAndView.addObject("mapWithOrderItems", orderIdAndListOfOrderItemsMap);
+
+
+            // map where K = product id and V = is product
+            modelAndView.addObject("productsMap", productsMap);
+
+            modelAndView.addObject("orderIdAndTotalPriceMap", orderIdAndTotalPriceMap);
+
+            return modelAndView;
 
         } catch (ServiceException e) {
 
             logger.error("not managed to find all order of user with id = " + userID);
             return ExceptionUtils.getErrorPage("not managed to find all order of user");
         }
-
-        modelAndView.addObject("orders", orders);
-
-        return modelAndView;
     }
 
 
@@ -102,7 +138,7 @@ public class OrdersController {
             long orderId = orderService.create(order);
 
             // order creation failed
-            if (orderId == -1){
+            if (orderId == -1) {
 
 
                 // order created successfully
@@ -140,33 +176,31 @@ public class OrdersController {
 
         try {
 
-            List<OrderItemDTO> orderItemList = new ArrayList<>();
-
             logger.info("order_id = " + orderID);
 
-            for (OrderItem item : orderItemService.findAllByOrderId(orderID)) {
-
-                logger.info(">>> product id = " + item.getProductId());
-                Product product = productService.findById(item.getProductId());
-                // set to 1 as now even same products are displayed separately
-                product.setQuantity(1);
-
-                OrderItemDTO orderItemDTO = productToOrderItemDTOConverter.convert(product, item.getOrderId());
-
-                orderItemList.add(orderItemDTO);
-            }
-
-            System.out.println("size of orderItemList = " + orderItemList.size());
-
+            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderID);
+            List<OrderItemDTO> orderItemDTOList = orderItemToDTOConverter.convertAll(orderItems);
             logger.info("order items found");
 
-            double totalPrice = ProductUtils.calculateTotalPrice(orderItemList);
+            List<Product> productsList = productService.findAllByOrderId(orderID);
+            Map<Long, Product> productsMap = new HashMap<>();
+            for (Product product : productsList) {
+                productsMap.put(product.getId(), product);
+            }
 
+            double totalPrice = 0;
+            // calculating total price
+            for (OrderItem item : orderItems) {
+
+                totalPrice += productsMap.get(item.getProductId()).getPrice();
+            }
             logger.info("order total price calculated");
+
 
             ModelAndView modelAndView = new ModelAndView("order-confirm");
 
-            modelAndView.addObject("orderItems", orderItemList);
+            modelAndView.addObject("orderItems", orderItemDTOList);
+            modelAndView.addObject("productsMap", productsMap);
             modelAndView.addObject("total_price", totalPrice);
             modelAndView.addObject("order_id", orderID);
 

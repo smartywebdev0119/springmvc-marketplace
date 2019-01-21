@@ -33,6 +33,18 @@ public class ProductDaoImpMySQL implements ProductDao {
     private static final String UPDATE_PRODUCT =
             "update product set name = ?, description=?, seller=?, price=?, quantity=? where id = ?";
 
+
+    private final static String FIND_ALL_BY_USER_ID = "select distinct * from product where id in \n" +
+            "(select product_id from order_item where order_id in \n" +
+            "(select id from order_ where buyer_id = ?))";
+
+
+    private final static String FIND_ALL_BY_ORDER_ID = "select * from product where id in (select product_id from order_item where order_id = ?)";
+
+    private final static String FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART =
+            "select * from product where id in (select product_id from shopping_cart_item where user_id = ?);";
+
+
     @Autowired
     private HikariDataSource hikariDataSource;
 
@@ -126,6 +138,107 @@ public class ProductDaoImpMySQL implements ProductDao {
 
         } catch (SQLException e) {
 
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("Duplicates")
+    public List<Product> findAllByUserId(long userId) throws DaoException {
+
+        try (
+                Connection connection = hikariDataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)
+        ) {
+
+            List<Product> products = new ArrayList<>();
+
+
+            statement.setLong(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Product product = parseProduct(resultSet);
+                    products.add(product);
+                }
+            }
+
+            if (products.isEmpty()){
+                return null;
+            }
+
+            return products;
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("Duplicates")
+    public List<Product> findAllByOrderId(long orderId) throws DaoException {
+        try (
+                Connection connection = hikariDataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_ORDER_ID)
+        ) {
+
+            List<Product> products = new ArrayList<>();
+
+
+            statement.setLong(1, orderId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Product product = parseProduct(resultSet);
+                    products.add(product);
+                }
+            }
+
+            if (products.isEmpty()){
+                return null;
+            }
+
+            return products;
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("Duplicates")
+    public List<Product> findAllUniqueProductsFromUserShoppingCart(long userID) throws DaoException {
+
+        try (
+                Connection connection = hikariDataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART)
+        ) {
+
+            List<Product> products = new ArrayList<>();
+
+
+            statement.setLong(1, userID);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    Product product = parseProduct(resultSet);
+                    products.add(product);
+                }
+            }
+
+            if (products.isEmpty()){
+                return null;
+            }
+
+            return products;
+
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
     }

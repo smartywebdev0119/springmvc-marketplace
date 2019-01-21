@@ -6,6 +6,7 @@ import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.*;
 import java.util.List;
 
 public class ProductService {
@@ -22,6 +23,30 @@ public class ProductService {
         }
     }
 
+    public List<Product> findAllByOrderId(long orderId) throws ServiceException {
+        try {
+            return productDao.findAllByOrderId(orderId);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public List<Product> findAllByUserId(long userId) throws ServiceException {
+        try {
+            return productDao.findAllByUserId(userId);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    public List<Product> findAllUniqueProductsFromUserShoppingCart(long userID) throws ServiceException {
+        try {
+            return productDao.findAllUniqueProductsFromUserShoppingCart(userID);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
     public Product findById(long id) throws ServiceException {
 
         try {
@@ -31,7 +56,7 @@ public class ProductService {
         }
     }
 
-    public List<Product> findByPage(int pageNumber) throws ServiceException{
+    public List<Product> findByPage(int pageNumber) throws ServiceException {
 
         try {
             return productDao.findByPage(pageNumber);
@@ -41,7 +66,7 @@ public class ProductService {
 
     }
 
-    public int findTotalProductsNumber() throws ServiceException{
+    public int findTotalProductsNumber() throws ServiceException {
 
         try {
             return productDao.findTotalProductsNumber();

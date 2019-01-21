@@ -1,7 +1,5 @@
 package com.trade.dto;
 
-import java.util.List;
-
 public class OrderDTO {
 
     private long id;
@@ -15,7 +13,8 @@ public class OrderDTO {
 
     private String address;
 
-    private List<OrderItemDTO> orderItems;
+    // indicates what stage the order is on (created, shipping, payment)
+    private String stage;
 
     public long getId() {
         return id;
@@ -73,12 +72,12 @@ public class OrderDTO {
         this.address = address;
     }
 
-    public List<OrderItemDTO> getOrderItems() {
-        return orderItems;
+    public String getStage() {
+        return stage;
     }
 
-    public void setOrderItems(List<OrderItemDTO> orderItems) {
-        this.orderItems = orderItems;
+    public void setStage(String stage) {
+        this.stage = stage;
     }
 
     @Override
@@ -91,6 +90,7 @@ public class OrderDTO {
                 ", status='" + status + '\'' +
                 ", paid=" + paid +
                 ", address='" + address + '\'' +
+                ", stage=" + stage +
                 '}';
     }
 }

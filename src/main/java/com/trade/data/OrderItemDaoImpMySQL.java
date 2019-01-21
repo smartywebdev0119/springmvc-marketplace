@@ -24,6 +24,9 @@ public class OrderItemDaoImpMySQL implements OrderItemDao {
     private static final String FIND_ALL_BY_ODER_ID = "select * from order_item where order_id = ?";
     private static final String INSERT_INTO = "insert into order_item (order_id, product_id, products_quantity) values (?,?,?)";
 
+    private static final String FIND_ALL_BY_USER_ID = "select * from order_item where order_id in (select id from order_ where buyer_id = ?) order by order_id";
+
+
     @Autowired
     private HikariDataSource hikariDataSource;
 
@@ -75,6 +78,39 @@ public class OrderItemDaoImpMySQL implements OrderItemDao {
             }
 
             return orderItem;
+
+        } catch (SQLException e) {
+
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public List<OrderItem> findAllByUserId(long userId) throws DaoException {
+
+        try (
+                Connection connection = hikariDataSource.getConnection();
+                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)
+        ) {
+
+            statement.setLong(1, userId);
+
+            List<OrderItem> orderItems = new ArrayList<>();
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+
+                    orderItems.add(parseOrderItem(resultSet));
+                }
+            }
+
+            if (orderItems.isEmpty()){
+
+                return null;
+            }
+
+            return orderItems;
 
         } catch (SQLException e) {
 
