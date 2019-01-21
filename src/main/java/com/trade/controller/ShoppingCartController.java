@@ -1,6 +1,5 @@
 package com.trade.controller;
 
-import com.trade.utils.ExceptionUtils;
 import com.trade.dto.ShoppingCartItemDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
@@ -9,6 +8,7 @@ import com.trade.model.converter.ProductToShoppingCartItemDTOConverter;
 import com.trade.service.ShoppingCartService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
+import com.trade.utils.ExceptionUtils;
 import com.trade.utils.ProductUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

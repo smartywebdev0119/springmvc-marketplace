@@ -3,7 +3,6 @@ package com.trade.data;
 import com.trade.exception.DaoException;
 import com.trade.model.Product;
 
-import java.sql.*;
 import java.util.List;
 
 public interface ProductDao {

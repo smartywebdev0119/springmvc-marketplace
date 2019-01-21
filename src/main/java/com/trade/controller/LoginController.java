@@ -1,9 +1,9 @@
 package com.trade.controller;
 
-import com.trade.utils.ExceptionUtils;
 import com.trade.exception.ServiceException;
 import com.trade.service.AuthorizationService;
 import com.trade.service.CookieService;
+import com.trade.utils.ExceptionUtils;
 import com.trade.utils.HtmlUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

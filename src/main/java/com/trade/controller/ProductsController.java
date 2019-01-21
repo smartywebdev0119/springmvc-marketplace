@@ -1,9 +1,9 @@
 package com.trade.controller;
 
-import com.trade.utils.ExceptionUtils;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.service.dao.ProductService;
+import com.trade.utils.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

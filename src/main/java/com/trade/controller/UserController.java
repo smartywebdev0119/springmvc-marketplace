@@ -1,11 +1,11 @@
 package com.trade.controller;
 
-import com.trade.utils.ExceptionUtils;
 import com.trade.dto.UserDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.User;
 import com.trade.model.converter.UserModelToDTOConverter;
 import com.trade.service.dao.UserService;
+import com.trade.utils.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -6,7 +6,6 @@ import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.*;
 import java.util.List;
 
 public class ProductService {

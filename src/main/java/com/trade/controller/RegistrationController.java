@@ -1,9 +1,9 @@
 package com.trade.controller;
 
-import com.trade.utils.ExceptionUtils;
 import com.trade.exception.ServiceException;
 import com.trade.model.User;
 import com.trade.service.dao.UserService;
+import com.trade.utils.ExceptionUtils;
 import com.trade.utils.HtmlUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

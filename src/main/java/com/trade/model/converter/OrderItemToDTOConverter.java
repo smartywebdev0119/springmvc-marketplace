@@ -1,9 +1,10 @@
 package com.trade.model.converter;
 
-import com.trade.dto.*;
-import com.trade.model.*;
+import com.trade.dto.OrderItemDTO;
+import com.trade.model.OrderItem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderItemToDTOConverter {
 

@@ -1,10 +1,12 @@
 package com.trade.model.converter;
 
 import com.trade.dto.OrderDTO;
-import com.trade.enums.*;
+import com.trade.enums.OrderStage;
 import com.trade.model.Order;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class OrderToOrderDTOConverter {
 

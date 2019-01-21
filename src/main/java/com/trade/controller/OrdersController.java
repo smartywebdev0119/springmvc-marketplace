@@ -1,18 +1,18 @@
 package com.trade.controller;
 
-import com.trade.model.converter.*;
-import com.trade.utils.ExceptionUtils;
 import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Order;
 import com.trade.model.OrderItem;
 import com.trade.model.Product;
+import com.trade.model.converter.OrderItemToDTOConverter;
+import com.trade.model.converter.OrderToOrderDTOConverter;
 import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
-import com.trade.utils.ProductUtils;
+import com.trade.utils.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,7 +25,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OrdersController {
