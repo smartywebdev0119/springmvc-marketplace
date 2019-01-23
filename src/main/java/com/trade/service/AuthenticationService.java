@@ -76,17 +76,6 @@ public class AuthenticationService {
 
                 if (session.getSessionToken().equals(sessionTokenCookie.getValue())) {
 
-                    // if the user logged in he/she should not see login page again
-                    if (request.getServletPath().equals(toLoginPage) ||
-                            request.getServletPath().equals("/")
-                            || request.getServletPath().equals("/registration")) {
-
-                        String toProductsPage = "/products";
-                        logger.info("redirect to " + toProductsPage);
-                        response.sendRedirect(toProductsPage);
-                        return false;
-                    }
-
                     logger.info("tokens are the same");
                     return true;
                 }

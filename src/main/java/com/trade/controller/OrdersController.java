@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class OrdersController {
@@ -84,25 +87,24 @@ public class OrdersController {
             }
 
             List<Product> productsList = productService.findAllByUserId(userID);
-            Map<Long, Product> productsMap = new HashMap<>();
-            for (Product product : productsList) {
-                productsMap.put(product.getId(), product);
-            }
+            Map<Long, Product> productsMap = productsList
+                    .stream()
+                    .collect(Collectors.toMap(Product::getId, Function.identity()));
 
 
             // count total price
             Map<Long, Double> orderIdAndTotalPriceMap = new HashMap<>();
             for (Order order : orders1) {
 
-                double orderPrice = 0;
-
-                List<OrderItemDTO> orderItemDTOS = orderIdAndListOfOrderItemsMap.get(order.getId());
-
-                for (OrderItemDTO orderItemDTO : orderItemDTOS) {
-
-                    Product product = productsMap.get(orderItemDTO.getProductId());
-                    orderPrice += product.getPrice();
-                }
+                double orderPrice = Stream
+                        .of(order)
+                        // get the list of order items this order contains
+                        .flatMap(order1 -> orderIdAndListOfOrderItemsMap.get(order.getId()).stream())
+                        // get products using product ids from order items
+                        .map(orderItemDTO -> productsMap.get(orderItemDTO.getProductId()))
+                        // sum up the prices of products to get order price
+                        .collect(Collectors.summarizingDouble(Product::getPrice))
+                        .getSum();
 
                 orderIdAndTotalPriceMap.put(order.getId(), orderPrice);
             }
@@ -186,17 +188,16 @@ public class OrdersController {
             logger.info("order items found");
 
             List<Product> productsList = productService.findAllByOrderId(orderID);
-            Map<Long, Product> productsMap = new HashMap<>();
-            for (Product product : productsList) {
-                productsMap.put(product.getId(), product);
-            }
+            Map<Long, Product> productsMap = productsList
+                    .stream()
+                    .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-            double totalPrice = 0;
-            // calculating total price
-            for (OrderItem item : orderItems) {
+            double totalPrice = orderItems
+                    .stream()
+                    .map(orderItem -> productsMap.get(orderItem.getProductId()))
+                    .collect(Collectors.summarizingDouble(Product::getPrice))
+                    .getSum();
 
-                totalPrice += productsMap.get(item.getProductId()).getPrice();
-            }
             logger.info("order total price calculated");
 
 

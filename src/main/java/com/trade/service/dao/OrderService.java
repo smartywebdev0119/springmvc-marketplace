@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class OrderService {
 
@@ -73,15 +75,15 @@ public class OrderService {
             throw new ServiceException("order not created", e);
         }
 
-        Map<Long, Product> productsFromShoppingCartMap = new HashMap<>();
+        Map<Long, Product> productsFromShoppingCartMap = null;
         try {
 
             // find all unique products from user's shopping cart
             List<Product> productsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userID);
 
-            for (Product product : productsFromUserShoppingCart) {
-                productsFromShoppingCartMap.put(product.getId(), product);
-            }
+            productsFromShoppingCartMap = productsFromUserShoppingCart
+                    .stream()
+                    .collect(Collectors.toMap(Product::getId, Function.identity()));
 
         } catch (ServiceException e) {
             e.printStackTrace();
