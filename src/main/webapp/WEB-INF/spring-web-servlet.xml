@@ -107,6 +107,7 @@
     <bean name="topNavigationMenuUpdateService" class="com.trade.service.HeaderMenuUpdateService"/>
     <bean name="loginService" class="com.trade.service.AuthorizationService"/>
     <bean name="authenticationService" class="com.trade.service.AuthenticationService"/>
+    <bean name="paginationService" class="com.trade.service.PaginationService"/>
     <!-- services -->
 
     <!-- DTO converters-->

@@ -2,6 +2,7 @@ package com.trade.controller;
 
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
+import com.trade.service.PaginationService;
 import com.trade.service.dao.ProductService;
 import com.trade.utils.ExceptionUtils;
 import org.apache.log4j.Logger;
@@ -29,41 +30,45 @@ public class ProductsController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private PaginationService paginationService;
+
+    private static final int FIRST_PAGE = 1;
+
     @GetMapping
     public ModelAndView getProductsList() {
 
-        final int FIRST_PAGE = 1;
 
-//        List<Product> products = null;
-//
-
-//        try {
-//
-//            products = productService.findAll();
-//
-//        } catch (ServiceException e) {
-//            logger.info("Error while reading all products");
-//            e.printStackTrace();
-//            return ExceptionUtils.getErrorPage("Error while reading all products");
-//        }
-
-        return new ModelAndView("redirect:/products/page/"+FIRST_PAGE);
+        return new ModelAndView("redirect:/products/page/" + FIRST_PAGE);
     }
 
     @GetMapping("/page/{page_number}")
-    public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber){
+    public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber) {
 
         try {
+
+            if (pageNumber <= 0) {
+                return new ModelAndView("redirect:/products/page/" + FIRST_PAGE);
+            }
 
             List<Product> productsOnPage = productService.findByPage(pageNumber);
 
             final int totalProductsNumber = productService.findTotalProductsNumber();
             final int numberOfPages = (int) Math.ceil(totalProductsNumber / 10.0);
 
+            if (pageNumber > numberOfPages) {
+                return new ModelAndView("redirect:/products/page/" + FIRST_PAGE);
+            }
+
+            List<Integer> pageNumbers =
+                    paginationService.calcPageNumbersForPagination(pageNumber, numberOfPages);
+
             ModelAndView modelAndView = new ModelAndView("products");
             modelAndView.addObject("products", productsOnPage);
             modelAndView.addObject("number_of_pages", numberOfPages);
             modelAndView.addObject("current_page", pageNumber);
+
+            modelAndView.addObject("page_numbers", pageNumbers);
 
             return modelAndView;
 
@@ -98,9 +103,9 @@ public class ProductsController {
 
     @GetMapping("/picture/{product_id}")
     public void getProductPicture(@PathVariable("product_id") long productId,
-                               HttpServletResponse response) {
+                                  HttpServletResponse response) {
 
-        logger.info("getting product picture of the user_id = "+productId);
+        logger.info("getting product picture of the user_id = " + productId);
 
         try {
 

@@ -44,7 +44,8 @@
     </table>
     <div id="pagination-div">
         <ul>
-            <li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
+            <!--<li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">-->
+            <li th:each="page_number : ${page_numbers}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
 
                 <th:block th:switch="${page_number}">
                     <span th:case="${current_page}" th:text="${page_number}">current</span>

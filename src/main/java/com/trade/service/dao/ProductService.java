@@ -57,6 +57,10 @@ public class ProductService {
 
     public List<Product> findByPage(int pageNumber) throws ServiceException {
 
+        if (pageNumber <= 0 ){
+            pageNumber = 1;
+        }
+
         try {
             return productDao.findByPage(pageNumber);
         } catch (DaoException e) {
