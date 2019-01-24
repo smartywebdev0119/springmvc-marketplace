@@ -26,17 +26,17 @@
                     <th th:text="#{shopping_cart.price}">Price:</th>
                     <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
                 </tr>
-                <tr th:each="item : ${items}">
-                    <td th:text="${item.getProductName()}">name</td>
-                    <td th:text="${item.getProductDescription()}">desc</td>
-                    <td th:text="${item.getProductQuantity()}">100</td>
+                <tr th:each="item : ${shoppingCartItemsList}">
+                    <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
+                    <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
+                    <td th:text="${productsDtoMap.get(item.getProductId()).getQuantity()}">100</td>
                     <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
                            th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
-                    <td><a th:href="@{/user/{product_seller}(product_seller=${item.getSellerId()})}">seller</a></td>
-                    <td th:text="${item.getPrice()}"></td>
+                    <td><a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a></td>
+                    <td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>
                     <td>
                         <form method="post"
-                              th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getShoppingCartItemId()})}">
+                              th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">
                             <button type="submit" class="remove-item-button" th:text="#{shopping_cart.remove_button}">
                                 remove
                             </button>
@@ -53,6 +53,19 @@
                 </button>
             </form>
         </div>
+    </div>
+    <div id="pagination-div">
+        <ul>
+            <!--<li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">-->
+            <li th:each="page_number : ${page_numbers}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
+
+                <th:block th:switch="${page_number}">
+                    <span th:case="${current_page}" th:text="${page_number}">current</span>
+                    <a th:case="*" th:href="@{/products/page/{page_number}(page_number=${page_number})}" th:text="${page_number}"></a>
+                </th:block>
+
+            </li>
+        </ul>
     </div>
 </div>
 </body>

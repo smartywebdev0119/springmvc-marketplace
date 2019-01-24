@@ -1,26 +1,18 @@
 package com.trade.dto;
 
-import com.trade.model.IPrice;
+public class ShoppingCartItemDTO {
 
-import java.sql.Blob;
-
-public class ShoppingCartItemDTO implements IPrice {
-
-    private long shoppingCartItemId;
+    private long id;
     private long productId;
-    private String productName;
-    private String productDescription;
-    private long sellerId;
-    private double productPrice;
-    private int productQuantity;
-    private Blob productImage;
+    private long userId;
 
-    public long getShoppingCartItemId() {
-        return shoppingCartItemId;
+
+    public long getId() {
+        return id;
     }
 
-    public void setShoppingCartItemId(long shoppingCartItemId) {
-        this.shoppingCartItemId = shoppingCartItemId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getProductId() {
@@ -31,51 +23,20 @@ public class ShoppingCartItemDTO implements IPrice {
         this.productId = productId;
     }
 
-    public String getProductName() {
-        return productName;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public long getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(long sellerId) {
-        this.sellerId = sellerId;
-    }
-
-    public double getPrice() {
-        return productPrice;
-    }
-
-    public void setPrice(double productPrice) {
-        this.productPrice = productPrice;
-    }
-
-    public int getProductQuantity() {
-        return productQuantity;
-    }
-
-    public void setProductQuantity(int productQuantity) {
-        this.productQuantity = productQuantity;
-    }
-
-    public Blob getProductImage() {
-        return productImage;
-    }
-
-    public void setProductImage(Blob productImage) {
-        this.productImage = productImage;
+    @Override
+    public String toString() {
+        return "ShoppingCartItemDTO{" +
+                "id=" + id +
+                ", productId=" + productId +
+                ", userId=" + userId +
+                '}';
     }
 }

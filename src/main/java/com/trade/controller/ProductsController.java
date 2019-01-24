@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
+
 
 @Controller
 @RequestMapping("/products")
@@ -54,7 +56,7 @@ public class ProductsController {
             List<Product> productsOnPage = productService.findByPage(pageNumber);
 
             final int totalProductsNumber = productService.findTotalProductsNumber();
-            final int numberOfPages = (int) Math.ceil(totalProductsNumber / 10.0);
+            final int numberOfPages = (int) Math.ceil(totalProductsNumber / (NUMBER_OF_PRODUCTS_ON_PAGE * 1.0));
 
             if (pageNumber > numberOfPages) {
                 return new ModelAndView("redirect:/products/page/" + FIRST_PAGE);

@@ -29,7 +29,7 @@ public class OrderToOrderDTOConverter {
     }
 
 
-    public List<OrderDTO> convertAll(List<Order> orders){
+    public List<OrderDTO> convert(List<Order> orders){
 
         List<OrderDTO> dtos = new ArrayList<>();
 

@@ -65,7 +65,7 @@ public class OrdersController {
 
 
             List<Order> orders1 = orderService.findAllByUserId(userID);
-            List<OrderDTO> orderDTOList = orderToOrderDTOConverter.convertAll(orders1);
+            List<OrderDTO> orderDTOList = orderToOrderDTOConverter.convert(orders1);
 
 
             List<OrderItem> orderItemList = orderItemService.findAllByUserId(userID);
@@ -184,7 +184,7 @@ public class OrdersController {
             logger.info("order_id = " + orderID);
 
             List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderID);
-            List<OrderItemDTO> orderItemDTOList = orderItemToDTOConverter.convertAll(orderItems);
+            List<OrderItemDTO> orderItemDTOList = orderItemToDTOConverter.convert(orderItems);
             logger.info("order items found");
 
             List<Product> productsList = productService.findAllByOrderId(orderID);

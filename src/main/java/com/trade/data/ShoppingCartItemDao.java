@@ -9,6 +9,8 @@ public interface ShoppingCartItemDao {
 
     List<ShoppingCartItem> findAllById(long buyerId) throws DaoException;
 
+    List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws DaoException;
+
     long create(ShoppingCartItem shoppingCartItem) throws DaoException;
 
     void update(ShoppingCartItem shoppingCartItem) throws DaoException;
@@ -17,4 +19,5 @@ public interface ShoppingCartItemDao {
 
     void deleteAllByUserId(long userId) throws DaoException;
 
+    int findTotalShoppingCartItemsNumber(long userId) throws DaoException;
 }

@@ -2,9 +2,11 @@ package com.trade.data;
 
 import com.trade.exception.DaoException;
 import com.trade.model.Product;
+import com.trade.model.ShoppingCartItem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
@@ -15,9 +17,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDaoImpMySQL implements ProductDao {
+import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
 
-    private static final int NUMBER_OF_PRODUCTS_ON_PAGE = 10;
+public class ProductDaoImpMySQL implements ProductDao {
 
     private static final String ID_C_L = "id";
     private static final String NAME_C_L = "name";
@@ -82,23 +84,24 @@ public class ProductDaoImpMySQL implements ProductDao {
     }
 
     /**
-     *
      * Default number of products on a page is 10
-     *
      */
     @Override
     public List<Product> findByPage(int pageNumber) throws DaoException {
 
         final int startID = NUMBER_OF_PRODUCTS_ON_PAGE * (pageNumber - 1);
 
-        System.out.println("paging from "+ startID+ " to "+NUMBER_OF_PRODUCTS_ON_PAGE);
+        System.out.println("paging from " + startID + " to " + (startID+NUMBER_OF_PRODUCTS_ON_PAGE));
 
         try {
 
             List<Product> products = jdbcTemplate
-                    .query("select*from product limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE, new ProductRowMapper());
+                    .query(
+                            "select*from product limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE,
+                            new ProductRowMapper()
+                    );
 
-            if (!products.isEmpty()){
+            if (!products.isEmpty()) {
 
                 return products;
 
@@ -165,7 +168,7 @@ public class ProductDaoImpMySQL implements ProductDao {
                 }
             }
 
-            if (products.isEmpty()){
+            if (products.isEmpty()) {
                 return null;
             }
 
@@ -198,7 +201,7 @@ public class ProductDaoImpMySQL implements ProductDao {
                 }
             }
 
-            if (products.isEmpty()){
+            if (products.isEmpty()) {
                 return null;
             }
 
@@ -232,7 +235,7 @@ public class ProductDaoImpMySQL implements ProductDao {
                 }
             }
 
-            if (products.isEmpty()){
+            if (products.isEmpty()) {
                 return null;
             }
 

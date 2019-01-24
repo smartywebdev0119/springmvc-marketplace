@@ -1,9 +1,12 @@
 package com.trade.data;
 
 import com.trade.exception.DaoException;
+import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +15,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
 
 public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
@@ -27,6 +32,8 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
     @Autowired
     private HikariDataSource hikariDataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public List<ShoppingCartItem> findAllById(long buyerId) throws DaoException {
@@ -57,6 +64,36 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
             throw new DaoException(e);
         }
+    }
+
+    @Override
+    public List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws DaoException {
+
+        final int startID = NUMBER_OF_PRODUCTS_ON_PAGE * (pageNumber - 1);
+
+        System.out.println("paging from " + startID + " to " + (startID+NUMBER_OF_PRODUCTS_ON_PAGE));
+
+        try {
+
+            List<ShoppingCartItem> shoppingCartItemList = jdbcTemplate
+                    .query(
+                            "select*from shopping_cart_item where user_id = "+userId+" limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE,
+                            new ShoppingCartItemRowMapper()
+                    );
+
+            if (!shoppingCartItemList.isEmpty()) {
+
+                return shoppingCartItemList;
+
+            } else {
+
+                return null;
+            }
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+
     }
 
     @Override
@@ -139,6 +176,23 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
         }
     }
 
+    @Override
+    public int findTotalShoppingCartItemsNumber(long userId) throws DaoException {
+
+        try {
+
+            return jdbcTemplate
+                    .queryForObject(
+                            "select COUNT(*) from shopping_cart_item where user_id = "+userId,
+                            Integer.class
+                    );
+
+        } catch (Throwable e){
+            throw new DaoException(e);
+        }
+
+    }
+
     private ShoppingCartItem parseShoppingCartItem(ResultSet resultSet) throws DaoException {
 
         ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
@@ -153,5 +207,20 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
         }
 
         return shoppingCartItem;
+    }
+
+
+    public static class ShoppingCartItemRowMapper implements RowMapper<ShoppingCartItem> {
+
+        @Override
+        public ShoppingCartItem mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+
+            ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+            shoppingCartItem.setId(resultSet.getLong(ID_C_L));
+            shoppingCartItem.setProductId(resultSet.getLong(PRODUCT_ID_C_L));
+            shoppingCartItem.setUserId(resultSet.getLong(USER_ID_C_L));
+
+            return shoppingCartItem;
+        }
     }
 }

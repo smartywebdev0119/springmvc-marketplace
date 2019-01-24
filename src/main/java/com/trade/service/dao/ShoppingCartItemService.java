@@ -13,7 +13,7 @@ public class ShoppingCartItemService {
     @Autowired
     private ShoppingCartItemDao cartItemDao;
 
-    public List<ShoppingCartItem> findAllById(long buyerId) throws ServiceException{
+    public List<ShoppingCartItem> findAllById(long buyerId) throws ServiceException {
 
         try {
             return cartItemDao.findAllById(buyerId);
@@ -22,7 +22,7 @@ public class ShoppingCartItemService {
         }
     }
 
-    public long create(ShoppingCartItem shoppingCartItem) throws ServiceException{
+    public long create(ShoppingCartItem shoppingCartItem) throws ServiceException {
 
         try {
             return cartItemDao.create(shoppingCartItem);
@@ -31,7 +31,7 @@ public class ShoppingCartItemService {
         }
     }
 
-    public void update(ShoppingCartItem shoppingCartItem) throws ServiceException{
+    public void update(ShoppingCartItem shoppingCartItem) throws ServiceException {
 
         try {
             cartItemDao.update(shoppingCartItem);
@@ -49,7 +49,7 @@ public class ShoppingCartItemService {
         }
     }
 
-    public void deleteAllByUserId(long userId) throws ServiceException{
+    public void deleteAllByUserId(long userId) throws ServiceException {
 
         try {
             cartItemDao.deleteAllByUserId(userId);
@@ -58,5 +58,24 @@ public class ShoppingCartItemService {
         }
     }
 
+    public int findTotalProductsNumber(long userId) throws ServiceException {
 
+        try {
+
+            return cartItemDao.findTotalShoppingCartItemsNumber(userId);
+
+        } catch (DaoException e){
+            throw new ServiceException(e);
+        }
+
+    }
+
+    public List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws ServiceException{
+
+        try {
+            return cartItemDao.findByUserIdAndPageNumber(userId, pageNumber);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

@@ -1,15 +1,14 @@
 package com.trade.controller;
 
-import com.trade.dto.ShoppingCartItemDTO;
+import com.trade.dto.ProductDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
-import com.trade.model.converter.ProductToShoppingCartItemDTOConverter;
+import com.trade.model.converter.ProductModelToDTOConverter;
 import com.trade.service.ShoppingCartService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
 import com.trade.utils.ExceptionUtils;
-import com.trade.utils.ProductUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,8 +21,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.trade.utils.ConstantsUtils.NUMBER_OF_SHOPPING_CART_ITEMS_ON_PAGE;
 
 @Controller
 @RequestMapping("/shopping_cart")
@@ -42,7 +45,7 @@ public class ShoppingCartController {
     private ShoppingCartService shoppingCartService;
 
     @Autowired
-    private ProductToShoppingCartItemDTOConverter productToShoppingCartItemDTOConverter;
+    private ProductModelToDTOConverter productModelToDTOConverter;
 
     @Autowired
     private ProductService productService;
@@ -52,31 +55,36 @@ public class ShoppingCartController {
 
         logger.info("get shopping cart items");
 
-        List<ShoppingCartItemDTO> items = new ArrayList<>();
-
-        // TODO pagination
-
         try {
 
-            List<ShoppingCartItem> cartItems = cartItemService.findAllById(userId);
+            List<ShoppingCartItem> shoppingCartItemList = cartItemService.findAllById(userId);
 
-            if (cartItems != null) {
+            if (shoppingCartItemList != null) {
 
                 logger.info("userID = " + userId + ". shopping cart is not empty");
 
-                for (ShoppingCartItem shoppingCartItem : cartItems) {
+                List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
+                List<ProductDTO> productDTOList = productModelToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
+                Map<Long, ProductDTO> productsDtoMap = productDTOList
+                        .stream()
+                        .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
 
-                    Product product = productService.findById(shoppingCartItem.getProductId());
 
-                    items.add(productToShoppingCartItemDTOConverter.convert(product, shoppingCartItem));
+                // set quantity of all products to 1 as even the same product is
+                // shown as a separate item
+                for (ProductDTO value : productsDtoMap.values()) {
+                    value.setQuantity(1);
                 }
 
-                double totalPrice = ProductUtils.calculateTotalPrice(items);
-
-                logger.info("======= number of items in cart  = " + items.size());
+                double totalPrice = shoppingCartItemList
+                        .stream()
+                        .map(item -> productsDtoMap.get(item.getProductId()))
+                        .collect(Collectors.summarizingDouble(ProductDTO::getPrice))
+                        .getSum();
 
                 ModelAndView modelAndView = new ModelAndView("shopping_cart");
-                modelAndView.addObject("items", items);
+                modelAndView.addObject("shoppingCartItemsList", shoppingCartItemList);
+                modelAndView.addObject("productsDtoMap", productsDtoMap);
                 modelAndView.addObject("total_price", totalPrice);
 
                 return modelAndView;

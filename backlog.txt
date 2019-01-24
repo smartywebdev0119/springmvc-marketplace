@@ -1,21 +1,21 @@
 
 TODO:
 
-current: - pagination for shopping cart page
+current:
 
-- create a converter for user model as in the PR service project
 - user should not be able to add to cart when product quantity
 - SearchController
 - PaymentController
 - testing with Mockito
 - replace plain jdbc with JdbcTemplate
 - when changing language all parameters in the url are deleted. it causes errors. add hidden inputs where necessary
-
 - changing user's info in profile
 - move project to java configuration
 - make constants for paths to pages in controllers
 
 DONE:
+- 24.01.2019 - refactor ShoppingCartController to apply model converters updates (20m)
+- 24.01.2019 - create converters for models as in the PR service project(20m)
 - 24.01.2019 - - handling of hundreds of pages(1h)
 - 24.01.2019 - some imperative snippets of code in OrdersController refactored using Stream API (1h)
 - 21.01.2019 - OrderController refactored. Number of db queries decreased (3h)

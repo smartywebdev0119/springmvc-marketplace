@@ -1,9 +1,16 @@
 package com.trade.model;
 
+import javax.validation.constraints.Min;
+
 public class ShoppingCartItem {
 
+    @Min(1)
     private long id;
+
+    @Min(1)
     private long productId;
+
+    @Min(1)
     private long userId;
 
     public long getId() {

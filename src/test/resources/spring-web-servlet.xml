@@ -111,10 +111,9 @@
 
     <!-- DTO converters-->
     <bean name="orderToOrderDTOConverter" class="com.trade.model.converter.OrderToOrderDTOConverter"/>
-    <bean name="productToOrderItemDTOConverter" class="com.trade.model.converter.ProductToOrderItemDTOConverter"/>
     <bean name="userModelToDTOConverter" class="com.trade.model.converter.UserModelToDTOConverter"/>
-    <bean name="productToShoppingCartItemDTOConverter"
-          class="com.trade.model.converter.ProductToShoppingCartItemDTOConverter"/>
+    <bean name="productModelToDTOConverter"
+          class="com.trade.model.converter.ProductModelToDTOConverter"/>
     <!-- DTO converters-->
 
     <!-- DAOs -->

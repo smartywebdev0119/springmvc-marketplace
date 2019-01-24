@@ -21,7 +21,7 @@ public class OrderItemToDTOConverter {
     }
 
 
-    public List<OrderItemDTO> convertAll(List<OrderItem> orderItems){
+    public List<OrderItemDTO> convert(List<OrderItem> orderItems){
 
         List<OrderItemDTO> dtos = new ArrayList<>();
 
