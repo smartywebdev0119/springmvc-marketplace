@@ -31,15 +31,14 @@
         <div id="header-menu">
             <ul>
                 <li><a class="site-logo" href="/" title="logo">Marketplace</a></li>
-                <li><a href="/products" th:text="#{top_navigation_menu.products}">Products</a></li>
-                <li><a href="/orders" th:text="#{top_navigation_menu.orders}">Orders</a></li>
-                <li><a href="/shopping_cart"
-                       th:text="#{top_navigation_menu.shopping_cart(${number_of_products_in_shopping_cart})}">Shopping
-                    cart
-                    (0)</a></li>
                 <li style="float:right"><a href="/logout" th:text="#{top_navigation_menu.logout}">Logout</a></li>
-                <li style="float:right"><a href="/profile" th:text="#{top_navigation_menu.your_profile}">Profile</a>
-                </li>
+                <li style="float:right"><a href="/profile" th:text="#{top_navigation_menu.your_profile}">Profile</a></li>
+                <li style="float:right"><a href="/shopping_cart"
+                th:text="#{top_navigation_menu.shopping_cart(${number_of_products_in_shopping_cart})}">Shopping
+                cart
+                (0)</a></li>
+                <li style="float:right"><a href="/orders" th:text="#{top_navigation_menu.orders}">Orders</a></li>
+                <li style="float:right"><a href="/products" th:text="#{top_navigation_menu.products}">Products</a></li>
             </ul>
         </div>
 

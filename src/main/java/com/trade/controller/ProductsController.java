@@ -3,13 +3,16 @@ package com.trade.controller;
 import com.trade.dto.ProductDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
+import com.trade.model.ShoppingCartItem;
 import com.trade.model.converter.ProductModelToDTOConverter;
 import com.trade.service.PaginationService;
 import com.trade.service.dao.ProductService;
+import com.trade.service.dao.ShoppingCartItemService;
 import com.trade.utils.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
 
@@ -38,6 +43,9 @@ public class ProductsController {
     private PaginationService paginationService;
 
     @Autowired
+    private ShoppingCartItemService shoppingCartItemService;
+
+    @Autowired
     private ProductModelToDTOConverter productModelToDTOConverter;
 
     private static final int FIRST_PAGE = 1;
@@ -50,7 +58,8 @@ public class ProductsController {
     }
 
     @GetMapping("/page/{page_number}")
-    public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber) {
+    public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber,
+                                          @CookieValue("userID") long userID) {
 
         try {
 
@@ -71,8 +80,30 @@ public class ProductsController {
             List<Integer> pageNumbers =
                     paginationService.calcPageNumbersForPagination(pageNumber, numberOfPages);
 
+            List<ShoppingCartItem> shoppingCartItems = shoppingCartItemService.findAllById(userID);
+
+            // k - product id, v - number of products in shopping cart
+            Map<Long, Long> productsInShoppingCartMap = new HashMap<>();
+
+            // find products from the page that are added to the shopping cart item
+            if (null != shoppingCartItems){
+
+                for (ShoppingCartItem cartItem : shoppingCartItems) {
+
+                    for (Product product : productsOnPage) {
+
+                        if (product.getId() == cartItem.getProductId()){
+
+                            productsInShoppingCartMap.put(cartItem.getProductId(), cartItem.getQuantity());
+                        }
+                    }
+
+                }
+            }
+
             ModelAndView modelAndView = new ModelAndView("products");
             modelAndView.addObject("products", productDTOsOnPageList);
+            modelAndView.addObject("productsInShoppingCartMap", productsInShoppingCartMap);
             modelAndView.addObject("number_of_pages", numberOfPages);
             modelAndView.addObject("current_page", pageNumber);
 

@@ -13,6 +13,13 @@
     width: 100px;
 }
 
+.added-to-shopping-cart{
+    background-color: #99e3ae;
+}
+
+.not-added-to-shopping-cart{
+
+}
 
 #pagination-div{
 

@@ -24,18 +24,18 @@
             <th th:text="#{products.seller}">Seller:</th>
             <th th:text="#{products.add_product}">Add</th>
         </tr>
-        <tr th:each="product : ${products}">
-            <td th:text="${product.name}"></td>
-            <td th:text="${product.description}"></td>
-            <td th:text="${product.quantity}"></td>
-            <td th:text="${product.price}"></td>
+        <tr th:each="product : ${products}" th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">
+            <td th:text="${product.name}">name</td>
+            <td th:text="${product.description}">description</td>
+            <td th:text="${product.quantity}">100</td>
+            <td th:text="${product.price}">10$</td>
             <td><a th:href="@{/products/{product_id}(product_id=${product.id})}"
                    th:text="#{products.to_full_desc_link}">to
                 full desc</a></td>
             <td><a th:href="@{/user/{user_id}(user_id=${product.seller})}" th:text="#{products.to_seller_page_link}">seller</a>
             </td>
             <td>
-                <!--if -->
+
                 <th:block th:if="${product.getQuantity() > 0}">
                     <form method="post" th:action="@{/shopping_cart/add/{product_id}(product_id=${product.id})}">
                         <button type="submit" class="add-to-shopping-cart-button"

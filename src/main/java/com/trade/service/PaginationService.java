@@ -23,8 +23,7 @@ public class PaginationService {
      *
      * @param currentPage        is the number of current page
      * @param totalNumberOfPages is the total number of pages
-     * @return list of Integers that contains first, last pages and NUMBER_OF_PAGES_FOR_PAGINATION
-     * of pages after the current one
+     * @return list of Integers that contains first, last pages and pages after the current one
      */
     public List<Integer> calcPageNumbersForPagination(int currentPage, int totalNumberOfPages) {
 
