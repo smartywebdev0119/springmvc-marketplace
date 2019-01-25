@@ -14,6 +14,7 @@ public class ShoppingCartItemModelToDTOConverter {
 
         dto.setId(shoppingCartItem.getId());
         dto.setUserId(shoppingCartItem.getUserId());
+        dto.setQuantity(shoppingCartItem.getQuantity());
         dto.setProductId(shoppingCartItem.getProductId());
 
         return dto;

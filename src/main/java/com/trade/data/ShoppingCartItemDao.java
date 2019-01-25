@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface ShoppingCartItemDao {
 
+    ShoppingCartItem findById(long id) throws DaoException;
+
     List<ShoppingCartItem> findAllById(long buyerId) throws DaoException;
 
     List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws DaoException;
+
+    ShoppingCartItem findByUserIdAndProductId(long userID, long productID) throws DaoException;
 
     long create(ShoppingCartItem shoppingCartItem) throws DaoException;
 

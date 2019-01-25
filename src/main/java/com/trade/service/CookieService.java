@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CookieService {
 
@@ -28,7 +29,7 @@ public class CookieService {
 
         logger.info("adding default cookies");
 
-        int number = 0;
+        long number = 0;
 
         try {
 
@@ -44,7 +45,10 @@ public class CookieService {
 
                     logger.info("user has products in shopping cart");
 
-                    number = cartItems.size();
+                    number = cartItems
+                            .stream()
+                            .collect(Collectors.summarizingLong(ShoppingCartItem::getQuantity))
+                            .getSum();
                 }
             }
 

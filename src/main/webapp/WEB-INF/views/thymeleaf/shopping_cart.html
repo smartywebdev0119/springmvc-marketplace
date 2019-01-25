@@ -29,7 +29,7 @@
                 <tr th:each="item : ${shoppingCartItemsList}">
                     <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
                     <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
-                    <td th:text="${productsDtoMap.get(item.getProductId()).getQuantity()}">100</td>
+                    <td th:text="${item.getQuantity()}">100</td>
                     <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
                            th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
                     <td><a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a></td>

@@ -37,7 +37,7 @@ public class PaginationService {
         if (totalNumberOfPages <= MAX_PAGE_NUMBER_FOR_SHOWING_WITHOUT_A_GAP) {
 
             return IntStream
-                    .range(1, (MAX_PAGE_NUMBER_FOR_SHOWING_WITHOUT_A_GAP + 1))
+                    .range(1, (totalNumberOfPages + 1))
                     .boxed()
                     .collect(Collectors.toList());
         }

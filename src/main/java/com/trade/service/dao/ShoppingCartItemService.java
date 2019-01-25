@@ -4,14 +4,29 @@ import com.trade.data.ShoppingCartItemDao;
 import com.trade.exception.DaoException;
 import com.trade.exception.ServiceException;
 import com.trade.model.ShoppingCartItem;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ShoppingCartItemService {
 
+    private static final Logger logger = Logger.getLogger(ShoppingCartItemService.class);
+
     @Autowired
     private ShoppingCartItemDao cartItemDao;
+
+    public ShoppingCartItem findById(long id) throws ServiceException{
+
+        try {
+
+            return cartItemDao.findById(id);
+
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+
+    }
 
     public List<ShoppingCartItem> findAllById(long buyerId) throws ServiceException {
 
@@ -42,11 +57,15 @@ public class ShoppingCartItemService {
 
     public void delete(ShoppingCartItem shoppingCartItem) throws ServiceException {
 
+        logger.info("removing product from shopping cart item id = " + shoppingCartItem.getId() + " from user's cart (id = " + shoppingCartItem.getUserId() + ")");
+
         try {
             cartItemDao.delete(shoppingCartItem);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
+
+        logger.info("shoppingCartItem with ID was removed = " + shoppingCartItem.getId() + " for user id = " + shoppingCartItem.getUserId());
     }
 
     public void deleteAllByUserId(long userId) throws ServiceException {
@@ -64,18 +83,28 @@ public class ShoppingCartItemService {
 
             return cartItemDao.findTotalShoppingCartItemsNumber(userId);
 
-        } catch (DaoException e){
+        } catch (DaoException e) {
             throw new ServiceException(e);
         }
 
     }
 
-    public List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws ServiceException{
+    public List<ShoppingCartItem> findByUserIdAndPageNumber(long userId, int pageNumber) throws ServiceException {
 
         try {
             return cartItemDao.findByUserIdAndPageNumber(userId, pageNumber);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
+    }
+
+    public ShoppingCartItem findByUserIdAndProductId(long userID, long productID) throws ServiceException {
+
+        try {
+            return cartItemDao.findByUserIdAndProductId(userID, productID);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+
     }
 }

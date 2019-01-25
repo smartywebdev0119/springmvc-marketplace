@@ -4,8 +4,8 @@ public class ShoppingCartItemDTO {
 
     private long id;
     private long productId;
+    private long quantity;
     private long userId;
-
 
     public long getId() {
         return id;
@@ -31,11 +31,20 @@ public class ShoppingCartItemDTO {
         this.userId = userId;
     }
 
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public String toString() {
         return "ShoppingCartItemDTO{" +
                 "id=" + id +
                 ", productId=" + productId +
+                ", quantity=" + quantity +
                 ", userId=" + userId +
                 '}';
     }

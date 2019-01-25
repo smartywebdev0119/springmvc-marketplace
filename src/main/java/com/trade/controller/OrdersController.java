@@ -70,56 +70,68 @@ public class OrdersController {
 
             List<OrderItem> orderItemList = orderItemService.findAllByUserId(userID);
             Map<Long, List<OrderItemDTO>> orderIdAndListOfOrderItemsMap = new HashMap<>();
-            for (OrderItem orderItem : orderItemList) {
 
-                OrderItemDTO orderItemDTO = orderItemToDTOConverter.convert(orderItem);
 
-                if (orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()) == null) {
+            if (null != orderItemList) {
 
-                    List<OrderItemDTO> itms = new ArrayList<>();
-                    itms.add(orderItemDTO);
-                    orderIdAndListOfOrderItemsMap.put(orderItem.getOrderId(), itms);
+                for (OrderItem orderItem : orderItemList) {
 
-                } else {
+                    OrderItemDTO orderItemDTO = orderItemToDTOConverter.convert(orderItem);
 
-                    orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()).add(orderItemDTO);
+                    if (orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()) == null) {
+
+                        List<OrderItemDTO> itms = new ArrayList<>();
+                        itms.add(orderItemDTO);
+                        orderIdAndListOfOrderItemsMap.put(orderItem.getOrderId(), itms);
+
+                    } else {
+
+                        orderIdAndListOfOrderItemsMap.get(orderItem.getOrderId()).add(orderItemDTO);
+                    }
                 }
+
+                List<Product> productsList = productService.findAllByUserId(userID);
+                Map<Long, Product> productsMap = productsList
+                        .stream()
+                        .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+
+                // count total price
+                Map<Long, Double> orderIdAndTotalPriceMap = new HashMap<>();
+                for (Order order : orders1) {
+
+                    double orderPrice = Stream
+                            .of(order)
+                            // get the list of order items this order contains
+                            .flatMap(order1 -> orderIdAndListOfOrderItemsMap.get(order.getId()).stream())
+                            // get products using product ids from order items
+                            .map(orderItemDTO -> productsMap.get(orderItemDTO.getProductId()))
+                            // sum up the prices of products to get order price
+                            .collect(Collectors.summarizingDouble(Product::getPrice))
+                            .getSum();
+
+                    orderIdAndTotalPriceMap.put(order.getId(), orderPrice);
+                }
+
+                modelAndView.addObject("isEmpty", false);
+
+                // list with orders
+                modelAndView.addObject("orders", orderDTOList);
+
+                // map with order items where K = order id V = list of order items
+                modelAndView.addObject("mapWithOrderItems", orderIdAndListOfOrderItemsMap);
+
+
+                // map where K = product id and V = is product
+                modelAndView.addObject("productsMap", productsMap);
+
+                modelAndView.addObject("orderIdAndTotalPriceMap", orderIdAndTotalPriceMap);
+
+            } else {
+
+                modelAndView.addObject("isEmpty", true);
+
             }
-
-            List<Product> productsList = productService.findAllByUserId(userID);
-            Map<Long, Product> productsMap = productsList
-                    .stream()
-                    .collect(Collectors.toMap(Product::getId, Function.identity()));
-
-
-            // count total price
-            Map<Long, Double> orderIdAndTotalPriceMap = new HashMap<>();
-            for (Order order : orders1) {
-
-                double orderPrice = Stream
-                        .of(order)
-                        // get the list of order items this order contains
-                        .flatMap(order1 -> orderIdAndListOfOrderItemsMap.get(order.getId()).stream())
-                        // get products using product ids from order items
-                        .map(orderItemDTO -> productsMap.get(orderItemDTO.getProductId()))
-                        // sum up the prices of products to get order price
-                        .collect(Collectors.summarizingDouble(Product::getPrice))
-                        .getSum();
-
-                orderIdAndTotalPriceMap.put(order.getId(), orderPrice);
-            }
-
-            // list with orders
-            modelAndView.addObject("orders", orderDTOList);
-
-            // map with order items where K = order id V = list of order items
-            modelAndView.addObject("mapWithOrderItems", orderIdAndListOfOrderItemsMap);
-
-
-            // map where K = product id and V = is product
-            modelAndView.addObject("productsMap", productsMap);
-
-            modelAndView.addObject("orderIdAndTotalPriceMap", orderIdAndTotalPriceMap);
 
             return modelAndView;
 

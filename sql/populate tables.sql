@@ -14,11 +14,11 @@ values ("apple macbook 2013", "good though old", 1, 699.99, 1),
        ("a box of matches", "matches", 4, 0.99, 10);
 
 
-insert into order_
-  (buyer_id, order_creation_date_time, status_, stage)
-VALUES (2, "01.01.2000 10:23", "seller is processing the order", 1),
-       (5, "01.01.2000 10:23", "seller is processing the order", 1);
-
-insert into order_item
-  (order_id, product_id, products_quantity)
-VALUES (2, 2, 1);
+# insert into order_
+#   (buyer_id, order_creation_date_time, status_, stage)
+# VALUES (2, "01.01.2000 10:23", "seller is processing the order", 1),
+#        (5, "01.01.2000 10:23", "seller is processing the order", 1);
+#
+# insert into order_item
+#   (order_id, product_id, products_quantity)
+# VALUES (2, 2, 1);

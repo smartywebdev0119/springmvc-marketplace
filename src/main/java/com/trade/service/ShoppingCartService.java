@@ -18,9 +18,12 @@ public class ShoppingCartService {
 
         logger.info("adding product to shopping cart userID = " + userID + ", productID  = " + productID);
 
+        final long INITIAL_QUANTITY = 1;
+
         ShoppingCartItem item = new ShoppingCartItem();
         item.setUserId(userID);
         item.setProductId(productID);
+        item.setQuantity(INITIAL_QUANTITY);
 
         long shoppingCartItemID = 0;
 
@@ -28,20 +31,6 @@ public class ShoppingCartService {
         logger.info("shoppingCartItem with ID created = " + shoppingCartItemID + " for user id = " + userID);
 
         //TODO decrement quantity of the product!!!
-    }
-
-    public void removeFromShoppingCart(long userID, long shoppingCartItemId) throws ServiceException {
-
-        logger.info("removing product from shopping cart item id = " + shoppingCartItemId + " from user's cart (id = " + userID + ")");
-
-        ShoppingCartItem item = new ShoppingCartItem();
-
-        item.setId(shoppingCartItemId);
-        item.setUserId(userID);
-
-        shoppingCartItemService.delete(item);
-
-        logger.info("shoppingCartItem with ID was removed = " + shoppingCartItemId + " for user id = " + userID);
     }
 
 }

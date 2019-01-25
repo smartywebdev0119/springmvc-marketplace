@@ -11,6 +11,9 @@ public class ShoppingCartItem {
     private long productId;
 
     @Min(1)
+    private long quantity;
+
+    @Min(1)
     private long userId;
 
     public long getId() {
@@ -37,11 +40,21 @@ public class ShoppingCartItem {
         this.userId = userId;
     }
 
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
+
     @Override
     public String toString() {
         return "ShoppingCartItem{" +
                 "id=" + id +
                 ", productId=" + productId +
+                ", quantity=" + quantity +
                 ", userId=" + userId +
                 '}';
     }

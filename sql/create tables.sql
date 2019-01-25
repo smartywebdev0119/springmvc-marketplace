@@ -68,6 +68,7 @@ create table shopping_cart_item
 
   id         int auto_increment,
   product_id int not null,
+  quantity int not null,
   user_id    int not null,
   foreign key (product_id) references product (id),
   foreign key (user_id) references user (id),

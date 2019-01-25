@@ -1,10 +1,11 @@
 package com.trade.data;
 
 import com.trade.exception.DaoException;
-import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -20,14 +21,18 @@ import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
 
 public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
-    private static final String ID_C_L = "id";
-    private static final String PRODUCT_ID_C_L = "product_id";
-    private static final String USER_ID_C_L = "user_id";
+    private static final String ID = "id";
+    private static final String PRODUCT_ID = "product_id";
+    private static final String USER_ID = "user_id";
+    private static final String QUANTITY = "quantity";
 
-    private static final String FIND_BY_ID = "select*from shopping_cart_item where user_id = ?";
-    private static final String INSERT_INTO = "insert into shopping_cart_item (product_id, user_id) values (?, ?)";
+
+    private static final String FIND_BY_ITEM_ID = "select * from shopping_cart_item where id = ?";
+    private static final String FIND_BY_USER_ID = "select*from shopping_cart_item where user_id = ?";
+    private static final String INSERT_INTO = "insert into shopping_cart_item (product_id, user_id, quantity) values (?, ?, ?)";
     private static final String DELETE_FROM = "delete from shopping_cart_item where id=? and user_id=?";
     private static final String DELETE_ALL_BY_USER_ID = "delete from shopping_cart_item where user_id=?";
+    private static final String UPDATE = "update shopping_cart_item set product_id = ?, quantity = ?, user_id = ? where id = ?";
 
     @Autowired
     private HikariDataSource hikariDataSource;
@@ -36,10 +41,28 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
+    public ShoppingCartItem findById(long id) throws DaoException {
+
+        try {
+
+            return jdbcTemplate.queryForObject(FIND_BY_ITEM_ID, new ShoppingCartItemRowMapper(), id);
+
+        } catch (IncorrectResultSizeDataAccessException e) {
+
+            return null;
+
+        } catch (Throwable e) {
+
+            throw new DaoException(e);
+        }
+
+    }
+
+    @Override
     public List<ShoppingCartItem> findAllById(long buyerId) throws DaoException {
         try (
                 Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
+                PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID)
         ) {
 
             statement.setLong(1, buyerId);
@@ -48,14 +71,14 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
             try (ResultSet resultSet = statement.executeQuery()) {
 
-                while (resultSet.next()){
+                while (resultSet.next()) {
 
                     ShoppingCartItem shoppingCartItem = parseShoppingCartItem(resultSet);
                     items.add(shoppingCartItem);
                 }
             }
 
-            if (items.isEmpty()){
+            if (items.isEmpty()) {
                 return null;
             }
 
@@ -71,13 +94,13 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
         final int startID = NUMBER_OF_PRODUCTS_ON_PAGE * (pageNumber - 1);
 
-        System.out.println("paging from " + startID + " to " + (startID+NUMBER_OF_PRODUCTS_ON_PAGE));
+        System.out.println("paging from " + startID + " to " + (startID + NUMBER_OF_PRODUCTS_ON_PAGE));
 
         try {
 
             List<ShoppingCartItem> shoppingCartItemList = jdbcTemplate
                     .query(
-                            "select*from shopping_cart_item where user_id = "+userId+" limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE,
+                            "select*from shopping_cart_item where user_id = " + userId + " limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE,
                             new ShoppingCartItemRowMapper()
                     );
 
@@ -97,13 +120,40 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
     }
 
     @Override
+    public ShoppingCartItem findByUserIdAndProductId(long userID, long productID) throws DaoException {
+
+        try {
+
+            return jdbcTemplate
+                    .queryForObject(
+                            "select * from shopping_cart_item where user_id = ? and product_id = ?",
+                            new ShoppingCartItemRowMapper(),
+                            userID,
+                            productID
+                    );
+
+        } catch (IncorrectResultSizeDataAccessException e){
+
+            System.out.println("shopping cart not found = "+ e.getMessage());
+
+            return null;
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
     public long create(ShoppingCartItem shoppingCartItem) throws DaoException {
 
         try (Connection connection = hikariDataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTO, Statement.RETURN_GENERATED_KEYS)) {
 
+            System.out.println("creating shopping cart item = "+shoppingCartItem);
+
             preparedStatement.setLong(1, shoppingCartItem.getProductId());
             preparedStatement.setLong(2, shoppingCartItem.getUserId());
+            preparedStatement.setLong(3, shoppingCartItem.getQuantity());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -130,7 +180,25 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
     @Override
     public void update(ShoppingCartItem shoppingCartItem) throws DaoException {
-        throw new RuntimeException();
+
+        try {
+
+            int affectedRows = jdbcTemplate.update(
+                    UPDATE,
+                    shoppingCartItem.getProductId(),
+                    shoppingCartItem.getQuantity(),
+                    shoppingCartItem.getUserId(),
+                    shoppingCartItem.getId()
+            );
+
+            if (affectedRows != 1){
+
+                throw new DaoException("shopping cart item not updated, supposed to update to this = "+ shoppingCartItem);
+            }
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
 
     }
 
@@ -183,11 +251,11 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
             return jdbcTemplate
                     .queryForObject(
-                            "select COUNT(*) from shopping_cart_item where user_id = "+userId,
+                            "select COUNT(*) from shopping_cart_item where user_id = " + userId,
                             Integer.class
                     );
 
-        } catch (Throwable e){
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
 
@@ -195,12 +263,12 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
 
     private ShoppingCartItem parseShoppingCartItem(ResultSet resultSet) throws DaoException {
 
-        ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+        ShoppingCartItem shoppingCartItem = null;
 
         try {
-            shoppingCartItem.setId(resultSet.getLong(ID_C_L));
-            shoppingCartItem.setProductId(resultSet.getLong(PRODUCT_ID_C_L));
-            shoppingCartItem.setUserId(resultSet.getLong(USER_ID_C_L));
+
+            shoppingCartItem = new ShoppingCartItemRowMapper().mapRow(resultSet, -1);
+
         } catch (SQLException e) {
 
             throw new DaoException(e);
@@ -216,9 +284,10 @@ public class ShoppingCartItemDaoImpMySQL implements ShoppingCartItemDao {
         public ShoppingCartItem mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
             ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
-            shoppingCartItem.setId(resultSet.getLong(ID_C_L));
-            shoppingCartItem.setProductId(resultSet.getLong(PRODUCT_ID_C_L));
-            shoppingCartItem.setUserId(resultSet.getLong(USER_ID_C_L));
+            shoppingCartItem.setId(resultSet.getLong(ID));
+            shoppingCartItem.setProductId(resultSet.getLong(PRODUCT_ID));
+            shoppingCartItem.setUserId(resultSet.getLong(USER_ID));
+            shoppingCartItem.setQuantity(resultSet.getInt(QUANTITY));
 
             return shoppingCartItem;
         }

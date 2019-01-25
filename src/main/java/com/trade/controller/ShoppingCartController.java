@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.trade.utils.ConstantsUtils.NUMBER_OF_SHOPPING_CART_ITEMS_ON_PAGE;
-
 @Controller
 @RequestMapping("/shopping_cart")
 public class ShoppingCartController {
@@ -39,7 +37,7 @@ public class ShoppingCartController {
 
 
     @Autowired
-    private ShoppingCartItemService cartItemService;
+    private ShoppingCartItemService shoppingCartItemService;
 
     @Autowired
     private ShoppingCartService shoppingCartService;
@@ -57,7 +55,7 @@ public class ShoppingCartController {
 
         try {
 
-            List<ShoppingCartItem> shoppingCartItemList = cartItemService.findAllById(userId);
+            List<ShoppingCartItem> shoppingCartItemList = shoppingCartItemService.findAllById(userId);
 
             if (shoppingCartItemList != null) {
 
@@ -70,17 +68,10 @@ public class ShoppingCartController {
                         .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
 
 
-                // set quantity of all products to 1 as even the same product is
-                // shown as a separate item
-                for (ProductDTO value : productsDtoMap.values()) {
-                    value.setQuantity(1);
-                }
-
                 double totalPrice = shoppingCartItemList
                         .stream()
-                        .map(item -> productsDtoMap.get(item.getProductId()))
-                        .collect(Collectors.summarizingDouble(ProductDTO::getPrice))
-                        .getSum();
+                        .mapToDouble(item -> productsDtoMap.get(item.getProductId()).getPrice() * item.getQuantity())
+                        .sum();
 
                 ModelAndView modelAndView = new ModelAndView("shopping_cart");
                 modelAndView.addObject("shoppingCartItemsList", shoppingCartItemList);
@@ -115,7 +106,29 @@ public class ShoppingCartController {
 
         try {
 
-            shoppingCartService.addToUserShoppingCart(userID, productID);
+            logger.info("adding to shopping cart");
+
+            ShoppingCartItem existingShoppingCartItem =
+                    shoppingCartItemService.findByUserIdAndProductId(userID, productID);
+
+
+            // if this product is already added to the shopping cart
+            // we just increment its quantity and not creating new item
+            if (existingShoppingCartItem != null) {
+
+                logger.info("existing item = " + existingShoppingCartItem);
+
+                long newQuantity = existingShoppingCartItem.getQuantity() + 1;
+                existingShoppingCartItem.setQuantity(newQuantity);
+
+                shoppingCartItemService.update(existingShoppingCartItem);
+
+            } else {
+
+                logger.info("creating new shopping cart item for product id = "+productID+" and user id  = "+userID);
+
+                shoppingCartService.addToUserShoppingCart(userID, productID);
+            }
 
             // increment counter in cookie
             if (numberOfProductsInCart != null) {
@@ -126,7 +139,6 @@ public class ShoppingCartController {
                 logger.info("current number is " + currentNumber);
 
                 final long newNumber = currentNumber + 1;
-
 
                 Cookie numberOfProductsInShoppingCartCookie = new Cookie(NUMBER_OF_PRODUCTS_IN_SHOPPING_CART, String.valueOf(newNumber));
                 numberOfProductsInShoppingCartCookie.setMaxAge(60 * 60);
@@ -139,7 +151,8 @@ public class ShoppingCartController {
         } catch (ServiceException e) {
 
             logger.error("not managed to add product with id = " + productID + " to user's shopping cart with id = " + userID);
-            logger.error(e);
+            e.printStackTrace();
+
 
             return ExceptionUtils.getErrorPage("not managed to add product");
         }
@@ -156,16 +169,18 @@ public class ShoppingCartController {
 
         try {
 
-            shoppingCartService.removeFromShoppingCart(userID, shoppingCartItemId);
+            ShoppingCartItem shoppingCartItemToBeDeleted = shoppingCartItemService.findById(shoppingCartItemId);
 
-            if (numberOfProductsInCart != null) {
+            if (null != shoppingCartItemToBeDeleted) {
+
+                shoppingCartItemService.delete(shoppingCartItemToBeDeleted);
 
                 final long currentNumber = Long.valueOf(numberOfProductsInCart);
 
                 logger.info("decrement cookie " + NUMBER_OF_PRODUCTS_IN_SHOPPING_CART);
                 logger.info("current number is " + currentNumber);
 
-                final long newNumber = currentNumber - 1;
+                final long newNumber = currentNumber - shoppingCartItemToBeDeleted.getQuantity();
 
                 Cookie numberOfProductsInShoppingCartCookie = new Cookie(NUMBER_OF_PRODUCTS_IN_SHOPPING_CART, String.valueOf(newNumber));
                 numberOfProductsInShoppingCartCookie.setMaxAge(60 * 60);

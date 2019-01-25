@@ -1,9 +1,11 @@
 
 TODO:
 
-current:
+current: - user should not be able to add to cart when product quantity is 0
 
-- user should not be able to add to cart when product quantity
+- when user opens the shopping cart page each item should be checked on availability in stocks
+          if it is not in stocks then the item should be highlighted and
+          the Create order button should be hidden
 - SearchController
 - PaymentController
 - testing with Mockito
@@ -14,6 +16,9 @@ current:
 - make constants for paths to pages in controllers
 
 DONE:
+- 26.01.2019 - handle pagination when number of pages is lower then min numb of pages to show in pagination div (5m)
+- 26.01.2019 - show the same products as one shopping cart item (1h)
+- 26.01.2019 - handling case when there is no orders (15m)
 - 24.01.2019 - refactor ShoppingCartController to apply model converters updates (20m)
 - 24.01.2019 - create converters for models as in the PR service project(20m)
 - 24.01.2019 - - handling of hundreds of pages(1h)
