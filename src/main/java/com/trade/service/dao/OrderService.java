@@ -59,8 +59,48 @@ public class OrderService {
 
         logger.info("creating order for user id = " + userID);
 
-        List<ShoppingCartItem> shoppingCartItems = null;
+        List<ShoppingCartItem> shoppingCartItems = getShoppingCartItems(userID);
 
+        Map<Long, Product> productsFromShoppingCartMap = getMapWithUniqueProductsFromCart(userID);
+
+        List<Product> productsFromShoppingCart =
+                getProductsFromShoppingCart(userID, shoppingCartItems, productsFromShoppingCartMap);
+
+        // create order
+        if (productsFromShoppingCart != null) {
+
+            try {
+
+                long orderID = orderDao.create(order);
+
+                for (Product product : productsFromShoppingCart) {
+
+                    logger.info("creating order item for product id = "+product.getId());
+
+                    createOrderItem(orderID, product);
+
+                    logger.info("decrementing quantity of the product id = "+product.getId());
+
+                    decrementProductQuantity(product);
+                }
+
+                // clean shopping cart
+                cleanShoppingCart(userID);
+
+                return orderID;
+
+            } catch (DaoException e) {
+
+                logger.error("not managed to create order for user with id = " + userID, e);
+                throw new ServiceException("order not created", e);
+            }
+        }
+
+        return -1;
+    }
+
+    private List<ShoppingCartItem> getShoppingCartItems(long userID) throws ServiceException {
+        List<ShoppingCartItem> shoppingCartItems;
         try {
 
             logger.info("get all shopping cart items for user id = " + userID);
@@ -69,40 +109,54 @@ public class OrderService {
 
         } catch (ServiceException e) {
 
-            logger.error("shopping cart items not found for user with id = " + userID);
-            e.printStackTrace();
+            logger.error("shopping cart items not found for user with id = " + userID, e);
 
             throw new ServiceException("order not created", e);
         }
+        return shoppingCartItems;
+    }
 
-        Map<Long, Product> productsFromShoppingCartMap = null;
+    private void cleanShoppingCart(long userID) throws ServiceException {
         try {
 
-            // find all unique products from user's shopping cart
-            List<Product> productsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userID);
-
-            productsFromShoppingCartMap = productsFromUserShoppingCart
-                    .stream()
-                    .collect(Collectors.toMap(Product::getId, Function.identity()));
+            shoppingCartItemService.deleteAllByUserId(userID);
+            logger.info("deleted all shopping cart items for user with id = " + userID);
 
         } catch (ServiceException e) {
-            e.printStackTrace();
 
+            logger.info("not managed to delete all shopping cart items for user with id = " + userID, e);
             throw new ServiceException("order not created", e);
         }
+    }
 
+    private void createOrderItem(long orderID, Product product) throws ServiceException {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrderId(orderID);
+        orderItem.setProductId(product.getId());
+        orderItemService.create(orderItem);
+    }
 
-        List<Product> productsInOrder = null;
+    private void decrementProductQuantity(Product product) throws ServiceException {
+        Product productToDecrQuantity = productService.findById(product.getId());
 
+        final int newQuantityOfProduct = productToDecrQuantity.getQuantity() - product.getQuantity();
+        productToDecrQuantity.setQuantity(newQuantityOfProduct);
+        productService.update(productToDecrQuantity);
+    }
+
+    private List<Product> getProductsFromShoppingCart(long userID, List<ShoppingCartItem> shoppingCartItems, Map<Long, Product> productsFromShoppingCartMap) throws ServiceException {
+        List<Product> productsFromShoppingCart = null;
+
+        // gather products from shopping cart
         if (shoppingCartItems != null) {
 
-            productsInOrder = new ArrayList<>();
+            productsFromShoppingCart = new ArrayList<>();
 
-            // get products
             for (ShoppingCartItem item : shoppingCartItems) {
 
                 Product product = productsFromShoppingCartMap.get(item.getProductId());
-                productsInOrder.add(product);
+                product.setQuantity((int)item.getQuantity());
+                productsFromShoppingCart.add(product);
             }
 
         } else {
@@ -112,59 +166,28 @@ public class OrderService {
 
             throw new ServiceException("order not created");
         }
+        return productsFromShoppingCart;
+    }
 
-        // create order
-        if (productsInOrder != null) {
+    private Map<Long, Product> getMapWithUniqueProductsFromCart(long userID) throws ServiceException {
 
-            try {
+        Map<Long, Product> productsFromShoppingCartMap = null;
+        try {
 
-                long orderID = orderDao.create(order);
+            // find all unique products from user's shopping cart
+            List<Product> uniqueProductsFromUserShoppingCart = productService
+                    .findAllUniqueProductsFromUserShoppingCart(userID);
 
-                for (Product product : productsInOrder) {
+            productsFromShoppingCartMap = uniqueProductsFromUserShoppingCart
+                    .stream()
+                    .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-                    logger.info("creating order item for product id = "+product.getId());
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrderId(orderID);
-                    orderItem.setProductId(product.getId());
-                    orderItem.setProductsQuantity(1);
-                    orderItemService.create(orderItem);
+        } catch (ServiceException e) {
 
-                    logger.info("decrementing quantity of the product id = "+product.getId());
-
-                    // since even same products considered as different we need to
-                    // update info about the product's quantity
-                    Product productToDecrQuantity = productService.findById(product.getId());
-
-                    final int newQuantityOfProduct = productToDecrQuantity.getQuantity() - 1;
-                    productToDecrQuantity.setQuantity(newQuantityOfProduct);
-                    productService.update(productToDecrQuantity);
-                }
-
-                // clean shopping cart
-                try {
-
-                    shoppingCartItemService.deleteAllByUserId(userID);
-                    logger.info("deleted all shopping cart items for user with id = " + userID);
-
-                } catch (ServiceException e) {
-
-                    logger.info("not managed to delete all shopping cart items for user with id = " + userID);
-                    e.printStackTrace();
-                    throw new ServiceException("order not created", e);
-                }
-
-                return orderID;
-
-            } catch (DaoException e) {
-
-                logger.error("not managed to create order for user with id = " + userID);
-                e.printStackTrace();
-
-                throw new ServiceException("order not created", e);
-            }
+            logger.error("order not created", e);
+            throw new ServiceException("order not created", e);
         }
-
-        return -1;
+        return productsFromShoppingCartMap;
     }
 
     public void update(Order order)throws ServiceException {
