@@ -30,7 +30,6 @@ public class ShoppingCartService {
         shoppingCartItemID = shoppingCartItemService.create(item);
         logger.info("shoppingCartItem with ID created = " + shoppingCartItemID + " for user id = " + userID);
 
-        //TODO decrement quantity of the product!!!
     }
 
 }

@@ -3,7 +3,7 @@ package com.trade.controller;
 import com.trade.exception.ServiceException;
 import com.trade.model.User;
 import com.trade.service.dao.UserService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import com.trade.utils.HtmlUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class RegistrationController {
     @GetMapping
     public ModelAndView getRegistrationPage() {
 
-        logger.info("RegistrationController.getRegistrationPage");
+        logger.info("opening registration page");
 
         User user = new User();
 
@@ -54,14 +54,14 @@ public class RegistrationController {
                 logger.info("form is invalid");
 
                 try {
-                    logger.info("created a user with id = " + userService.create(user));
-                    logger.info("new user created");
-                    logger.info(user);
+
+                    long userId = userService.create(user);
+
+                    logger.info("created new user with id = " +userId);
 
                 } catch (ServiceException e) {
-                    logger.info("not managed to create new user");
-                    e.printStackTrace();
-                    return ExceptionUtils.getErrorPage("not managed to create new user");
+                    logger.info("not managed to create new user", e);
+                    return ErrorHandling.getErrorPage("not managed to create new user");
                 }
 
                 logger.info("go to login page");
@@ -75,7 +75,7 @@ public class RegistrationController {
             }
         }
 
-        System.out.println("go to registration page");
+        logger.info("go to registration page");
 
         ModelAndView modelAndView = new ModelAndView("registration");
         modelAndView.addObject("message",

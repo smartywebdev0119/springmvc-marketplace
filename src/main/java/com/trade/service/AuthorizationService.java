@@ -19,7 +19,12 @@ import java.util.UUID;
  */
 public class AuthorizationService {
 
+    public static final boolean USER_NOT_LOGGED_OUT = false;
+    public static final boolean USER_LOGGED_OUT = true;
     private final Logger logger = Logger.getLogger(this.getClass());
+
+    private static final boolean USER_LOGGED_ID = true;
+    private static final boolean USER_PROVIDED_WRONG_CREDS = false;
 
     @Autowired
     private UserService userService;
@@ -77,16 +82,16 @@ public class AuthorizationService {
                         response.addCookie(sessionTokenUserID);
 
                         // meaning that user provided right creds and logged in
-                        return true;
+                        return USER_LOGGED_ID;
 
                     }
                 }
 
             } catch (ServiceException e) {
 
-                logger.error(e.getMessage());
-                e.printStackTrace();
-                return false;
+                logger.error(e);
+
+                return USER_PROVIDED_WRONG_CREDS;
             }
 
         }
@@ -94,7 +99,7 @@ public class AuthorizationService {
         logger.info("wrong creds provided, user [" + username + "] not logged in");
 
         // user is not logged in
-        return false;
+        return USER_PROVIDED_WRONG_CREDS;
     }
 
     /**
@@ -114,7 +119,7 @@ public class AuthorizationService {
             logger.info("User was not able to find session by userService id =" + userID);
             e.printStackTrace();
 
-            return false;
+            return USER_NOT_LOGGED_OUT;
         }
 
         if (session != null) {
@@ -128,15 +133,15 @@ public class AuthorizationService {
                 logger.info("was not able to close session. Redirect to main page");
                 e.printStackTrace();
 
-                return false;
+                return USER_NOT_LOGGED_OUT;
             }
 
-            return true;
+            return USER_LOGGED_OUT;
 
         } else {
 
             logger.info("Session is not found. redirect to main page");
-            return false;
+            return USER_NOT_LOGGED_OUT;
         }
     }
 }

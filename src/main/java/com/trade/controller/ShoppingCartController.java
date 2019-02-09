@@ -8,7 +8,7 @@ import com.trade.model.converter.ProductModelToDTOConverter;
 import com.trade.service.ShoppingCartService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,9 +51,8 @@ public class ShoppingCartController {
     @GetMapping
     public ModelAndView getShoppingCart(@CookieValue("userID") long userId) {
 
-        logger.info("get shopping cart items");
-
         try {
+            logger.info("get shopping cart items");
 
             List<ShoppingCartItem> shoppingCartItemList = shoppingCartItemService.findAllById(userId);
 
@@ -89,16 +88,13 @@ public class ShoppingCartController {
 
         } catch (ServiceException e) {
 
-            logger.info("not managed to read all shopping cart items");
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("not managed to read all shopping cart items");
+            logger.error("not managed to read all shopping cart items", e);
+            return ErrorHandling.getErrorPage("not managed to read all shopping cart items");
         }
-
 
     }
 
     @PostMapping("/add/{product_id}")
-    @SuppressWarnings("Duplicates")
     public ModelAndView addToShoppingCart(@PathVariable("product_id") long productID,
                                           @CookieValue("userID") long userID,
                                           @CookieValue(value = "number_of_products_in_shopping_cart", required = false) String numberOfProductsInCart,
@@ -118,14 +114,28 @@ public class ShoppingCartController {
 
                 logger.info("existing item = " + existingShoppingCartItem);
 
+                Product product = productService.findById(productID);
+
+                if (product.getQuantity() == 0){
+
+                    return new ModelAndView("redirect:/products");
+                }
+
+                // numb of products in cart cannot be greater than numb of the product in stock
+                if (existingShoppingCartItem.getQuantity() == product.getQuantity()) {
+
+                    return new ModelAndView("redirect:/products");
+                }
+
                 long newQuantity = existingShoppingCartItem.getQuantity() + 1;
                 existingShoppingCartItem.setQuantity(newQuantity);
 
                 shoppingCartItemService.update(existingShoppingCartItem);
 
+
             } else {
 
-                logger.info("creating new shopping cart item for product id = "+productID+" and user id  = "+userID);
+                logger.info("creating new shopping cart item for product id = " + productID + " and user id  = " + userID);
 
                 shoppingCartService.addToUserShoppingCart(userID, productID);
             }
@@ -140,28 +150,20 @@ public class ShoppingCartController {
 
                 final long newNumber = currentNumber + 1;
 
-                Cookie numberOfProductsInShoppingCartCookie = new Cookie(NUMBER_OF_PRODUCTS_IN_SHOPPING_CART, String.valueOf(newNumber));
-                numberOfProductsInShoppingCartCookie.setMaxAge(60 * 60);
-                numberOfProductsInShoppingCartCookie.setPath("/");
-
-                response.addCookie(numberOfProductsInShoppingCartCookie);
-
+                response.addCookie(getNumberOfProductsInShoppingCartCookie(newNumber));
             }
+
+            return new ModelAndView("redirect:/products");
 
         } catch (ServiceException e) {
 
-            logger.error("not managed to add product with id = " + productID + " to user's shopping cart with id = " + userID);
-            e.printStackTrace();
+            logger.error("not managed to add product with id = " + productID + " to user's shopping cart with id = " + userID, e);
 
-
-            return ExceptionUtils.getErrorPage("not managed to add product");
+            return ErrorHandling.getErrorPage("not managed to add product");
         }
-
-        return new ModelAndView("redirect:/products");
     }
 
     @PostMapping("/remove/{shopping_cart_item_id}")
-    @SuppressWarnings("Duplicates")
     public ModelAndView removeFromShoppingCart(@PathVariable("shopping_cart_item_id") long shoppingCartItemId,
                                                @CookieValue("userID") long userID,
                                                @CookieValue("number_of_products_in_shopping_cart") String numberOfProductsInCart,
@@ -182,12 +184,7 @@ public class ShoppingCartController {
 
                 final long newNumber = currentNumber - shoppingCartItemToBeDeleted.getQuantity();
 
-                Cookie numberOfProductsInShoppingCartCookie = new Cookie(NUMBER_OF_PRODUCTS_IN_SHOPPING_CART, String.valueOf(newNumber));
-                numberOfProductsInShoppingCartCookie.setMaxAge(60 * 60);
-                numberOfProductsInShoppingCartCookie.setPath("/");
-
-                response.addCookie(numberOfProductsInShoppingCartCookie);
-
+                response.addCookie(getNumberOfProductsInShoppingCartCookie(newNumber));
             }
 
             return new ModelAndView("redirect:/shopping_cart");
@@ -197,9 +194,16 @@ public class ShoppingCartController {
             logger.error("not managed to remove item from cart with id = " + shoppingCartItemId + " when user id is " + userID);
             logger.error(e);
 
-            return ExceptionUtils.getErrorPage("not managed to add product to shopping cart");
+            return ErrorHandling.getErrorPage("not managed to add product to shopping cart");
         }
 
+    }
+
+    private Cookie getNumberOfProductsInShoppingCartCookie(long newNumber) {
+        Cookie numberOfProductsInShoppingCartCookie = new Cookie(NUMBER_OF_PRODUCTS_IN_SHOPPING_CART, String.valueOf(newNumber));
+        numberOfProductsInShoppingCartCookie.setMaxAge(60 * 60);
+        numberOfProductsInShoppingCartCookie.setPath("/");
+        return numberOfProductsInShoppingCartCookie;
     }
 
 }

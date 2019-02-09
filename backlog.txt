@@ -1,15 +1,9 @@
 
 TODO:
 
-current: - user should not be able to add to cart when product quantity is 0 (1h)
+current: - verify that products are available when open shopping cart page
 
 - fix issues in dao layer (returning nulls, general catch blocks)
-
-
-
-- apply this: If the keyword 'try' exists in a function, it should be the very first word
-in the function and that there should be nothing after the 'catch/finally' blocks.
-
 
 - SearchController
 - PaymentController
@@ -21,11 +15,14 @@ in the function and that there should be nothing after the 'catch/finally' block
 - make constants for paths to pages in controllers
 
 DONE:
+- 9.02.2019 - apply this: If the keyword 'try' exists in a function, it should be the very first word
+in the function and that there should be nothing after the 'catch/finally' blocks (30m)
+- 9.02.2019 - user should not be able to add to cart when product quantity equals number of the product in cart(30m)
 - 9.02.2019 - when user opens the shopping cart page each item should be checked on availability in stocks
-the Create order button should be hidden
-- 9.02.2019 - when create order with a few same products then only one (1) subtracted. FIX
-- 9.02.2019 - refactor dao imp
-- 9.02.2019 - get rid of commented code in dao layer
+the Create order button should be hidden(30m)
+- 9.02.2019 - when create order with a few same products then only one (1) subtracted. FIX (15m)
+- 9.02.2019 - refactor dao imp (1h)
+- 9.02.2019 - get rid of commented code in dao layer (1h)
 - 26.01.2019 - highlighting products on the products page when they added to the shopping cart(30m)
 - 26.01.2019 - handle pagination when number of pages is lower then min numb of pages to show in
 pagination div (5m)

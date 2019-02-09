@@ -5,7 +5,7 @@ import com.trade.exception.ServiceException;
 import com.trade.model.User;
 import com.trade.model.converter.UserModelToDTOConverter;
 import com.trade.service.dao.UserService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,35 +36,30 @@ public class UserController {
     @GetMapping("/{id}")
     public ModelAndView getUserPage(@PathVariable("id") long userID) {
 
-        logger.info("userID = " + userID + " opening the profile");
-
-        UserDTO userDTO;
-
         try {
+            logger.info("userID = " + userID + " opening the profile");
 
             User user = userService.findById(userID);
-            userDTO = converter.convert(user);
+            UserDTO userDTO = converter.convert(user);
+
+            return new ModelAndView("user", "user", userDTO);
 
         } catch (ServiceException e) {
 
-            logger.info("no managed to find user with id = " + userID);
-            e.printStackTrace();
-            return ExceptionUtils.getDefaultErrorPage();
+            logger.error("no managed to find user with id = " + userID, e);
+            return ErrorHandling.getDefaultErrorPage();
         }
 
-        logger.info("UserController.getUserPage");
-        logger.info(userDTO);
-
-        return new ModelAndView("user", "user", userDTO);
     }
 
     @GetMapping("/picture/{user_id}")
+    @SuppressWarnings("Duplicates")
     public void getUserPicture(@PathVariable("user_id") long userID,
                                HttpServletResponse response) {
 
-        logger.info("getting picture of the user_id = " + userID);
 
         try {
+            logger.info("getting picture of the user_id = " + userID);
 
             User user = userService.findById(userID);
 
@@ -92,16 +87,13 @@ public class UserController {
             }
 
         } catch (SQLException e) {
-            logger.info("no managed to find user with id = " + userID);
-            e.printStackTrace();
+            logger.error("no managed to find user with id = " + userID, e);
 
         } catch (ServiceException e) {
-            logger.info("user not found");
-            e.printStackTrace();
+            logger.error("user not found", e);
 
         } catch (IOException e) {
-            logger.info("error while converting Blob image to array of bytes");
-            e.printStackTrace();
+            logger.error("error while converting Blob image to array of bytes", e);
         }
 
     }

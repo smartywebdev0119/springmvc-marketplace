@@ -3,7 +3,7 @@ package com.trade.controller;
 import com.trade.exception.ServiceException;
 import com.trade.service.AuthorizationService;
 import com.trade.service.CookieService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import com.trade.utils.HtmlUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,9 @@ public class LoginController {
             }
         } catch (ServiceException e) {
 
-            return ExceptionUtils.getDefaultErrorPage();
+            logger.error(e);
+
+            return ErrorHandling.getDefaultErrorPage();
         }
     }
 

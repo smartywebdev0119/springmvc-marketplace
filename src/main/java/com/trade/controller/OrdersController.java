@@ -12,7 +12,7 @@ import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -137,8 +137,8 @@ public class OrdersController {
 
         } catch (ServiceException e) {
 
-            logger.error("not managed to find all order of user with id = " + userID);
-            return ExceptionUtils.getErrorPage("not managed to find all order of user");
+            logger.error("not managed to find all order of user with id = " + userID, e);
+            return ErrorHandling.getErrorPage("not managed to find all order of user");
         }
     }
 
@@ -148,15 +148,17 @@ public class OrdersController {
                                     HttpServletResponse response) {
 
 
-        Order order = new Order();
-        order.setBuyerId(userID);
-
         try {
+
+            Order order = new Order();
+            order.setBuyerId(userID);
+
             long orderId = orderService.create(order);
 
             // order creation failed
             if (orderId == -1) {
 
+                return ErrorHandling.getDefaultErrorPage();
 
                 // order created successfully
             } else {
@@ -176,12 +178,10 @@ public class OrdersController {
 
         } catch (ServiceException e) {
 
-            e.printStackTrace();
+            logger.error(e);
 
-            return ExceptionUtils.getErrorPage(e.getMessage());
+            return ErrorHandling.getErrorPage(e.getMessage());
         }
-
-        return ExceptionUtils.getDefaultErrorPage();
     }
 
 
@@ -225,7 +225,7 @@ public class OrdersController {
         } catch (ServiceException e) {
 
             logger.error("not managed to find order by id. order id = " + orderID);
-            return ExceptionUtils.getErrorPage("not managed to find order by id");
+            return ErrorHandling.getErrorPage("not managed to find order by id");
         }
     }
 

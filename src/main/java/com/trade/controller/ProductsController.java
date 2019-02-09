@@ -8,7 +8,7 @@ import com.trade.model.converter.ProductModelToDTOConverter;
 import com.trade.service.PaginationService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -113,10 +113,9 @@ public class ProductsController {
 
         } catch (ServiceException e) {
 
-            logger.error("not managed to read products from table by page");
-            e.printStackTrace();
+            logger.error("not managed to read products from table by page", e);
 
-            return ExceptionUtils.getErrorPage("not managed to get products by page");
+            return ErrorHandling.getErrorPage("not managed to get products by page");
         }
 
     }
@@ -124,19 +123,19 @@ public class ProductsController {
     @GetMapping("/{id}")
     public ModelAndView getProductPage(@PathVariable("id") long id) {
 
-        Product product = null;
         try {
 
-            product = productService.findById(id);
+            Product product = productService.findById(id);
+
+            return new ModelAndView("product", "product", product);
 
         } catch (ServiceException e) {
 
-            logger.info("Error while reading product with id =" + id);
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("Error while reading product with id = " + id);
+            logger.error("Error while reading product with id =" + id, e);
+
+            return ErrorHandling.getErrorPage("Error while reading product with id = " + id);
         }
 
-        return new ModelAndView("product", "product", product);
     }
 
 
@@ -144,9 +143,8 @@ public class ProductsController {
     public void getProductPicture(@PathVariable("product_id") long productId,
                                   HttpServletResponse response) {
 
-        logger.info("getting product picture of the user_id = " + productId);
-
         try {
+            logger.info("getting product picture of the user_id = " + productId);
 
             Product product = productService.findById(productId);
 
@@ -181,9 +179,9 @@ public class ProductsController {
             }
 
         } catch (SQLException | ServiceException e) {
-            logger.info("not managed to find product with id = " + productId);
-            e.printStackTrace();
-            ExceptionUtils.getErrorPage("not managed to find product");
+            logger.error("not managed to find product with id = " + productId, e);
+
+            ErrorHandling.getErrorPage("not managed to find product");
         }
 
     }

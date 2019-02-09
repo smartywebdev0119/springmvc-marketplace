@@ -5,7 +5,7 @@ import com.trade.exception.ServiceException;
 import com.trade.model.User;
 import com.trade.model.converter.UserModelToDTOConverter;
 import com.trade.service.dao.UserService;
-import com.trade.utils.ExceptionUtils;
+import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,82 +38,78 @@ public class ProfileController {
     @GetMapping
     public ModelAndView getProfile(@CookieValue("userID") long userID) {
 
-        logger.info("userID = " + userID);
-
-        UserDTO userDTO;
-
         try {
 
+            logger.info("userID = " + userID);
+
             User user = userService.findById(userID);
-            userDTO = converter.convert(user);
+            UserDTO userDTO = converter.convert(user);
+
+            logger.info("ProfileController.getProfile");
+            logger.info(userDTO);
+
+            return new ModelAndView("profile", "user", userDTO);
 
         } catch (ServiceException e) {
-            logger.info("not managed to find user with id = " + userID);
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("not managed to find user with id");
+            logger.error("not managed to find user with id = " + userID, e);
+            return ErrorHandling.getErrorPage("not managed to find user with id");
         }
 
-        logger.info("ProfileController.getProfile");
-        logger.info(userDTO);
 
-        return new ModelAndView("profile", "user", userDTO);
     }
 
     @PostMapping("/picture")
     public ModelAndView uploadUserPicture(@CookieValue("userID") long thisUserID,
                                           @RequestParam("user_image") MultipartFile file) {
 
-        logger.info("user with id = "+thisUserID+" uploading picture to the profile");
-
-        User user = null;
 
         try {
+            logger.info("user with id = "+thisUserID+" uploading picture to the profile");
 
-            user = userService.findById(thisUserID);
+            User user = userService.findById(thisUserID);
             Blob userImage = new SerialBlob(file.getBytes());
             user.setImage(userImage);
 
             logger.info("user picture uploaded for user id = "+thisUserID);
 
+            try {
+
+                userService.updateImage(user);
+                logger.info("user picture updated for user id = "+thisUserID);
+
+            } catch (ServiceException e) {
+
+                String errorMessage = "error while updating user's image";
+
+                logger.info(errorMessage, e);
+
+                return ErrorHandling.getErrorPage(errorMessage);
+            }
+
+            return new ModelAndView(
+                    "redirect:/profile",
+                    "user",
+                    converter.convert(user)
+            );
+
         } catch (SQLException e) {
 
-            logger.info("not managed to read user with id = "+thisUserID);
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("not managed to read user");
+            logger.info("not managed to read user with id = "+thisUserID, e);
+            return ErrorHandling.getErrorPage("not managed to read user");
 
         } catch (IOException e) {
 
-            logger.info("not managed to read picture as bytes");
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("not managed to read picture as bytes");
+            logger.info("not managed to read picture as bytes", e);
+            return ErrorHandling.getErrorPage("not managed to read picture as bytes");
 
         } catch (ServiceException e) {
 
-            logger.info("user not found");
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage("user not found");
+            logger.info("user not found", e);
+            return ErrorHandling.getErrorPage("user not found");
 
         }
 
-        try {
 
-            userService.updateImage(user);
-            logger.info("user picture updated for user id = "+thisUserID);
-
-        } catch (ServiceException e) {
-
-            String errorMessage = "error while updating user's image";
-
-            logger.info(errorMessage);
-            e.printStackTrace();
-            return ExceptionUtils.getErrorPage(errorMessage);
-        }
-
-        return new ModelAndView(
-                "redirect:/profile",
-                "user",
-                converter.convert(user)
-        );
     }
 
 

@@ -2,7 +2,7 @@ package com.trade.utils;
 
 import org.springframework.web.servlet.ModelAndView;
 
-public class ExceptionUtils {
+public class ErrorHandling {
 
     public static ModelAndView getDefaultErrorPage(){
 

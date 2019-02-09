@@ -54,7 +54,7 @@ public class CookieService {
 
         } catch (ServiceException e) {
 
-            logger.info("not managed to find all shopping cart items by username");
+            logger.info("not managed to find all shopping cart items by username", e);
             throw new ServiceException(e);
 
         } finally {
