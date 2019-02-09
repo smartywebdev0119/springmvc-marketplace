@@ -2,15 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Confirm order</title>
+    <title th:text="#{order_confirm.title}">Confirm order</title>
     <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
     <link rel="stylesheet" type="text/css" href="/resources/css/order-confirm.css" media="screen"/>
 </head>
 <body>
+<div th:include="common/header-menu :: header"></div>
 <div class="main-div">
-    <div th:replace="common/header-menu :: header"></div>
 
-    <input type="hidden" name="order_id" th:value="${order_id}">
+    <h2>Confirm the order:</h2>
 
     <div class="order-confirm-div">
 
@@ -45,7 +45,10 @@
 
         <div>
             <form action="/order/shipping-details" method="get">
-                <button type="submit">Next to shipping details</button>
+
+                <input type="hidden" name="order_id" th:value="${order_id}">
+
+                <button id="next-to-shipping-details-button" type="submit">Next to shipping details</button>
             </form>
         </div>
     </div>

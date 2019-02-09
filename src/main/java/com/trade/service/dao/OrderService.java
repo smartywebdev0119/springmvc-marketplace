@@ -132,6 +132,7 @@ public class OrderService {
         OrderItem orderItem = new OrderItem();
         orderItem.setOrderId(orderID);
         orderItem.setProductId(product.getId());
+        orderItem.setProductsQuantity(product.getQuantity());
         orderItemService.create(orderItem);
     }
 

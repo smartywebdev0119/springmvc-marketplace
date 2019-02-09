@@ -1,10 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shipping details</title>
+    <title th:text="#{order_shipping_details.title}">Shipping details</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/order-shipping-details.css" media="screen"/>
 </head>
 <body>
-    Here the user will have to enter address and so on
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+
+    <h2 th:text="#{order_shipping_details.description}">Fill up shipping details:</h2>
+
+    <div id="shipping-details-div">
+        <form action="/order/shipping-details" method="post">
+            <input type="hidden" name="order_id" th:value="${order_id}">
+
+            <div>
+                <label for="address-input" th:text="#{order_shipping_details.address_field_name}">Address*:</label>
+                <input id="address-input" type="text" name="address"/>
+            </div>
+            <div>
+                <button id="confirm-and-go-to-payment"
+                        type="submit"
+                        th:text="#{order_shipping_details.confirm_and_to_payment}">
+                    Confirm and go to payment
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="common/footer :: footer"></div>
+</div>
 </body>
 </html>

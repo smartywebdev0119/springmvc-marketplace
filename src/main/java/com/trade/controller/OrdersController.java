@@ -2,6 +2,7 @@ package com.trade.controller;
 
 import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
+import com.trade.enums.OrderStage;
 import com.trade.exception.ServiceException;
 import com.trade.model.Order;
 import com.trade.model.OrderItem;
@@ -224,31 +225,46 @@ public class OrdersController {
 
         } catch (ServiceException e) {
 
-            logger.error("not managed to find order by id. order id = " + orderID);
+            logger.error("not managed to find order by id. order id = " + orderID, e);
             return ErrorHandling.getErrorPage("not managed to find order by id");
         }
     }
 
 
     @GetMapping("/order/shipping-details")
-    public ModelAndView getShippingDetailsPage(Model model) {
+    public ModelAndView getShippingDetailsPage(@RequestParam("order_id") long orderID,
+                                               @CookieValue("userID") long userID) {
+
+        logger.info("getting page for filling up shipping details");
 
         ModelAndView modelAndView = new ModelAndView("order-shipping-details");
 
-        // TODO
+        modelAndView.addObject("order_id", orderID);
 
         return modelAndView;
     }
 
 
     @PostMapping("/order/shipping-details")
-    public ModelAndView submitShippingDetails() {
+    public ModelAndView submitShippingDetails(@RequestParam("order_id") long orderID,
+                                              @RequestParam("address") String address,
+                                              @CookieValue("userID") long userID) {
 
-        ModelAndView modelAndView = new ModelAndView("order-shipping-details");
+        logger.info("submitting shipping details");
 
-        // TODO
+        try {
 
-        return modelAndView;
+            Order order = orderService.findById(orderID);
+            order.setAddress(address);
+            order.setStage(OrderStage.SHIPPING_DETAILS_PROVIDED.asInt());
+            orderService.update(order);
+
+            return new ModelAndView("redirect:/products");
+
+        } catch (ServiceException e) {
+            logger.error("", e);
+            return new ModelAndView("redirect:/products");
+        }
     }
 
 }

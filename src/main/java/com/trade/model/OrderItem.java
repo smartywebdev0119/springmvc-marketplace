@@ -39,4 +39,15 @@ public class OrderItem {
     public void setProductsQuantity(long productsQuantity) {
         this.productsQuantity = productsQuantity;
     }
+
+
+    @Override
+    public String toString() {
+        return "OrderItem{" +
+                "id=" + id +
+                ", orderId=" + orderId +
+                ", productId=" + productId +
+                ", productsQuantity=" + productsQuantity +
+                '}';
+    }
 }

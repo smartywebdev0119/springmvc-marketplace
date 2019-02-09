@@ -27,15 +27,24 @@
                      class="user-image">
 
             </div>
-            <div>
-                <form method="post" th:action="@{/profile/picture}" enctype="multipart/form-data">
-                    <div style="vertical-align: middle;">
-                        <input type="file" name="user_image" th:value="#{profile.choose_image}">
-                        <br>
-                        <button type="submit" th:text="#{profile.upload_image}">Upload image</button>
+
+            <form method="post" th:action="@{/profile/picture}" enctype="multipart/form-data">
+                <div id="picture-upload-div">
+                    <div id="choose-image-div">
+                        <label for="image-upload" class="custom-image-upload">Choose image</label>
+                        <input id="image-upload" type="file" name="user_image" th:value="#{profile.choose_image}">
                     </div>
-                </form>
-            </div>
+                    <div id="upload-image-div">
+                        <button
+                                id="upload-image-button"
+                                type="submit"
+                                th:text="#{profile.upload_image}">
+                            Upload image
+                        </button>
+                    </div>
+                </div>
+            </form>
+
         </div>
 
         <div class="profile-info-div">

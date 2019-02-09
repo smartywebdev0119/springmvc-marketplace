@@ -1,0 +1,31 @@
+
+
+#shipping-details-div{
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#shipping-details-div div{
+    padding-bottom: 20px;
+}
+
+#confirm-and-go-to-payment {
+
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 5px;
+    border: none;
+    cursor: pointer;
+    width: 200px;
+}
+
+#address-input {
+
+    height: 25px;
+    width: 350px;
+    box-sizing: border-box;
+    /*border-radius: 4px;*/
+    font-size: 12px;
+
+}

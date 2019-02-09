@@ -10,8 +10,6 @@ table {
 
 .order-confirm-div{
 
-    padding: 16px;
-
 }
 
 .order-number-div{
@@ -24,4 +22,14 @@ table {
     padding-top: 16px;
     padding-bottom: 16px;
 
+}
+
+#next-to-shipping-details-button {
+
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 5px;
+    border: none;
+    cursor: pointer;
+    width: 200px;
 }
