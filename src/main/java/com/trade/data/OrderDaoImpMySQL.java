@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OrderDaoImpMySQL implements OrderDao {
@@ -49,7 +51,7 @@ public class OrderDaoImpMySQL implements OrderDao {
                     jdbcTemplate.query(FIND_ALL_BY_USER_ID, new OrderRowMapper(), id);
 
             if (orderItems.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             }
 
             return orderItems;

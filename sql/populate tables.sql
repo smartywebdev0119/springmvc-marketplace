@@ -11,7 +11,12 @@ insert into product
   (name, description, seller, price, quantity)
 values ("apple macbook 2013", "good though old", 1, 699.99, 1),
        ("toyota camry", "nice car, in a well condition", 3, 5000.99, 1),
-       ("a box of matches", "matches", 4, 0.99, 10);
+       ("a box of matches", "matches", 4, 0.99, 10),
+       ("iphone x", "previous year version", 3, 1000.99, 1),
+       ("leather jacket", "by levis, durable and almost brand new", 1, 900, 1),
+       ("steve jobs biography", "in nice condition", 3, 15.99, 10),
+       ("samsung flat tv, 45 inch", "wand to but this one because bought a rolling tv on the other day", 4, 950, 1);
+
 
 
 # insert into order_

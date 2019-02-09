@@ -1,7 +1,8 @@
 
 TODO:
 
-current: - verify that products are available when open shopping cart page
+current: - fix html markup on confirm page
+- fix data on confirm page
 
 - fix issues in dao layer (returning nulls, general catch blocks)
 
@@ -15,6 +16,7 @@ current: - verify that products are available when open shopping cart page
 - make constants for paths to pages in controllers
 
 DONE:
+- 9.02.2019 - verify that products are available when open shopping cart page (1h)
 - 9.02.2019 - apply this: If the keyword 'try' exists in a function, it should be the very first word
 in the function and that there should be nothing after the 'catch/finally' blocks (30m)
 - 9.02.2019 - user should not be able to add to cart when product quantity equals number of the product in cart(30m)

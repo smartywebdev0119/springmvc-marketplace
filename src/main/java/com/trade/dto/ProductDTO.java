@@ -67,4 +67,18 @@ public class ProductDTO implements IPrice {
     public void setSeller(long seller) {
         this.seller = seller;
     }
+
+
+    @Override
+    public String toString() {
+        return "ProductDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", seller=" + seller +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", imageId=" + imageId +
+                '}';
+    }
 }

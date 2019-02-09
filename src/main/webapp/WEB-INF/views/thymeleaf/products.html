@@ -24,7 +24,9 @@
             <th th:text="#{products.seller}">Seller:</th>
             <th th:text="#{products.add_product}">Add</th>
         </tr>
-        <tr th:each="product : ${products}" th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">
+        <tr th:each="product : ${products}"
+            th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">
+
             <td th:text="${product.name}">name</td>
             <td th:text="${product.description}">description</td>
             <td th:text="${product.quantity}">100</td>

@@ -21,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -60,12 +62,20 @@ public class ShoppingCartController {
 
                 logger.info("userID = " + userId + ". shopping cart is not empty");
 
-                List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
-                List<ProductDTO> productDTOList = productModelToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
-                Map<Long, ProductDTO> productsDtoMap = productDTOList
-                        .stream()
-                        .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
+                Map<Long, ProductDTO> productsDtoMap = getProductDTOMap(userId);
 
+                // to not allow user to create order when one of the products in
+                // the shopping cart is not in stock
+                List<Long> productIDsWithQuantityNotEnoughToCreateOrder = new ArrayList<>();
+                for (ShoppingCartItem cartItem : shoppingCartItemList) {
+
+                    int inStock = productsDtoMap.get(cartItem.getProductId()).getQuantity();
+                    long required = cartItem.getQuantity();
+
+                    if (inStock < required){
+                        productIDsWithQuantityNotEnoughToCreateOrder.add(cartItem.getProductId());
+                    }
+                }
 
                 double totalPrice = shoppingCartItemList
                         .stream()
@@ -73,6 +83,8 @@ public class ShoppingCartController {
                         .sum();
 
                 ModelAndView modelAndView = new ModelAndView("shopping_cart");
+                modelAndView.addObject("productIDsWithQuantityNotEnoughToCreateOrder",
+                        productIDsWithQuantityNotEnoughToCreateOrder);
                 modelAndView.addObject("shoppingCartItemsList", shoppingCartItemList);
                 modelAndView.addObject("productsDtoMap", productsDtoMap);
                 modelAndView.addObject("total_price", totalPrice);
@@ -92,6 +104,21 @@ public class ShoppingCartController {
             return ErrorHandling.getErrorPage("not managed to read all shopping cart items");
         }
 
+    }
+
+    private Map<Long, ProductDTO> getProductDTOMap(long userId) throws ServiceException {
+        List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
+        List<ProductDTO> productDTOList = productModelToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
+
+        Map<Long, ProductDTO> map = productDTOList
+                .stream()
+                .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
+
+        if (map.isEmpty()){
+            return new HashMap<>();
+        }
+
+        return map;
     }
 
     @PostMapping("/add/{product_id}")
@@ -194,7 +221,7 @@ public class ShoppingCartController {
             logger.error("not managed to remove item from cart with id = " + shoppingCartItemId + " when user id is " + userID);
             logger.error(e);
 
-            return ErrorHandling.getErrorPage("not managed to add product to shopping cart");
+            return ErrorHandling.getErrorPage("not managed to remove product from shopping cart");
         }
 
     }

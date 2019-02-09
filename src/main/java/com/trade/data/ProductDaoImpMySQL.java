@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 
 import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
@@ -91,7 +92,7 @@ public class ProductDaoImpMySQL implements ProductDao {
 
             } else {
 
-                return null;
+                return Collections.emptyList();
             }
 
         } catch (Throwable e) {
@@ -135,7 +136,7 @@ public class ProductDaoImpMySQL implements ProductDao {
             List<Product> productList = jdbcTemplate.query(findAllByWithOneParam, new ProductRowMapper(), userId);
 
             if (productList.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             }
 
             return productList;

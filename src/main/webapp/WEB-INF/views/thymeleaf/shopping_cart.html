@@ -26,7 +26,9 @@
                     <th th:text="#{shopping_cart.price}">Price:</th>
                     <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
                 </tr>
-                <tr th:each="item : ${shoppingCartItemsList}">
+                <tr
+                        th:class="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId()) == false ? 'regular-item' : 'out-of-stock-item'}"
+                        th:each="item : ${shoppingCartItemsList}">
                     <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
                     <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
                     <td th:text="${item.getQuantity()}">100</td>
@@ -44,9 +46,14 @@
                     </td>
                 </tr>
             </table>
+            <div
+                    th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == false}"
+                    id = "have-products-out-of-stock-message-div">
+                *Products highlighted red are products with quantity in stock not enough to create order
+            </div>
         </div>
         <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
-        <div class="create-order-button-div">
+        <div class="create-order-button-div" th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == true}">
             <form th:action="@{/order}" method="post">
                 <button type="submit" class="create-order-button" th:text="#{shopping_cart.created_order_button}">
                     Create order

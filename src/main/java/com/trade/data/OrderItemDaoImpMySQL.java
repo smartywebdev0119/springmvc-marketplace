@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OrderItemDaoImpMySQL implements OrderItemDao {
@@ -72,7 +74,7 @@ public class OrderItemDaoImpMySQL implements OrderItemDao {
                     jdbcTemplate.query(findAllByWithOneParam, new OrderItemRowMapper(), id);
 
             if (orderItems.isEmpty()) {
-                return null;
+                return Collections.emptyList();
             }
 
             return orderItems;
