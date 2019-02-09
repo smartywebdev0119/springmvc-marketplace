@@ -2,11 +2,10 @@ package com.trade.data;
 
 import com.trade.exception.DaoException;
 import com.trade.model.Product;
-import com.trade.model.ShoppingCartItem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
@@ -14,7 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.trade.utils.ConstantsUtils.NUMBER_OF_PRODUCTS_ON_PAGE;
@@ -28,23 +26,26 @@ public class ProductDaoImpMySQL implements ProductDao {
     private static final String PRICE_C_L = "price";
     private static final String QUANTITY_C_L = "quantity";
 
-    private final static String FIND_ALL = "select * from product";
-    private final static String FIND_BY_ID = "select * from product where id = ?";
-    private final static String INSERT_INTO =
+    private static final String FIND_ALL = "select * from product";
+    private static final String FIND_BY_ID = "select * from product where id = ?";
+    private static final String INSERT_INTO =
             "insert into product (name, description, seller, price, quantity) values (?,?,?,?,?)";
     private static final String UPDATE_PRODUCT =
             "update product set name = ?, description=?, seller=?, price=?, quantity=? where id = ?";
 
 
-    private final static String FIND_ALL_BY_USER_ID = "select distinct * from product where id in \n" +
+    private static final String FIND_ALL_BY_USER_ID = "select distinct * from product where id in \n" +
             "(select product_id from order_item where order_id in \n" +
             "(select id from order_ where buyer_id = ?))";
 
 
-    private final static String FIND_ALL_BY_ORDER_ID = "select * from product where id in (select product_id from order_item where order_id = ?)";
+    private static final String FIND_ALL_BY_ORDER_ID =
+            "select * from product where id in (select product_id from order_item where order_id = ?)";
 
-    private final static String FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART =
+    private static final String FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART =
             "select * from product where id in (select product_id from shopping_cart_item where user_id = ?);";
+    private static final String TOTAL_NUMBER_OF_PRODUCTS = "select COUNT(*) from product";
+    private static final String FIND_BY_PAGE_NUMBER = "select*from product limit ? , ?";
 
 
     @Autowired
@@ -56,28 +57,11 @@ public class ProductDaoImpMySQL implements ProductDao {
     @Override
     public List<Product> findAll() throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL)
-        ) {
+        try {
 
-            List<Product> products = new ArrayList<>();
+            return jdbcTemplate.query(FIND_ALL, new ProductRowMapper());
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-
-                    Product product = parseProduct(resultSet);
-
-                    products.add(product);
-
-                }
-
-            }
-
-            return products;
-
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
@@ -91,14 +75,14 @@ public class ProductDaoImpMySQL implements ProductDao {
 
         final int startID = NUMBER_OF_PRODUCTS_ON_PAGE * (pageNumber - 1);
 
-        System.out.println("paging from " + startID + " to " + (startID+NUMBER_OF_PRODUCTS_ON_PAGE));
-
         try {
 
             List<Product> products = jdbcTemplate
                     .query(
-                            "select*from product limit " + startID + ", " + NUMBER_OF_PRODUCTS_ON_PAGE,
-                            new ProductRowMapper()
+                            FIND_BY_PAGE_NUMBER,
+                            new ProductRowMapper(),
+                            startID,
+                            NUMBER_OF_PRODUCTS_ON_PAGE
                     );
 
             if (!products.isEmpty()) {
@@ -119,93 +103,42 @@ public class ProductDaoImpMySQL implements ProductDao {
     @Override
     public Product findById(long id) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
-        ) {
+        try {
 
-            statement.setLong(1, id);
+            return jdbcTemplate.queryForObject(FIND_BY_ID, new ProductRowMapper(), id);
 
-            Product product = null;
-            try (ResultSet resultSet = statement.executeQuery()) {
+        } catch (EmptyResultDataAccessException e) {
 
-                if (resultSet.next()) {
+            return null;
 
-                    product = parseProduct(resultSet);
-
-                }
-
-            }
-
-            return product;
-
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public List<Product> findAllByUserId(long userId) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)
-        ) {
-
-            List<Product> products = new ArrayList<>();
-
-
-            statement.setLong(1, userId);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-
-                    Product product = parseProduct(resultSet);
-                    products.add(product);
-                }
-            }
-
-            if (products.isEmpty()) {
-                return null;
-            }
-
-            return products;
-
-        } catch (Throwable e) {
-            throw new DaoException(e);
-        }
+        return findAllBy(userId, FIND_ALL_BY_USER_ID);
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public List<Product> findAllByOrderId(long orderId) throws DaoException {
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_ORDER_ID)
-        ) {
+        return findAllBy(orderId, FIND_ALL_BY_ORDER_ID);
+    }
 
-            List<Product> products = new ArrayList<>();
+    private List<Product> findAllBy(long userId, String findAllByWithOneParam) throws DaoException {
 
+        try {
 
-            statement.setLong(1, orderId);
+            List<Product> productList = jdbcTemplate.query(findAllByWithOneParam, new ProductRowMapper(), userId);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-
-                    Product product = parseProduct(resultSet);
-                    products.add(product);
-                }
-            }
-
-            if (products.isEmpty()) {
+            if (productList.isEmpty()) {
                 return null;
             }
 
-            return products;
+            return productList;
 
         } catch (Throwable e) {
             throw new DaoException(e);
@@ -213,33 +146,11 @@ public class ProductDaoImpMySQL implements ProductDao {
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public List<Product> findAllUniqueProductsFromUserShoppingCart(long userID) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART)
-        ) {
+        try {
 
-            List<Product> products = new ArrayList<>();
-
-
-            statement.setLong(1, userID);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-
-                    Product product = parseProduct(resultSet);
-                    products.add(product);
-                }
-            }
-
-            if (products.isEmpty()) {
-                return null;
-            }
-
-            return products;
+            return findAllBy(userID, FIND_ALL_UNIQUE_PRODUCTS_FROM_USER_SHOPPING_CART);
 
         } catch (Throwable e) {
             throw new DaoException(e);
@@ -249,14 +160,15 @@ public class ProductDaoImpMySQL implements ProductDao {
     @Override
     public int findTotalProductsNumber() throws DaoException {
 
-        return jdbcTemplate.queryForObject("select COUNT(*) from product", Integer.class);
+        return jdbcTemplate.queryForObject(TOTAL_NUMBER_OF_PRODUCTS, Integer.class);
     }
 
     @Override
     public long create(Product product) throws DaoException {
 
         try (Connection connection = hikariDataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_INTO, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement preparedStatement = connection
+                     .prepareStatement(INSERT_INTO, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
@@ -319,27 +231,6 @@ public class ProductDaoImpMySQL implements ProductDao {
 
     }
 
-    private Product parseProduct(ResultSet resultSet) throws DaoException {
-
-        Product product = new Product();
-
-        try {
-            product.setId(resultSet.getLong(ID_C_L));
-            product.setName(resultSet.getString(NAME_C_L));
-            product.setDescription(resultSet.getString(DESCRIPTION_C_L));
-            product.setSeller(resultSet.getLong(SELLER_C_L));
-            product.setPrice(resultSet.getDouble(PRICE_C_L));
-            product.setQuantity(resultSet.getInt(QUANTITY_C_L));
-
-        } catch (SQLException e) {
-
-            throw new DaoException(e);
-        }
-
-        return product;
-    }
-
-    @SuppressWarnings("Duplicates")
     private class ProductRowMapper implements RowMapper<Product> {
 
         @Override

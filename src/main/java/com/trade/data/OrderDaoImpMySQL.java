@@ -6,6 +6,9 @@ import com.trade.model.Order;
 import com.trade.utils.DateTimeUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDaoImpMySQL implements OrderDao {
@@ -27,64 +29,49 @@ public class OrderDaoImpMySQL implements OrderDao {
     private static final String ADDRESS = "address";
     private static final String STAGE = "stage";
 
-    private final static String FIND_BY_ID = "select * from order_ where id = ?";
-    private final static String FIND_ALL_BY_USER_ID = "select * from order_ where buyer_id = ?";
-    private final static String INSERT_INTO = "insert into order_ (buyer_id, order_creation_date_time, status_, paid, stage) values (?, ?, ?, ?, ?)";
-    private final static String UPDATE_ORDER = "update order_ set buyer_id=?, order_creation_date_time=?, order_closed_date_time=?, status_=?, paid=?, address = ?, stage=? where id = ?";
+    private static final String FIND_BY_ID = "select * from order_ where id = ?";
+    private static final String FIND_ALL_BY_USER_ID = "select * from order_ where buyer_id = ?";
+    private static final String INSERT_INTO = "insert into order_ (buyer_id, order_creation_date_time, status_, paid, stage) values (?, ?, ?, ?, ?)";
+    private static final String UPDATE_ORDER = "update order_ set buyer_id=?, order_creation_date_time=?, order_closed_date_time=?, status_=?, paid=?, address = ?, stage=? where id = ?";
 
     @Autowired
     private HikariDataSource hikariDataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     public List<Order> findAllByUserId(long id) throws DaoException {
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)
-        ) {
 
-            statement.setLong(1, id);
+        try {
 
-            List<Order> orders = new ArrayList<>();
+            List<Order> orderItems =
+                    jdbcTemplate.query(FIND_ALL_BY_USER_ID, new OrderRowMapper(), id);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-
-                    orders.add(parseOrder(resultSet));
-                }
+            if (orderItems.isEmpty()) {
+                return null;
             }
 
-            return orders;
+            return orderItems;
 
-        } catch (SQLException e) {
-
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
+
     }
 
     @Override
     public Order findById(long id) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
-        ) {
+        try {
 
-            statement.setLong(1, id);
+            return jdbcTemplate.queryForObject(FIND_BY_ID, new OrderRowMapper(), id);
 
-            Order order = null;
+        } catch (EmptyResultDataAccessException e) {
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+            return null;
 
-                if (resultSet.next()) {
-
-                    order = parseOrder(resultSet);
-                }
-            }
-
-            return order;
-
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
@@ -164,14 +151,12 @@ public class OrderDaoImpMySQL implements OrderDao {
         throw new RuntimeException();
     }
 
+    private class OrderRowMapper implements RowMapper<Order> {
+        @Override
+        public Order mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+            Order order = new Order();
 
-    private Order parseOrder(ResultSet resultSet) throws DaoException {
-
-        Order order = new Order();
-
-        try {
             order.setId(resultSet.getLong(ID));
-
             order.setBuyerId(resultSet.getLong(BUYER_ID));
             order.setOrderCreationDateTime(resultSet.getString(ORDER_CREATION_DATE_TIME));
             order.setOrderClosedDateTime(resultSet.getString(ORDER_CLOSED_DATE_TIME));
@@ -180,9 +165,7 @@ public class OrderDaoImpMySQL implements OrderDao {
             order.setAddress(resultSet.getString(ADDRESS));
             order.setStage(resultSet.getInt(STAGE));
 
-        } catch (SQLException e) {
-            throw new DaoException(e);
+            return order;
         }
-        return order;
     }
 }

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class OrderService {
 
-    private final static Logger logger = Logger.getLogger(OrderService.class);
+    private static final Logger logger = Logger.getLogger(OrderService.class);
 
     @Autowired
     private ShoppingCartItemService shoppingCartItemService;

@@ -4,6 +4,9 @@ import com.trade.exception.DaoException;
 import com.trade.model.Session;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,40 +24,32 @@ public class SessionDaoImpMySQL implements SessionDao {
     private static final String LOGOUT_DATE_TIME_C = "logout_date_time";
     private static final String IS_EXPIRED_C = "is_expired";
 
-    private final static String INSERT_INTO =
+    private static final String INSERT_INTO =
             "insert into session (user_id, session_token, login_date_time, logout_date_time, is_expired) values (?, ?, ?, ?, ?)";
-    private final static String FIND_BY_USER_ID = "select * from session where user_id = ? and is_expired = false";
+    private static final String FIND_BY_USER_ID = "select * from session where user_id = ? and is_expired = false";
 
-    private final static String CLOSE_SESSION = "update session set logout_date_time = ?, is_expired = true where id = ?";
+    private static final String CLOSE_SESSION = "update session set logout_date_time = ?, is_expired = true where id = ?";
 
     @Autowired
     private HikariDataSource hikariDataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     public Session findActiveByUserId(long id) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID)
-        ) {
+        try {
 
-            statement.setLong(1, id);
+            return jdbcTemplate.queryForObject(FIND_BY_USER_ID, new SessionRowMapper(), id);
 
-            Session session = null;
+        } catch (EmptyResultDataAccessException e){
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+            return null;
 
-                if (resultSet.next()) {
-
-                    session = parseSession(resultSet);
-                }
-            }
-
-            return session;
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
-
         }
     }
 
@@ -96,20 +91,15 @@ public class SessionDaoImpMySQL implements SessionDao {
     @Override
     public void closeSession(Session session) throws DaoException {
 
-        try (Connection connection = hikariDataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(CLOSE_SESSION)) {
+        try {
 
-
-            preparedStatement.setString(1, session.getLogoutDateTime());
-            preparedStatement.setLong(2, session.getId());
-
-            int affectedRows = preparedStatement.executeUpdate();
+            int affectedRows = jdbcTemplate.update(CLOSE_SESSION, session.getLogoutDateTime(), session.getId());
 
             if (affectedRows == 0) {
                 throw new DaoException("Closing session (through updating) failed, no rows affected.");
             }
 
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
@@ -125,12 +115,13 @@ public class SessionDaoImpMySQL implements SessionDao {
         throw new RuntimeException();
     }
 
-    private Session parseSession(ResultSet resultSet) throws DaoException {
 
-        Session session = new Session();
+    private class SessionRowMapper implements RowMapper<Session> {
 
-        try {
+        @Override
+        public Session mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
+            Session session = new Session();
             session.setId(resultSet.getLong(ID_C));
             session.setUserId(resultSet.getLong(USER_ID_C));
             session.setSessionToken(resultSet.getString(SESSION_TOKEN_C));
@@ -138,11 +129,7 @@ public class SessionDaoImpMySQL implements SessionDao {
             session.setLogoutDateTime(resultSet.getString(LOGOUT_DATE_TIME_C));
             session.setExpired(resultSet.getBoolean(IS_EXPIRED_C));
 
-        } catch (SQLException e) {
-
-            throw new DaoException(e);
+            return session;
         }
-
-        return session;
     }
 }

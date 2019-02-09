@@ -3,6 +3,8 @@ TODO:
 
 current: - user should not be able to add to cart when product quantity is 0 (1h)
 
+- when create order with a few same products then only one (1) subtracted. FIX
+
 - apply this: If the keyword 'try' exists in a function, it should be the very first word
 in the function and that there should be nothing after the 'catch/finally' blocks.
 
@@ -19,6 +21,8 @@ in the function and that there should be nothing after the 'catch/finally' block
 - make constants for paths to pages in controllers
 
 DONE:
+- 9.02.2019 - refactor dao imp
+- 9.02.2019 - get rid of commented code in dao layer
 - 26.01.2019 - highlighting products on the products page when they added to the shopping cart(30m)
 - 26.01.2019 - handle pagination when number of pages is lower then min numb of pages to show in pagination div (5m)
 - 26.01.2019 - show the same products as one shopping cart item (1h)

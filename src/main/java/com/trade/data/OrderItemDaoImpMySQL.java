@@ -4,13 +4,15 @@ import com.trade.exception.DaoException;
 import com.trade.model.OrderItem;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderItemDaoImpMySQL implements OrderItemDao {
@@ -30,90 +32,52 @@ public class OrderItemDaoImpMySQL implements OrderItemDao {
     @Autowired
     private HikariDataSource hikariDataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
-    public List<OrderItem> findAllByOrderId(long orderId) throws DaoException {
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_ODER_ID)
-        ) {
+    public OrderItem findById(long id) throws DaoException {
 
-            statement.setLong(1, orderId);
+        try {
 
-            List<OrderItem> orderItems = new ArrayList<>();
+            return jdbcTemplate.queryForObject(FIND_BY_ID, new OrderItemRowMapper(), id);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+        } catch (EmptyResultDataAccessException e) {
 
-                while (resultSet.next()) {
+            return null;
 
-                    orderItems.add(parseOrderItem(resultSet));
-                }
-            }
-
-            return orderItems;
-
-        } catch (SQLException e) {
+        } catch (Throwable e) {
 
             throw new DaoException(e);
         }
     }
 
     @Override
-    public OrderItem findById(long id) throws DaoException {
+    public List<OrderItem> findAllByOrderId(long orderId) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
-        ) {
-
-            statement.setLong(1, id);
-
-            OrderItem orderItem = null;
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-
-                if (resultSet.next()) {
-
-                    orderItem = parseOrderItem(resultSet);
-                }
-            }
-
-            return orderItem;
-
-        } catch (SQLException e) {
-
-            throw new DaoException(e);
-        }
+        return findAllBy(orderId, FIND_ALL_BY_ODER_ID);
     }
 
     @Override
     public List<OrderItem> findAllByUserId(long userId) throws DaoException {
 
-        try (
-                Connection connection = hikariDataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)
-        ) {
+        return findAllBy(userId, FIND_ALL_BY_USER_ID);
+    }
 
-            statement.setLong(1, userId);
+    private List<OrderItem> findAllBy(long id, String findAllByWithOneParam) throws DaoException {
 
-            List<OrderItem> orderItems = new ArrayList<>();
+        try {
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+            List<OrderItem> orderItems =
+                    jdbcTemplate.query(findAllByWithOneParam, new OrderItemRowMapper(), id);
 
-                while (resultSet.next()) {
-
-                    orderItems.add(parseOrderItem(resultSet));
-                }
-            }
-
-            if (orderItems.isEmpty()){
-
+            if (orderItems.isEmpty()) {
                 return null;
             }
 
             return orderItems;
 
-        } catch (SQLException e) {
-
+        } catch (Throwable e) {
             throw new DaoException(e);
         }
     }
@@ -163,22 +127,17 @@ public class OrderItemDaoImpMySQL implements OrderItemDao {
 
     }
 
-    private OrderItem parseOrderItem(ResultSet resultSet) throws DaoException {
+    private class OrderItemRowMapper implements RowMapper<OrderItem> {
+        @Override
+        public OrderItem mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
-        OrderItem orderItem = new OrderItem();
-
-        try {
-
+            OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(resultSet.getLong(ORDER_ID));
             orderItem.setProductId(resultSet.getLong(PRODUCT_ID));
             orderItem.setProductsQuantity(resultSet.getLong(PRODUCTS_QUANTITY));
             orderItem.setId(resultSet.getLong(ID));
 
-        } catch (SQLException e) {
-
-            throw new DaoException(e);
+            return orderItem;
         }
-
-        return orderItem;
     }
 }

@@ -33,7 +33,7 @@ public class ShoppingCartController {
     private final Logger logger = Logger.getLogger(this.getClass());
 
     // cookie name
-    private final static String NUMBER_OF_PRODUCTS_IN_SHOPPING_CART = "number_of_products_in_shopping_cart";
+    private static final String NUMBER_OF_PRODUCTS_IN_SHOPPING_CART = "number_of_products_in_shopping_cart";
 
 
     @Autowired

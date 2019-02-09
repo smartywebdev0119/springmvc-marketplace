@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import static com.trade.utils.HtmlUtils.makeTextColorful;
 
 @Controller
-public class LoginController implements ILoginController {
+public class LoginController {
 
     private static final Logger logger = Logger.getLogger(LoginController.class);
 
@@ -37,7 +37,6 @@ public class LoginController implements ILoginController {
     }
 
     @PostMapping("/login")
-    @Override
     public ModelAndView login(@RequestParam("username") String username,
                               @RequestParam("password") String password,
                               HttpServletRequest request,
@@ -82,7 +81,6 @@ public class LoginController implements ILoginController {
     }
 
     @GetMapping("/logout")
-    @Override
     public ModelAndView logout(@CookieValue("userID") long userID) {
 
         logger.info("user with id [" + userID + "] is logging out");

@@ -15,7 +15,7 @@ public class PaginationService {
 
     private static final int MAX_PAGE_NUMBER_FOR_SHOWING_WITHOUT_A_GAP = 7;
 
-    private final static int NUMBER_OF_PAGES_FOR_PAGINATION = 7;
+    private static final int NUMBER_OF_PAGES_FOR_PAGINATION = 7;
 
 
     /**

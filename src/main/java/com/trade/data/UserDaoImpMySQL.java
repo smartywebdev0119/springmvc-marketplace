@@ -27,10 +27,10 @@ public class UserDaoImpMySQL implements UserDao {
     private static final String IMAGE_C_L = "image";
 
 
-    private final static String INSERT_INTO = "insert into user (username, password, name, surname, role, image, email) values (?, ?, ?, ?, ?, ?, ?)";
-    private final static String FIND_BY_ID = "select * from user where id = ?";
-    private final static String FIND_BY_USERNAME = "select * from user where username = ?";
-    private final static String UPDATE_USER_IMAGE = "update user set image = ? where id = ?";
+    private static final String INSERT_INTO = "insert into user (username, password, name, surname, role, image, email) values (?, ?, ?, ?, ?, ?, ?)";
+    private static final String FIND_BY_ID = "select * from user where id = ?";
+    private static final String FIND_BY_USERNAME = "select * from user where username = ?";
+    private static final String UPDATE_USER_IMAGE = "update user set image = ? where id = ?";
 
     @Autowired
     private HikariDataSource hikariDataSource;
@@ -39,7 +39,6 @@ public class UserDaoImpMySQL implements UserDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    @SuppressWarnings("Duplicates")
     public User findByUsername(String username) throws DaoException {
 
         try {
@@ -48,37 +47,12 @@ public class UserDaoImpMySQL implements UserDao {
 
         } catch (Throwable e) {
 
-            throw new DaoException(e);
+            throw new DaoException("not managed to find user by username",e);
         }
 
-
-//        try (
-//                Connection connection = hikariDataSource.getConnection();
-//                PreparedStatement statement = connection.prepareStatement(FIND_BY_USERNAME)
-//        ) {
-//
-//            statement.setString(1, username);
-//
-//            User user = null;
-//
-//            try (ResultSet resultSet = statement.executeQuery()) {
-//
-//                if (resultSet.next()) {
-//
-//                    user = parseUser(resultSet);
-//                }
-//
-//            }
-//
-//            return user;
-//        } catch (SQLException e) {
-//
-//            throw new DaoException(e);
-//        }
     }
 
     @Override
-    @SuppressWarnings("Duplicates")
     public User findById(long id) throws DaoException {
 
         try {
@@ -86,31 +60,9 @@ public class UserDaoImpMySQL implements UserDao {
             return jdbcTemplate.queryForObject(FIND_BY_ID, new UserRowMapper(), id);
 
         } catch (Throwable e) {
-            throw new DaoException(e);
+            throw new DaoException("not managed to find user by id",e);
         }
 
-//        try (
-//                Connection connection = hikariDataSource.getConnection();
-//                PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)
-//        ) {
-//
-//            statement.setLong(1, id);
-//
-//            User user = null;
-//
-//            try (ResultSet resultSet = statement.executeQuery()) {
-//
-//                if (resultSet.next()) {
-//
-//                    user = parseUser(resultSet);
-//                }
-//            }
-//
-//            return user;
-//        } catch (SQLException e) {
-//
-//            throw new DaoException(e);
-//        }
     }
 
     @Override
@@ -165,24 +117,6 @@ public class UserDaoImpMySQL implements UserDao {
             throw new DaoException(e);
         }
 
-
-//        try (Connection connection = hikariDataSource.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_IMAGE)) {
-//
-//            preparedStatement.setBlob(1, user.getImage());
-//            preparedStatement.setLong(2, user.getId());
-//
-//            int affectedRows = preparedStatement.executeUpdate();
-//
-//            if (affectedRows == 0) {
-//                throw new DaoException("Updating user's image failed, no rows affected.");
-//            }
-//
-//        } catch (SQLException e) {
-//
-//            throw new DaoException(e);
-//        }
-
     }
 
     @Override
@@ -195,30 +129,6 @@ public class UserDaoImpMySQL implements UserDao {
         throw new RuntimeException();
     }
 
-    private User parseUser(ResultSet resultSet) throws DaoException {
-
-        User user = new User();
-
-        try {
-            user.setId(resultSet.getLong(ID_COLUMN_LABEL));
-            user.setUsername(resultSet.getString(USERNAME_C_L));
-            user.setPassword(resultSet.getString(PASS_C_L));
-            user.setName(resultSet.getString(NAME_C_L));
-            user.setSurname(resultSet.getString(SURNAME_C_L));
-            user.setRole(resultSet.getString(ROLE_C_L));
-            user.setImage(resultSet.getBlob(IMAGE_C_L));
-            user.setEmail(resultSet.getString(EMAIL_C_L));
-
-        } catch (SQLException e) {
-
-            throw new DaoException(e);
-        }
-
-        return user;
-    }
-
-
-    @SuppressWarnings("Duplicates")
     public static class UserRowMapper implements RowMapper<User> {
 
         @Override
@@ -235,8 +145,6 @@ public class UserDaoImpMySQL implements UserDao {
             user.setEmail(resultSet.getString(EMAIL_C_L));
 
             return user;
-
-
         }
     }
 }
