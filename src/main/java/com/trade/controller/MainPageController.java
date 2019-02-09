@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/")
 public class MainPageController {
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private static final Logger logger = Logger.getLogger(MainPageController.class);
 
     @GetMapping
     public ModelAndView getMainPage(){

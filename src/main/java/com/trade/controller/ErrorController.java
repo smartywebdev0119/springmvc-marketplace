@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/error")
 public class ErrorController {
 
-    private final static String DEFAULT_MESSAGE = "something went wrong";
+    private static final String DEFAULT_MESSAGE = "something went wrong";
 
     @GetMapping
     public ModelAndView getErrorPage(

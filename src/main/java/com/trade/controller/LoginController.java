@@ -22,7 +22,7 @@ import static com.trade.utils.HtmlUtils.makeTextColorful;
 @Controller
 public class LoginController implements ILoginController {
 
-    private final static Logger logger = Logger.getLogger(LoginController.class);
+    private static final Logger logger = Logger.getLogger(LoginController.class);
 
     @Autowired
     private AuthorizationService authorizationService;

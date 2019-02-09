@@ -3,6 +3,9 @@ TODO:
 
 current: - user should not be able to add to cart when product quantity is 0 (1h)
 
+- apply this: If the keyword 'try' exists in a function, it should be the very first word
+in the function and that there should be nothing after the 'catch/finally' blocks.
+
 - when user opens the shopping cart page each item should be checked on availability in stocks
           if it is not in stocks then the item should be highlighted and
           the Create order button should be hidden
