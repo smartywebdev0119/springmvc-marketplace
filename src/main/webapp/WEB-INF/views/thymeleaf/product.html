@@ -13,14 +13,14 @@
 <div class="main-div">
 
     <!--<div th:inline="text">-->
-        <!--Description: [[${product.description}]]-->
-        <!--<br>-->
-        <!--Price: [[${product.price}]]-->
-        <!--<br>-->
-        <!--Quantity: [[${product.quantity}]]-->
-        <!--<br>-->
-        <!--Seller: [[${product.seller}]]-->
-        <!--<br>-->
+    <!--Description: [[${product.description}]]-->
+    <!--<br>-->
+    <!--Price: [[${product.price}]]-->
+    <!--<br>-->
+    <!--Quantity: [[${product.quantity}]]-->
+    <!--<br>-->
+    <!--Seller: [[${product.seller}]]-->
+    <!--<br>-->
     <!--</div>-->
 
     <div id="product-div">
@@ -40,14 +40,17 @@
         </div>
         <div id="product-info-div">
 
-            <h3 th:text="${product.name}">Product name</h3>
+            <div class="h3-div">
+                <h3 th:text="${product.name}">Product name</h3>
+            </div>
+
             <span>Description: [[${product.description}]]</span>
-            <br>
             <span>Price: [[${product.price}]]</span>
-            <br>
             <span>Quantity: [[${product.quantity}]]</span>
-            <br>
-            <span><a th:href="@{/user/{user_id}(user_id=${product.seller})}" th:text="#{products.to_seller_page_link}">seller</a></span>
+            <span>
+                <a th:href="@{/user/{user_id}(user_id=${product.seller})}"
+                   th:text="#{products.to_seller_page_link}">seller</a>
+            </span>
         </div>
     </div>
 

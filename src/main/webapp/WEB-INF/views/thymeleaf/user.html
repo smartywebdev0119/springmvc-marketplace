@@ -29,8 +29,9 @@
             </div>
         </div>
         <div class="user-info-div">
-            <h3 th:text="${user.name + ' ' + user.surname}">Profile</h3>
-            <br>
+            <div class="h3-div">
+                <h3 th:text="${user.name + ' ' + user.surname}">Profile</h3>
+            </div>
             <span th:inline="text">username: [[${user.username}]]</span>
         </div>
     </div>

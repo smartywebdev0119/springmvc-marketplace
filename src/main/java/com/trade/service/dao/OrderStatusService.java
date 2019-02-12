@@ -7,7 +7,7 @@ import com.trade.model.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class OrderStatusService {
-    
+
     @Autowired
     private OrderStatusDao orderStatusDao;
 

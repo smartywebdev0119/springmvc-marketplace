@@ -4,14 +4,17 @@ import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
 import com.trade.dto.ProductDTO;
 import com.trade.enums.OrderStage;
+import com.trade.enums.OrderStatusTypeClass;
 import com.trade.exception.ServiceException;
 import com.trade.model.Order;
 import com.trade.model.OrderItem;
+import com.trade.model.OrderStatus;
 import com.trade.model.Product;
 import com.trade.model.converter.OrderItemToDTOConverter;
 import com.trade.model.converter.OrderToOrderDTOConverter;
 import com.trade.model.converter.ProductToDTOConverter;
-import com.trade.service.handler.OrderStatusHandler;
+import com.trade.service.dao.OrderStatusService;
+import com.trade.service.handler.OrderStatusConverterService;
 import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
@@ -52,7 +55,13 @@ public class OrdersController {
     private OrderService orderService;
 
     @Autowired
+    private OrderStatusService orderStatusService;
+
+    @Autowired
     private OrderItemService orderItemService;
+
+    @Autowired
+    OrderStatusConverterService orderStatusConverterService;
 
     @Autowired
     private OrderToOrderDTOConverter orderToOrderDTOConverter;
@@ -162,13 +171,24 @@ public class OrdersController {
 
             long orderId = orderService.create(order);
 
-            // order creation failed
             if (orderId == -1) {
+
+                logger.info("order creation failed");
 
                 return ErrorHandling.getDefaultErrorPage();
 
-                // order created successfully
+
             } else {
+
+                logger.info("order created successfully");
+
+                logger.info("creating record in order status table");
+
+                OrderStatus orderStatus = new OrderStatus();
+                orderStatus.setOrderId(orderId);
+                orderStatus.setCreated(true);
+
+                orderStatusService.create(orderStatus);
 
                 logger.info("set number_of_products_in_shopping_cart cookie to zero");
 
@@ -260,10 +280,16 @@ public class OrdersController {
 
         try {
 
+            logger.info("adding address where deliver the order to");
             Order order = orderService.findById(orderID);
             order.setAddress(address);
             order.setStage(OrderStage.SHIPPING_DETAILS_PROVIDED.asInt());
             orderService.update(order);
+
+            logger.info("updating status of order");
+            OrderStatus orderStatus = orderStatusService.findByOrderId(orderID);
+            orderStatus.setShippingDetailsProvided(true);
+            orderStatusService.update(orderStatus);
 
             return new ModelAndView("redirect:/products");
 
@@ -274,19 +300,47 @@ public class OrdersController {
     }
 
 
+    @GetMapping("/order/payment/{order_id}")
+    public ModelAndView getOrderPaymentPage(@PathVariable("order_id") long orderId,
+                                            @CookieValue("userID") long userID) {
+
+        try {
+
+            logger.info("getting order payment page");
+
+            Order order = orderService.findById(orderId);
+            OrderDTO orderDTO = orderToOrderDTOConverter.convert(order);
+
+            ModelAndView modelAndView = new ModelAndView("order-payment");
+
+            modelAndView.addObject("order_id", orderId);
+            modelAndView.addObject("orderDTO", orderDTO);
+
+            return modelAndView;
+
+        } catch (ServiceException e) {
+
+            String message = "not managed to prepare order payment page";
+
+            logger.error(message, e);
+
+            return ErrorHandling.getErrorPage(message);
+        }
+    }
+
     @GetMapping("/order/{order_id}")
-    public ModelAndView getOrderInfoPage(@PathVariable("order_id") long orderID,
+    public ModelAndView getOrderInfoPage(@PathVariable("order_id") long orderId,
                                          @CookieValue("userID") long userID) {
 
         try {
 
-            Order order = orderService.findById(orderID);
+            Order order = orderService.findById(orderId);
             OrderDTO orderDTO = orderToOrderDTOConverter.convert(order);
 
-            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderID);
+            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderId);
             List<OrderItemDTO> orderItemDTOS = orderItemToDTOConverter.convert(orderItems);
 
-            List<Product> productsFromOrder = productService.findAllByOrderId(orderID);
+            List<Product> productsFromOrder = productService.findAllByOrderId(orderId);
             List<ProductDTO> productsDTOFromOrder = productToDTOConverter.convert(productsFromOrder);
 
             Map<Long, ProductDTO> productsDtoMap = productsDTOFromOrder
@@ -298,13 +352,13 @@ public class OrdersController {
                     .mapToDouble(item -> productsDtoMap.get(item.getProductId()).getPrice() * item.getProductsQuantity())
                     .sum();
 
-            OrderStatusHandler orderStatusHandler = new OrderStatusHandler();
 
-
-            Map<String, String> statusAndClassName =  orderStatusHandler.handle(order);
+            Map<String, String> statusAndClassName = orderStatusConverterService.convertToMap(order);
 
             ModelAndView modelAndView = new ModelAndView("order-info");
+
             modelAndView.addObject("status_map", statusAndClassName);
+            modelAndView.addObject("orderStatusTypeClass", OrderStatusTypeClass.values());
 
             modelAndView.addObject("order_dto", orderDTO);
             modelAndView.addObject("products_dto_map", productsDtoMap);
@@ -315,8 +369,8 @@ public class OrdersController {
 
         } catch (ServiceException e) {
 
-            String errorMessage = "error while creating order info page for order = " + orderID;
-            logger.error(errorMessage,e);
+            String errorMessage = "error while creating order info page for order = " + orderId;
+            logger.error(errorMessage, e);
             return ErrorHandling.getErrorPage(errorMessage);
         }
     }

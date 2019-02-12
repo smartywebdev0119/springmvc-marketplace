@@ -9,8 +9,9 @@
 <body>
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
-
-    <h2 th:text="#{order_shipping_details.description}">Fill up shipping details:</h2>
+    <div class="h2-div">
+        <h2 th:text="#{order_shipping_details.description}">Fill up shipping details:</h2>
+    </div>
 
     <div id="shipping-details-div">
         <form action="/order/shipping-details" method="post">
@@ -21,7 +22,7 @@
                 <input id="address-input" type="text" name="address"/>
             </div>
             <div>
-                <button id="confirm-and-go-to-payment"
+                <button id="confirm-and-go-to-payment-button"
                         type="submit"
                         th:text="#{order_shipping_details.confirm_and_to_payment}">
                     Confirm and go to payment

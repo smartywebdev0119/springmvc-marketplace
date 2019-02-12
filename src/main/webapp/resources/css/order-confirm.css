@@ -26,10 +26,6 @@ table {
 
 #next-to-shipping-details-button {
 
-    background-color: #4CAF50;
-    color: white;
     padding: 15px 5px;
-    border: none;
-    cursor: pointer;
     width: 200px;
 }

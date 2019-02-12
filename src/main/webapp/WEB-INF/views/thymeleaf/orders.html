@@ -12,7 +12,9 @@
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
 
-    <h3 th:text="#{orders.page_desc}"></h3>
+    <div class="h2-div">
+        <h2 th:text="#{orders.page_desc}"></h2>
+    </div>
 
     <div class="all-orders-div">
 
@@ -30,7 +32,11 @@
                         <div th:inline="text">paid: [[${order.paid}]]</div>
                         <div th:inline="text">order id: [[${order.id}]]</div>
                         <div th:inline="text">total price, $: [[${orderIdAndTotalPriceMap.get(order.id)}]]</div>
-
+                        <div>
+                            <a th:href="@{/order/{order_id}(order_id=${order.getId()})}">
+                                Open full order description
+                            </a>
+                        </div>
                     </div>
 
                     <div class="product-div" th:each="orderItem, iterStat : ${mapWithOrderItems.get(order.getId())}">

@@ -31,7 +31,7 @@
             <form method="post" th:action="@{/profile/picture}" enctype="multipart/form-data">
                 <div id="picture-upload-div">
                     <div id="choose-image-div">
-                        <label for="image-upload" class="custom-image-upload">Choose image</label>
+                        <label for="image-upload" class="custom-image-upload-label">Choose image</label>
                         <input id="image-upload" type="file" name="user_image" th:value="#{profile.choose_image}">
                     </div>
                     <div id="upload-image-div">
@@ -48,8 +48,9 @@
         </div>
 
         <div class="profile-info-div">
-            <h3 th:text="${user.name + ' ' + user.surname}">Jack Johns</h3>
-            <br>
+            <div class="h3-div">
+                <h3 th:text="${user.name + ' ' + user.surname}">Jack Johns</h3>
+            </div>
             <span th:inline="text">Username: [[${user.username}]]</span>
         </div>
     </div>

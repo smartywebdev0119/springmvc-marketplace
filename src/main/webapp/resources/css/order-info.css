@@ -63,11 +63,11 @@ ul {
 
 .product-desc {
 
-    color: #dde0de;
+    color: #aaadab;
 }
 
 .product-quantity {
-    color: #dde0de;
+    color: #aaadab;
 }
 
 #total-price-div {
@@ -87,6 +87,14 @@ ul {
     overflow: auto;
 }
 
+.status-info-div {
+
+    padding-left: 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+}
+
 #order-created-status-div {
 }
 
@@ -97,9 +105,6 @@ ul {
 }
 
 #order-sent-status-div {
-}
-
-#delivery-status-div {
 }
 
 #order-arrival-status-div {
@@ -164,8 +169,15 @@ ul {
 
 .bottom-boarder {
 
-    padding-top: 5px;
-    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 5px;
 
     border-bottom: 1px solid #e4e6e8;
+}
+
+.pay-for-the-order-button {
+
+    padding: 14px 20px;
+    margin: 8px 0;
+    width: 300px;
 }

@@ -24,7 +24,7 @@ public class OrderStatusDaoImpMySQL implements OrderStatusDao {
     private static final String SENT_BY_SELLER = "sent_by_seller";
     private static final String SHIPPING_DETAILS_PROVIDED = "shipping_details_provided";
 
-    private static final String FIND_BY_ORDER_ID = "select*from order_status where id = ?";
+    private static final String FIND_BY_ORDER_ID = "select*from order_status where order_id = ?";
     private static final String INSERT_INTO = "insert into order_status " +
             "(order_id, created, shipping_details_provided, order_paid, sent_by_seller, delivered) " +
             "value (?, ?, ?, ?, ?, ?)";

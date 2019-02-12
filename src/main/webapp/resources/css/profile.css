@@ -1,6 +1,6 @@
 .root-profile-div {
 
-    padding-top: 16px;
+    /*padding-top: 16px;*/
 
     width: 90%;
     position: relative;
@@ -9,7 +9,7 @@
 .profile-picture-div {
 
     padding-right: 16px;
-    padding-top: 16px;
+    /*padding-top: 16px;*/
     padding-bottom: 16px;
 
     width: 40%;
@@ -23,7 +23,7 @@
     top: 0;
 
     padding-left: 16px;
-    padding-top: 16px;
+    /*padding-top: 16px;*/
     padding-bottom: 16px;
 
     width: 50%;
@@ -39,9 +39,9 @@
 input[type="file"] {
     display: none;
 }
-.custom-image-upload {
+.custom-image-upload-label {
 
-    background-color: #4CAF50;
+    background-color: #63b175;
     color: white;
     border: none;
     display: inline-block;
@@ -54,11 +54,7 @@ input[type="file"] {
 
 #upload-image-button {
 
-    background-color: #4CAF50;
-    color: white;
     padding: 10px 5px;
-    border: none;
-    cursor: pointer;
     width: inherit;
     font-size: 13px;
 

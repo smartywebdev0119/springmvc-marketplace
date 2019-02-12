@@ -12,8 +12,9 @@
 <body>
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
-
-    <h3 th:text="#{shopping_cart.page_desc}">Your shopping cart:</h3>
+    <div class="h2-div">
+        <h2 th:text="#{shopping_cart.page_desc}">Your shopping cart:</h2>
+    </div>
     <div class="shopping-cart-div">
         <div>
             <table class="shopping-cart-table">
@@ -34,7 +35,9 @@
                     <td th:text="${item.getQuantity()}">100</td>
                     <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
                            th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
-                    <td><a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a></td>
+                    <td>
+                        <a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a>
+                    </td>
                     <td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>
                     <td>
                         <form method="post"
@@ -48,7 +51,7 @@
             </table>
             <div
                     th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == false}"
-                    id = "have-products-out-of-stock-message-div">
+                    id="have-products-out-of-stock-message-div">
                 *Products highlighted red are products with quantity in stock not enough to create order
             </div>
         </div>
@@ -64,11 +67,13 @@
     <div id="pagination-div">
         <ul>
             <!--<li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">-->
-            <li th:each="page_number : ${page_numbers}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
+            <li th:each="page_number : ${page_numbers}"
+                th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
 
                 <th:block th:switch="${page_number}">
                     <span th:case="${current_page}" th:text="${page_number}">current</span>
-                    <a th:case="*" th:href="@{/products/page/{page_number}(page_number=${page_number})}" th:text="${page_number}"></a>
+                    <a th:case="*" th:href="@{/products/page/{page_number}(page_number=${page_number})}"
+                       th:text="${page_number}"></a>
                 </th:block>
 
             </li>

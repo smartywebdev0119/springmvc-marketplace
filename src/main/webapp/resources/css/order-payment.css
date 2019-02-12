@@ -1,0 +1,190 @@
+#order-payment-div {
+
+
+
+}
+
+#order-number-div {
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+    background-color: #e6e6e6;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+    padding: 20px 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f7f7f7;
+}
+
+.collapsible:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: white;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+
+
+/*  CSS FOR DEBIT CARD UI*/
+/* Credit Card */
+.credit-card {
+    width: 360px;
+    height: 390px;
+    margin: 20px auto 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+/*box-shadow: 1px 2px 3px 0 rgba(0,0,0,.10);*/
+}
+
+
+.form-header {
+    height: 40px;
+    padding: 20px 30px 0;
+    border-bottom: 1px solid #e1e8ee;
+}
+
+.form-body {
+    height: 300px;
+    width: 300px;
+    padding: 30px 30px 20px;
+}
+/* Title */
+
+.title {
+    font-size: 18px;
+    margin: 0;
+    color: #5e6977;
+}
+/* Common */
+
+.card-number,
+.cvv-input input,
+.month select,
+.year select {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 14px;
+}
+
+.card-number,
+.month select,
+.year select {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 14px;
+}
+
+.card-number,
+.cvv-details,
+.cvv-input input,
+.month select,
+.year select {
+    opacity: .7;
+    color: #86939e;
+}
+/* Card Number */
+
+.card-number {
+    width: 92%;
+    height: 30px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+}
+/* Date Field */
+
+.month select,
+.year select {
+    width: 145px;
+    height: 30px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+    background: url('/resources/image/caret.png') no-repeat 85% 50%;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.month select {
+    float: left;
+}
+
+.year select {
+    float: right;
+}
+/* Card Verification Field */
+
+.cvv-input input {
+    float: left;
+    width: 125px;
+    height: 30px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.cvv-details {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 16px;
+    float: right;
+    margin-bottom: 20px;
+}
+
+.cvv-details p {
+    margin-top: 6px;
+}
+/* Buttons Section */
+
+.proceed-btn {
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    height: 35px;
+    border-color: transparent;
+    border-radius: 6px;
+}
+
+
+.proceed-btn {
+    margin-bottom: 10px;
+    background: #63b175;
+}
+
+.proceed-btn a {
+    text-decoration: none;
+}
+
+.proceed-btn a {
+    color: #fff;
+}
+/*  CSS FOR DEBIT CARD UI*/

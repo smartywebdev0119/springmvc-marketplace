@@ -128,7 +128,8 @@
     <bean name="userDaoImpMySQL" class="com.trade.data.UserDaoImpMySQL"/>
     <bean name="sessionDaoImpMySQL" class="com.trade.data.SessionDaoImpMySQL"/>
     <bean name="productDaoImpMySQL" class="com.trade.data.ProductDaoImpMySQL"/>
-    <bean name="OrderStatusDaoImpMySQL" class="com.trade.data.OrderStatusDaoImpMySQL"/>
+    <bean name="orderStatusDaoImpMySQL" class="com.trade.data.OrderStatusDaoImpMySQL"/>
+    <bean name="orderStatusConverterService" class="com.trade.service.handler.OrderStatusConverterService"/>
     <!-- DAOs -->
 
 </beans>

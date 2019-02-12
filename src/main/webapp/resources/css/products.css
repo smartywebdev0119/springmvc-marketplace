@@ -1,3 +1,11 @@
+
+.products-table{
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 15px;
+}
+
 .products-table td, th {
     border: 1px solid black;
     padding: 5px;
@@ -5,11 +13,7 @@
 
 .add-to-shopping-cart-button {
 
-    background-color: #4CAF50;
-    color: white;
     padding: 10px 5px;
-    border: none;
-    cursor: pointer;
     width: 100px;
 }
 

@@ -10,13 +10,9 @@
     padding-bottom: 20px;
 }
 
-#confirm-and-go-to-payment {
+#confirm-and-go-to-payment-button {
 
-    background-color: #4CAF50;
-    color: white;
     padding: 12px 5px;
-    border: none;
-    cursor: pointer;
     width: 200px;
 }
 

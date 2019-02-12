@@ -13,7 +13,9 @@
 <body>
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
-    <h3 th:text="#{order_info.description}">Order info:</h3>
+    <div class="h2-div">
+        <h2 th:text="#{order_info.description}">Order info:</h2>
+    </div>
 
     <div id="order-info-div">
         <ul>
@@ -40,7 +42,8 @@
             </li>
         </ul>
     </div>
-    <h2 th:text="#{order_info.products_in_order}">Products in order:</h2>
+
+    <h3 th:text="#{order_info.products_in_order}">Products in order:</h3>
     <div id="products-in-order-div">
 
         <th:block th:each="item : ${order_item_dtos}">
@@ -75,7 +78,7 @@
     </div>
 
     <div id="total-price-div">
-        Total price:
+        Total price, $:
         <th:block th:text="${total_price}">-1</th:block>
     </div>
 
@@ -84,58 +87,85 @@
     </div>
     <div id="order-status-div">
 
-        <div id="order-created-status-div" class="bottom-boarder">
+        <div id="created" class="bottom-boarder">
             <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('order_created_status')}"></div>
+                <div th:class="${status_map.get('created')}"></div>
                 <div class="stage-name-div">
-                    Order created
+                    Create order
                 </div>
+            </div>
+
+            <div class="status-info-div">
+                Order created on [[${order_dto.getOrderCreationDateTime()}]]
             </div>
         </div>
 
         <div id="shipping-details-status-div" class="bottom-boarder">
 
             <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('shipping_details_status')}"></div>
+                <div th:class="${status_map.get('shipping-details-provided')}"></div>
                 <div class="stage-name-div">
-                    Shipping details provided
+                    Provide shipping details
                 </div>
             </div>
+
+            <th:block th:switch="${status_map.get('shipping-details-provided')}">
+
+                <div class="status-info-div" th:case="${orderStatusTypeClass[1].getCssClassName()}">
+                    <span>Shipping details not provided.</span>
+                    <form action="/order/shipping-details" method="get">
+                        <input type="hidden" name="order_id" th:value="${order_dto.getId()}"/>
+                        <button type="submit" class="">Open page to provide shipping details</button>
+                    </form>
+                </div>
+
+                <div class="status-info-div" th:case="*">
+                    <span th:inline="text">Destination address: [[${order_dto.getAddress()}]]</span>
+                </div>
+
+            </th:block>
         </div>
 
         <div id="payment-status-div" class="bottom-boarder">
 
             <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('payment_status')}"></div>
+                <div th:class="${status_map.get('order-paid')}"></div>
                 <div class="stage-name-div">
-                    Order payed
+                    Pay for the order
                 </div>
             </div>
+
+
+            <th:block th:switch="${status_map.get('order-paid')}">
+
+                <div class="status-info-div" th:case="${orderStatusTypeClass[1].getCssClassName()}">
+                    <span>You have not paid for the order.</span>
+                    <form th:action="@{/order/payment/{order_id}(order_id=${order_dto.getId()})}" method="get">
+                        <input type="hidden" name="order_id" th:value="${order_dto.getId()}"/>
+                        <button type="submit" class="pay-for-the-order-button">Open page to pay for the order</button>
+                    </form>
+                </div>
+
+                <div class="status-info-div" th:case="*">
+
+                </div>
+
+            </th:block>
         </div>
 
         <div id="order-sent-status-div" class="bottom-boarder">
             <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('order_sent_status')}"></div>
+                <div th:class="${status_map.get('send-by-seller')}"></div>
                 <div class="stage-name-div">
                     Order sent to buyer
                 </div>
             </div>
         </div>
 
-        <div id="delivery-status-div" class="bottom-boarder">
-
-            <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('delivery_status')}"></div>
-                <div class="stage-name-div">
-                    Order delivered
-                </div>
-            </div>
-
-        </div>
         <div id="order-arrival-status-div" class="bottom-boarder">
 
             <div class="parent-div-for-bullet-and-stage-name">
-                <div th:class="${status_map.get('order_arrival_status')}"></div>
+                <div th:class="${status_map.get('buyer-got-the-order')}"></div>
                 <div class="stage-name-div">
                     Buyer received the order
                 </div>
@@ -148,7 +178,5 @@
     <div th:replace="common/footer :: footer"></div>
 </div>
 
-
-<script ></script>
 </body>
 </html>
