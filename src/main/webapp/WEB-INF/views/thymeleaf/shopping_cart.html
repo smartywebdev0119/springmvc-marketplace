@@ -16,69 +16,70 @@
         <h2 th:text="#{shopping_cart.page_desc}">Your shopping cart:</h2>
     </div>
     <div class="shopping-cart-div">
-        <div>
-            <table class="shopping-cart-table">
-                <tr>
-                    <th th:text="#{shopping_cart.name}">Name:</th>
-                    <th th:text="#{shopping_cart.desc}">Desc:</th>
-                    <th th:text="#{shopping_cart.quantity}">Quantity:</th>
-                    <th th:text="#{shopping_cart.to_product}">To product:</th>
-                    <th th:text="#{shopping_cart.seller}">Seller:</th>
-                    <th th:text="#{shopping_cart.price}">Price:</th>
-                    <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
-                </tr>
-                <tr
-                        th:class="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId()) == false ? 'regular-item' : 'out-of-stock-item'}"
-                        th:each="item : ${shoppingCartItemsList}">
-                    <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
-                    <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
-                    <td th:text="${item.getQuantity()}">100</td>
-                    <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
-                           th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
-                    <td>
-                        <a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a>
-                    </td>
-                    <td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>
-                    <td>
-                        <form method="post"
-                              th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">
-                            <button type="submit" class="remove-item-button" th:text="#{shopping_cart.remove_button}">
-                                remove
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <div
-                    th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == false}"
-                    id="have-products-out-of-stock-message-div">
-                *Products highlighted red are products with quantity in stock not enough to create order
+        <th:block th:switch="${shoppingCartItemsList.size()}">
+
+            <div th:case="0">
+                <span>Your shopping cart is empty.</span>
             </div>
-        </div>
-        <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
-        <div class="create-order-button-div" th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == true}">
-            <form th:action="@{/order}" method="post">
-                <button type="submit" class="create-order-button" th:text="#{shopping_cart.created_order_button}">
-                    Create order
-                </button>
-            </form>
-        </div>
-    </div>
-    <div id="pagination-div">
-        <ul>
-            <!--<li th:each="page_number : ${#numbers.sequence(1, number_of_pages, 1)}" th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">-->
-            <li th:each="page_number : ${page_numbers}"
-                th:id="${current_page == page_number} ? 'current-page-li' : 'next-page-li'">
 
-                <th:block th:switch="${page_number}">
-                    <span th:case="${current_page}" th:text="${page_number}">current</span>
-                    <a th:case="*" th:href="@{/products/page/{page_number}(page_number=${page_number})}"
-                       th:text="${page_number}"></a>
-                </th:block>
+            <th:block th:case="*">
+                <div>
+                    <table class="shopping-cart-table">
+                        <tr>
+                            <th th:text="#{shopping_cart.name}">Name:</th>
+                            <th th:text="#{shopping_cart.desc}">Desc:</th>
+                            <th th:text="#{shopping_cart.quantity}">Quantity:</th>
+                            <th th:text="#{shopping_cart.to_product}">To product:</th>
+                            <th th:text="#{shopping_cart.seller}">Seller:</th>
+                            <th th:text="#{shopping_cart.price}">Price:</th>
+                            <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
+                        </tr>
+                        <tr
+                                th:class="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId()) == false ? 'regular-item' : 'out-of-stock-item'}"
+                                th:each="item : ${shoppingCartItemsList}">
+                            <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
+                            <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
+                            <td th:text="${item.getQuantity()}">100</td>
+                            <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
+                                   th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
+                            <td>
+                                <a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a>
+                            </td>
+                            <td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>
+                            <td>
+                                <form method="post"
+                                      th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">
+                                    <button type="submit" class="remove-item-button"
+                                            th:text="#{shopping_cart.remove_button}">
+                                        remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                    <div
+                            th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == false}"
+                            id="have-products-out-of-stock-message-div">
+                        *Products highlighted red are products with quantity in stock not enough to create order
+                    </div>
+                </div>
+                <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
+                <div class="create-order-button-div"
+                     th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == true}">
+                    <form th:action="@{/order}" method="post">
+                        <button type="submit" class="create-order-button"
+                                th:text="#{shopping_cart.created_order_button}">
+                            Create order
+                        </button>
+                    </form>
+                </div>
+            </th:block>
+        </th:block>
 
-            </li>
-        </ul>
+
     </div>
+
+    <div th:replace="common/footer :: footer"></div>
 </div>
 </body>
 </html>

@@ -4,6 +4,12 @@
     padding-bottom: 16px;
 }
 
+.shopping-cart-table{
+
+    width: 100%;
+
+}
+
 .shopping-cart-table th,
 .shopping-cart-table td {
 
