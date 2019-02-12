@@ -4,7 +4,7 @@ import com.trade.dto.ProductDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
-import com.trade.model.converter.ProductModelToDTOConverter;
+import com.trade.model.converter.ProductToDTOConverter;
 import com.trade.service.ShoppingCartService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
@@ -45,7 +45,7 @@ public class ShoppingCartController {
     private ShoppingCartService shoppingCartService;
 
     @Autowired
-    private ProductModelToDTOConverter productModelToDTOConverter;
+    private ProductToDTOConverter productToDTOConverter;
 
     @Autowired
     private ProductService productService;
@@ -108,7 +108,7 @@ public class ShoppingCartController {
 
     private Map<Long, ProductDTO> getProductDTOMap(long userId) throws ServiceException {
         List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
-        List<ProductDTO> productDTOList = productModelToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
+        List<ProductDTO> productDTOList = productToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
 
         Map<Long, ProductDTO> map = productDTOList
                 .stream()

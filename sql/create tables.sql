@@ -43,7 +43,7 @@ create table order_
   buyer_id                 int          not null,
   order_creation_date_time varchar(19)  not null,
   order_closed_date_time   varchar(19),
-  status_                   varchar(500) not null,
+  status_                  varchar(500) not null,
   paid                     boolean default false,
   address                  varchar(300),
   stage                    int     default 1,
@@ -63,12 +63,25 @@ create table order_item
   primary key (id)
 );
 
+create table order_status
+(
+  id                        int auto_increment,
+  order_id                  int not null,
+  created                   boolean default false,
+  shipping_details_provided boolean default false,
+  order_paid                boolean default false,
+  sent_by_seller            boolean default false,
+  delivered                 boolean default false,
+  foreign key (order_id) references order_ (id),
+  primary key (id)
+);
+
 create table shopping_cart_item
 (
 
   id         int auto_increment,
   product_id int not null,
-  quantity int not null,
+  quantity   int not null,
   user_id    int not null,
   foreign key (product_id) references product (id),
   foreign key (user_id) references user (id),

@@ -99,6 +99,7 @@
     <bean name="productService" class="com.trade.service.dao.ProductService"/>
     <bean name="userService" class="com.trade.service.dao.UserService"/>
     <bean name="sessionService" class="com.trade.service.dao.SessionService"/>
+    <bean name="orderStatusService" class="com.trade.service.dao.OrderStatusService"/>
     <!-- dao services -->
 
     <!-- services -->
@@ -112,11 +113,12 @@
 
     <!-- DTO converters-->
     <bean name="orderToOrderDTOConverter" class="com.trade.model.converter.OrderToOrderDTOConverter"/>
-    <bean name="productModelToDTOConverter" class="com.trade.model.converter.ProductModelToDTOConverter"/>
+    <bean name="productModelToDTOConverter" class="com.trade.model.converter.ProductToDTOConverter"/>
     <bean name="userModelToDTOConverter" class="com.trade.model.converter.UserModelToDTOConverter"/>
     <bean name="orderItemToDTOConverter" class="com.trade.model.converter.OrderItemToDTOConverter"/>
     <bean name="shoppingCartItemModelToDTOConverter"
           class="com.trade.model.converter.ShoppingCartItemModelToDTOConverter"/>
+    <bean name="orderStatusToDtoConverter" class="com.trade.model.converter.OrderStatusToDtoConverter"/>
     <!-- DTO converters-->
 
     <!-- DAOs -->
@@ -126,6 +128,7 @@
     <bean name="userDaoImpMySQL" class="com.trade.data.UserDaoImpMySQL"/>
     <bean name="sessionDaoImpMySQL" class="com.trade.data.SessionDaoImpMySQL"/>
     <bean name="productDaoImpMySQL" class="com.trade.data.ProductDaoImpMySQL"/>
+    <bean name="OrderStatusDaoImpMySQL" class="com.trade.data.OrderStatusDaoImpMySQL"/>
     <!-- DAOs -->
 
 </beans>

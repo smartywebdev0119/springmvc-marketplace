@@ -7,7 +7,9 @@ public enum OrderStage {
 
     CREATED(1, "created"),
     SHIPPING_DETAILS_PROVIDED(2, "shipping details provided"),
-    ORDER_PAID(3, "order paid");
+    ORDER_PAID(3, "order paid"),
+    SENT_BY_SELLER(4, "send by seller"),
+    DELIVERED(5, "buyer got the order");
 
     private final int stage;
     private final String stageAsString;

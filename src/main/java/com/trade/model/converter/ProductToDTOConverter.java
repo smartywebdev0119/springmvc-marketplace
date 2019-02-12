@@ -6,7 +6,7 @@ import com.trade.model.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductModelToDTOConverter {
+public class ProductToDTOConverter {
 
 
     public ProductDTO convert(Product product) {

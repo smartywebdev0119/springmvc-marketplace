@@ -1,10 +1,9 @@
 
 TODO:
 
-current: - page for tracking order status where user can jump to the step he/she not finished yet
+current: - page for tracking order status where user can jump to the step he/she not finished yet (3.5h)
 
 - add css to Orders page
-
 - fix issues in dao layer (returning nulls, general catch blocks)
 
 - SearchController
@@ -17,6 +16,7 @@ current: - page for tracking order status where user can jump to the step he/she
 - make constants for paths to pages in controllers
 
 DONE:
+- 12.02.2019 - create grey(not yet),red(fail), green(passed with success), orange(current) circles pics to mark stages(3h)
 - 10.02.2019 - stylize buttons for uploading profile picture (1h)
 - 10.02.2019 - fix html markup on confirm page (30m)
 - 10.02.2019 - fix data on confirm page (10m)

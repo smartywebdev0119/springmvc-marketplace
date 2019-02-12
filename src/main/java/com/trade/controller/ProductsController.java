@@ -4,7 +4,7 @@ import com.trade.dto.ProductDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
-import com.trade.model.converter.ProductModelToDTOConverter;
+import com.trade.model.converter.ProductToDTOConverter;
 import com.trade.service.PaginationService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
@@ -46,7 +46,7 @@ public class ProductsController {
     private ShoppingCartItemService shoppingCartItemService;
 
     @Autowired
-    private ProductModelToDTOConverter productModelToDTOConverter;
+    private ProductToDTOConverter productToDTOConverter;
 
     private static final int FIRST_PAGE = 1;
 
@@ -68,7 +68,7 @@ public class ProductsController {
             }
 
             List<Product> productsOnPage = productService.findByPage(pageNumber);
-            List<ProductDTO> productDTOsOnPageList = productModelToDTOConverter.convert(productsOnPage);
+            List<ProductDTO> productDTOsOnPageList = productToDTOConverter.convert(productsOnPage);
 
             final int totalProductsNumber = productService.findTotalProductsNumber();
             final int numberOfPages = (int) Math.ceil(totalProductsNumber / (NUMBER_OF_PRODUCTS_ON_PAGE * 1.0));

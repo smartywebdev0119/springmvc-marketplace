@@ -2,6 +2,7 @@ package com.trade.controller;
 
 import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
+import com.trade.dto.ProductDTO;
 import com.trade.enums.OrderStage;
 import com.trade.exception.ServiceException;
 import com.trade.model.Order;
@@ -9,6 +10,8 @@ import com.trade.model.OrderItem;
 import com.trade.model.Product;
 import com.trade.model.converter.OrderItemToDTOConverter;
 import com.trade.model.converter.OrderToOrderDTOConverter;
+import com.trade.model.converter.ProductToDTOConverter;
+import com.trade.service.handler.OrderStatusHandler;
 import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
@@ -17,9 +20,9 @@ import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,6 +59,9 @@ public class OrdersController {
 
     @Autowired
     private OrderItemToDTOConverter orderItemToDTOConverter;
+
+    @Autowired
+    private ProductToDTOConverter productToDTOConverter;
 
     @GetMapping("/orders")
     public ModelAndView getOrders(@CookieValue("userID") long userID) {
@@ -264,6 +270,54 @@ public class OrdersController {
         } catch (ServiceException e) {
             logger.error("", e);
             return new ModelAndView("redirect:/products");
+        }
+    }
+
+
+    @GetMapping("/order/{order_id}")
+    public ModelAndView getOrderInfoPage(@PathVariable("order_id") long orderID,
+                                         @CookieValue("userID") long userID) {
+
+        try {
+
+            Order order = orderService.findById(orderID);
+            OrderDTO orderDTO = orderToOrderDTOConverter.convert(order);
+
+            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderID);
+            List<OrderItemDTO> orderItemDTOS = orderItemToDTOConverter.convert(orderItems);
+
+            List<Product> productsFromOrder = productService.findAllByOrderId(orderID);
+            List<ProductDTO> productsDTOFromOrder = productToDTOConverter.convert(productsFromOrder);
+
+            Map<Long, ProductDTO> productsDtoMap = productsDTOFromOrder
+                    .stream()
+                    .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
+
+            double totalPrice = orderItemDTOS
+                    .stream()
+                    .mapToDouble(item -> productsDtoMap.get(item.getProductId()).getPrice() * item.getProductsQuantity())
+                    .sum();
+
+            OrderStatusHandler orderStatusHandler = new OrderStatusHandler();
+
+
+            Map<String, String> statusAndClassName =  orderStatusHandler.handle(order);
+
+            ModelAndView modelAndView = new ModelAndView("order-info");
+            modelAndView.addObject("status_map", statusAndClassName);
+
+            modelAndView.addObject("order_dto", orderDTO);
+            modelAndView.addObject("products_dto_map", productsDtoMap);
+            modelAndView.addObject("order_item_dtos", orderItemDTOS);
+            modelAndView.addObject("total_price", totalPrice);
+
+            return modelAndView;
+
+        } catch (ServiceException e) {
+
+            String errorMessage = "error while creating order info page for order = " + orderID;
+            logger.error(errorMessage,e);
+            return ErrorHandling.getErrorPage(errorMessage);
         }
     }
 
