@@ -20,18 +20,17 @@
 
         <th:block th:switch="${isEmpty}">
 
-            <div th:case="${true}">no orders found</div>
+            <div th:case="${true}">No orders found.</div>
 
             <th:block th:case="${false}">
                 <div class="order-div" th:each="order : ${orders}">
                     <div class="order-info-div">
 
-                        <div th:inline="text">created: [[${order.orderCreationDateTime}]]</div>
-                        <div th:inline="text">closed: [[${order.orderClosedDateTime}]]</div>
-                        <div th:inline="text">address: [[${order.address}]]</div>
-                        <div th:inline="text">paid: [[${order.paid}]]</div>
-                        <div th:inline="text">order id: [[${order.id}]]</div>
-                        <div th:inline="text">total price, $: [[${orderIdAndTotalPriceMap.get(order.id)}]]</div>
+                        <div th:inline="text"><strong>Order number: [[${order.id}]]</strong></div>
+                        <div th:inline="text">Created: [[${order.orderCreationDateTime}]]</div>
+                        <div th:inline="text">Closed: [[${order.orderClosedDateTime}]]</div>
+                        <div th:inline="text">Address: [[${order.address}]]</div>
+                        <div th:inline="text">Paid: [[${order.paid}]]</div>
                         <div>
                             <a th:href="@{/order/{order_id}(order_id=${order.getId()})}">
                                 Open full order description
@@ -39,18 +38,43 @@
                         </div>
                     </div>
 
-                    <div class="product-div" th:each="orderItem, iterStat : ${mapWithOrderItems.get(order.getId())}">
-                        <span th:text="${iterStat.count}"></span>
-                        <div class="product-picture-div">
-                            product picture
-                        </div>
-                        <div class="product-info-div" th:text="${productsMap.get(orderItem.getProductId())}">
-                            product info
-                        </div>
-                        <hr>
+                    <div class="products-in-order-div">
+                        <th:block th:each="item, iterStat : ${mapWithOrderItems.get(order.getId())}">
+                            <div class="product-in-order-div" th:inline="text">
+                                <div class="product-picture-div">
+                                    PRODUCT PIC
+                                </div>
+                                <div class="product-desc-div">
+                                    <ul>
+                                        <li class="product-name">
+                                            <a th:text="${productsMap.get(item.productId).getName()}"
+                                               th:href="@{/products/{product_id}(product_id=${item.getProductId()})}">Product
+                                                name</a>
+                                        </li>
+                                        <li class="product-desc"
+                                            th:text="${productsMap.get(item.productId).getDescription()}"></li>
+                                        <li class="product-quantity">quantity:
+                                            <th:block th:text="${item.getProductsQuantity()}">-1</th:block>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="product-price-div">
+                                    <span>Price:<th:block
+                                            th:text="${item.getProductsQuantity() * productsMap.get(item.productId).getPrice()}"/></span>
+                                </div>
+                            </div>
+                        </th:block>
                     </div>
 
+                    <div class="parent-of-order-price-div">
+                        <div class="order-price-div"
+                             th:inline="text">Total price, $: [[${orderIdAndTotalPriceMap.get(order.getId())}]]
+                        </div>
+                    </div>
+
+                    <div class="order-separator"></div>
                 </div>
+
             </th:block>
 
         </th:block>

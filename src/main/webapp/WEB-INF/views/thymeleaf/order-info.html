@@ -60,7 +60,7 @@
                         <li class="product-desc"
                             th:text="${products_dto_map.get(item.productId).getDescription()}"></li>
                         <li class="product-quantity">quantity:
-                            <th:block th:text="${item.getProductsQuantity()}"></th:block>
+                            <th:block th:text="${item.getProductsQuantity()}">-1</th:block>
                         </li>
                     </ul>
                 </div>
@@ -68,7 +68,9 @@
                     <span>
                         Price:
                         <th:block
-                                th:text="${item.getProductsQuantity() * products_dto_map.get(item.productId).getPrice()}"/></span>
+                                th:text="${item.getProductsQuantity() * products_dto_map.get(item.productId).getPrice()}"/>
+                         $
+                    </span>
                 </div>
             </div>
 
@@ -115,7 +117,9 @@
                     <span>Shipping details not provided.</span>
                     <form action="/order/shipping-details" method="get">
                         <input type="hidden" name="order_id" th:value="${order_dto.getId()}"/>
-                        <button type="submit" class="provide-shipping-details-button">Open page to provide shipping details</button>
+                        <button type="submit" class="provide-shipping-details-button">Open page to provide shipping
+                            details
+                        </button>
                     </form>
                 </div>
 

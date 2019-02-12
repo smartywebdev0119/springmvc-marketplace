@@ -1,7 +1,11 @@
 
 TODO:
 
-current: - add css to Orders page
+current: - orders page - wrong total price
+
+- order info page - wrong total price
+
+- create handler of double numbers with lots of digits after the dot
 
 - check rights of users. now any logged user can get order page of other users.
 - add button 'Cancel order' on confirm order page
@@ -17,6 +21,7 @@ current: - add css to Orders page
 - make constants for paths to pages in controllers
 
 DONE:
+- 12.02.2019 - add css to Orders page (1h)
 - 12.02.2019 - handle case when shopping cart is empty(10m)
 - 12.02.2019 - css styles updated, site main color changed (1h)
 - 12.02.2019 - page for tracking order status where user can jump to the step he/she not finished yet (5.5h)
