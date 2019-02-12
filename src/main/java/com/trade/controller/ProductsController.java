@@ -1,13 +1,17 @@
 package com.trade.controller;
 
 import com.trade.dto.ProductDTO;
+import com.trade.dto.UserDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
+import com.trade.model.User;
 import com.trade.model.converter.ProductToDTOConverter;
+import com.trade.model.converter.UserToDTOConverter;
 import com.trade.service.PaginationService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
+import com.trade.service.dao.UserService;
 import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +49,12 @@ public class ProductsController {
 
     @Autowired
     private ShoppingCartItemService shoppingCartItemService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserToDTOConverter userToDTOConverter;
 
     @Autowired
     private ProductToDTOConverter productToDTOConverter;
@@ -121,13 +132,20 @@ public class ProductsController {
     }
 
     @GetMapping("/{id}")
-    public ModelAndView getProductPage(@PathVariable("id") long id) {
+    public ModelAndView getProductPage(@PathVariable("id") long id,
+                                       @CookieValue("userID") long userID) {
 
         try {
 
             Product product = productService.findById(id);
+            User seller = userService.findById(product.getSeller());
+            UserDTO userDTO = userToDTOConverter.convert(seller);
 
-            return new ModelAndView("product", "product", product);
+            ModelAndView modelAndView = new ModelAndView("product");
+            modelAndView.addObject("product", product);
+            modelAndView.addObject("user_dto", userDTO);
+
+            return modelAndView;
 
         } catch (ServiceException e) {
 

@@ -12,17 +12,6 @@
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
 
-    <!--<div th:inline="text">-->
-    <!--Description: [[${product.description}]]-->
-    <!--<br>-->
-    <!--Price: [[${product.price}]]-->
-    <!--<br>-->
-    <!--Quantity: [[${product.quantity}]]-->
-    <!--<br>-->
-    <!--Seller: [[${product.seller}]]-->
-    <!--<br>-->
-    <!--</div>-->
-
     <div id="product-div">
         <div id="product-picture-div" th:switch="${product.image}">
             <div th:case="null">
@@ -39,18 +28,19 @@
             </div>
         </div>
         <div id="product-info-div">
+            <ul>
+                <li class="h3-div">
+                    <h3 th:text="${product.name}">Product name</h3>
+                </li>
 
-            <div class="h3-div">
-                <h3 th:text="${product.name}">Product name</h3>
-            </div>
-
-            <span>Description: [[${product.description}]]</span>
-            <span>Price: [[${product.price}]]</span>
-            <span>Quantity: [[${product.quantity}]]</span>
-            <span>
-                <a th:href="@{/user/{user_id}(user_id=${product.seller})}"
-                   th:text="#{products.to_seller_page_link}">seller</a>
-            </span>
+                <li>Description: [[${product.description}]]</li>
+                <li>Price for one, $: [[${product.price}]]</li>
+                <li>Numbers available: [[${product.quantity}]]</li>
+                <li>
+                    <th:block th:text="#{products.to_seller_page_link}">Seller: </th:block>
+                    <a th:href="@{/user/{user_id}(user_id=${product.seller})}" th:text="${user_dto.getUsername()}">name surname</a>
+                </li>
+            </ul>
         </div>
     </div>
 

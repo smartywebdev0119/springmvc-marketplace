@@ -1,9 +1,14 @@
 
 TODO:
 
-current:
+current: - update css/html of products page
 
 - SearchController
+
+- user wants to add product from the product page
+
+- 'add new product' page for users with type seller
+- 'manage ordered products' page for users with type seller
 
 - check rights of users. now any logged user can get order page of other users.
 
@@ -18,6 +23,7 @@ current:
 - make constants for paths to pages in controllers
 
 DONE:
+- 12.02.2019 - css for product page (20m)
 - 12.02.2019 - show small picture of product on orders page (30m)
 - 12.02.2019 - PaymentController (15m)
 - 12.02.2019 - add button 'close order' on confirm order page (30m)

@@ -6,7 +6,7 @@ import com.trade.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserModelToDTOConverter {
+public class UserToDTOConverter {
 
     private static final Long DEFAULT_USER_IMAGE_ID = 0L;
 

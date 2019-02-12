@@ -3,7 +3,7 @@ package com.trade.controller;
 import com.trade.dto.UserDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.User;
-import com.trade.model.converter.UserModelToDTOConverter;
+import com.trade.model.converter.UserToDTOConverter;
 import com.trade.service.dao.UserService;
 import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
@@ -33,7 +33,7 @@ public class ProfileController {
     private UserService userService;
 
     @Autowired
-    private UserModelToDTOConverter converter;
+    private UserToDTOConverter converter;
 
     @GetMapping
     public ModelAndView getProfile(@CookieValue("userID") long userID) {
