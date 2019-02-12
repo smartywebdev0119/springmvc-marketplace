@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="/resources/css/order-payment.css" media="screen"/>
 
     <script src="/resources/js/order-payment.js" type="text/javascript"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 <div th:include="common/header-menu :: header"></div>
@@ -23,25 +22,32 @@
         <div id="order-number-div">
             <span th:inline="text">Order number: [[${orderDTO.getId()}]]</span>
         </div>
+        <div>
+            <span th:inline="text">Order price, $: [[${total_price}]]</span>
+        </div>
 
         <button id="collapsible-id" class="collapsible" onclick="toggleDebitCartPaymentMethod()">Debit cart payment
             method
         </button>
         <div id="content-id" class="content">
 
-            <form class="credit-card">
+            <form class="credit-card"
+                  name="debit_credit_card_name"
+                  th:action="@{/order/payment/{order_id}(order_id=${order_id})}"
+                  method="post"
+                  onsubmit="return validateDebitCard()" >
                 <div class="form-header">
                     <h4 class="title">Debit card details</h4>
                 </div>
 
                 <div class="form-body">
                     <!-- Card Number -->
-                    <input type="text" class="card-number" placeholder="Card Number">
+                    <input type="text" name="debit_card_number" class="card-number" placeholder="Card Number">
 
                     <!-- Date Field -->
                     <div class="date-field">
                         <div class="month">
-                            <select name="Month">
+                            <select name="month">
                                 <option value="january">January</option>
                                 <option value="february">February</option>
                                 <option value="march">March</option>
@@ -57,16 +63,15 @@
                             </select>
                         </div>
                         <div class="year">
-                            <select name="Year">
-                                <option value="2016">2016</option>
-                                <option value="2017">2017</option>
-                                <option value="2018">2018</option>
+                            <select name="year">
                                 <option value="2019">2019</option>
                                 <option value="2020">2020</option>
                                 <option value="2021">2021</option>
                                 <option value="2022">2022</option>
                                 <option value="2023">2023</option>
                                 <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
                             </select>
                         </div>
                     </div>
@@ -74,14 +79,17 @@
                     <!-- Card Verification Field -->
                     <div class="card-verification">
                         <div class="cvv-input">
-                            <input type="text" placeholder="CVV">
+                            <input type="text" name="debit_card_cvv" placeholder="CVV">
                         </div>
                         <div class="cvv-details">
                             <p>3 or 4 digits usually found <br> on the signature strip</p>
                         </div>
                     </div>
-
-                    <button type="submit" class="proceed-btn"><a href="#">Proceed</a></button>
+                    <span id="debit-card-error-div"></span>
+                    <input type="hidden" name="total_price" th:value="${total_price}"/>
+                    <button type="submit" class="proceed-btn">
+                        Pay for the order
+                    </button>
                 </div>
             </form>
         </div>

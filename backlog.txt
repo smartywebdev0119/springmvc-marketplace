@@ -1,12 +1,12 @@
 
 TODO:
 
-current: - create validation of debit card info via js
+current: - add button 'Cancel order' on confirm order page
 
 - create handler of double numbers with lots of digits after the dot
 
 - check rights of users. now any logged user can get order page of other users.
-- add button 'Cancel order' on confirm order page
+
 - fix issues in dao layer (returning nulls, general catch blocks)
 - refactor order status logic. now there is no way to close order or mark a step as failed
 - SearchController
@@ -19,6 +19,8 @@ current: - create validation of debit card info via js
 - make constants for paths to pages in controllers
 
 DONE:
+- 12.02.2019 - order payment status page implemented(1h)
+- 12.02.2019 - create validation of debit card info via js (1h)
 - 12.02.2019 - confirm page - wrong total price (20m)
 - 12.02.2019 - orders page - wrong total price. fixed (5m)
 - 12.02.2019 - add css to Orders page (1h)
@@ -109,7 +111,7 @@ General TODO:
 -4. Product DTO
 5. Model validation
 -6. Product dao
-7. Products html page and css
+-7. Products html page and css
 8. tests
 
 4) UserPage:
@@ -127,7 +129,7 @@ General TODO:
 -6. ShoppingCartItem dao
 7. ShoppingCart model validation
 -8. ShoppingCart dao
-9. ShoppingCart html page css and html
+-9. ShoppingCart html page css and html
 
 6) Order:
 -1. OrderDao

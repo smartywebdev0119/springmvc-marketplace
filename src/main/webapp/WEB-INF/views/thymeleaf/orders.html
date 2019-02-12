@@ -26,11 +26,21 @@
                 <div class="order-div" th:each="order : ${orders}">
                     <div class="order-info-div">
 
-                        <div th:inline="text"><strong>Order number: [[${order.id}]]</strong></div>
-                        <div th:inline="text">Created: [[${order.orderCreationDateTime}]]</div>
-                        <div th:inline="text">Closed: [[${order.orderClosedDateTime}]]</div>
-                        <div th:inline="text">Address: [[${order.address}]]</div>
-                        <div th:inline="text">Paid: [[${order.paid}]]</div>
+                        <ul>
+                            <li th:inline="text"><strong>Order number: [[${order.id}]]</strong></li>
+                            <li th:inline="text">Created: [[${order.orderCreationDateTime}]]</li>
+                            <li th:inline="text">Closed: [[${order.orderClosedDateTime}]]</li>
+                            <li th:inline="text">Address: [[${order.address}]]</li>
+                            <li>Status:
+                                <th:block th:text="${order.getStatus()}"/>
+                            </li>
+                            <li>Stage:
+                                <th:block th:text="${order.getStage()}"/>
+                            </li>
+                            <li>Paid:
+                                <th:block th:text="${order.isPaid()}"/>
+                            </li>
+                        </ul>
                         <div>
                             <a th:href="@{/order/{order_id}(order_id=${order.getId()})}">
                                 Open full order description

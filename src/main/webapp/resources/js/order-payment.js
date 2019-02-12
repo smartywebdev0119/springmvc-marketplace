@@ -2,7 +2,7 @@ function toggleDebitCartPaymentMethod() {
 
     var element = document.getElementById("collapsible-id");
 
-    if (element.getAttribute("class") === "collapsible"){
+    if (element.getAttribute("class") === "collapsible") {
 
         element.setAttribute("class", "collapsible active");
         document
@@ -44,5 +44,39 @@ function toggleDebitCartPaymentMethod() {
     //     }
     // });
     // }
+}
 
+
+function validateDebitCard() {
+
+    var debitCardNumber = document.debit_credit_card_name.debit_card_number.value;
+    var debitCardCvv = document.debit_credit_card_name.debit_card_cvv.value;
+
+    var errorDiv = document.getElementById("debit-card-error-div");
+
+    errorDiv.textContent = "";
+
+    if (debitCardNumber.length === 16
+        && isNumeric(debitCardNumber)) {
+
+    } else {
+        errorDiv.textContent = "card number is not valid";
+        return false;
+    }
+
+    if ((debitCardCvv.length === 3 ||
+        debitCardCvv.length === 4)
+        && isNumeric(debitCardCvv)) {
+
+    } else {
+        errorDiv.textContent = "card cvv is not valid";
+        return false;
+    }
+
+    return true;
+}
+
+
+function isNumeric(num) {
+    return !isNaN(num)
 }

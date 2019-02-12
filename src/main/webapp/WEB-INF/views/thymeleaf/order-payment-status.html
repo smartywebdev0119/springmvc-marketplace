@@ -13,9 +13,12 @@
 <div th:include="common/header-menu :: header"></div>
 <div class="main-div">
     <div class="h2-div">
-        <h2 th:text="#{order_info.description}">Order info:</h2>
+        <h2>Order payment status:</h2>
     </div>
 
+    <div th:text="${error_message}">An error message about order payment</div>
+
+    <a th:href="@{/order/{order_id}(order_id=${order.getId()})}">Back to order info page</a>
 
     <div th:replace="common/footer :: footer"></div>
 </div>

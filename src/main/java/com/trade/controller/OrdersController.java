@@ -5,6 +5,7 @@ import com.trade.dto.OrderItemDTO;
 import com.trade.dto.ProductDTO;
 import com.trade.enums.OrderStage;
 import com.trade.enums.OrderStatusTypeClass;
+import com.trade.exception.DebitCardPaymentException;
 import com.trade.exception.ServiceException;
 import com.trade.model.Order;
 import com.trade.model.OrderItem;
@@ -19,6 +20,7 @@ import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
+import com.trade.service.interfaces.DebitCardService;
 import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,10 @@ public class OrdersController {
     private OrderItemService orderItemService;
 
     @Autowired
-    OrderStatusConverterService orderStatusConverterService;
+    private DebitCardService debitCardService;
+
+    @Autowired
+    private OrderStatusConverterService orderStatusConverterService;
 
     @Autowired
     private OrderToOrderDTOConverter orderToOrderDTOConverter;
@@ -249,19 +254,6 @@ public class OrdersController {
         }
     }
 
-    private double getTotalPrice(List<OrderItemDTO> orderItemDTOS, Map<Long, ProductDTO> productsMap) {
-        return orderItemDTOS
-                        .stream()
-                        .mapToDouble(orderItem -> productsMap.get(orderItem.getProductId()).getPrice() * orderItem.getProductsQuantity())
-                        .sum();
-    }
-
-    private Map<Long, ProductDTO> getProductsMap(List<ProductDTO> productsList) {
-        return productsList
-                .stream()
-                .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
-    }
-
 
     @GetMapping("/order/shipping-details")
     public ModelAndView getShippingDetailsPage(@RequestParam("order_id") long orderID,
@@ -297,7 +289,7 @@ public class OrdersController {
             orderStatus.setShippingDetailsProvided(true);
             orderStatusService.update(orderStatus);
 
-            return new ModelAndView("redirect:/products");
+            return new ModelAndView("redirect:/order/"+orderID);
 
         } catch (ServiceException e) {
             logger.error("", e);
@@ -307,6 +299,7 @@ public class OrdersController {
 
 
     @GetMapping("/order/payment/{order_id}")
+    @SuppressWarnings("Duplicates")
     public ModelAndView getOrderPaymentPage(@PathVariable("order_id") long orderId,
                                             @CookieValue("userID") long userID) {
 
@@ -317,10 +310,23 @@ public class OrdersController {
             Order order = orderService.findById(orderId);
             OrderDTO orderDTO = orderToOrderDTOConverter.convert(order);
 
+            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderId);
+            List<OrderItemDTO> orderItemDTOS = orderItemToDTOConverter.convert(orderItems);
+
+            List<Product> productsFromOrder = productService.findAllByOrderId(orderId);
+            List<ProductDTO> productsDTOFromOrder = productToDTOConverter.convert(productsFromOrder);
+
+            Map<Long, ProductDTO> productsDtoMap = productsDTOFromOrder
+                    .stream()
+                    .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
+
+            double totalPrice = getTotalPrice(orderItemDTOS, productsDtoMap);
+
             ModelAndView modelAndView = new ModelAndView("order-payment");
 
             modelAndView.addObject("order_id", orderId);
             modelAndView.addObject("orderDTO", orderDTO);
+            modelAndView.addObject("total_price", totalPrice);
 
             return modelAndView;
 
@@ -330,6 +336,56 @@ public class OrdersController {
 
             logger.error(message, e);
 
+            return ErrorHandling.getErrorPage(message);
+        }
+    }
+
+    @PostMapping("/order/payment/{order_id}")
+    public ModelAndView submitOrderPayment(@PathVariable("order_id") long orderId,
+                                            @RequestParam("debit_card_number") String cardNumber,
+                                            @RequestParam("debit_card_cvv") String cardCvv,
+                                            @RequestParam("month") String month,
+                                            @RequestParam("year") String year,
+                                            @RequestParam("total_price") double amount,
+                                            @CookieValue("userID") long userID) {
+
+        Order order = null;
+
+        try {
+
+            logger.info("paying for the order");
+
+            order = orderService.findById(orderId);
+
+            debitCardService.pay(cardNumber, cardCvv, month, year, amount);
+
+            order.setStage(OrderStage.ORDER_PAID.asInt());
+            order.setStatus(OrderStage.ORDER_PAID.asString());
+            order.setPaid(true);
+            orderService.update(order);
+
+            OrderStatus orderStatus = orderStatusService.findByOrderId(orderId);
+            orderStatus.setOrderPaid(true);
+            orderStatusService.update(orderStatus);
+
+            ModelAndView modelAndView = new ModelAndView("redirect:/order/"+orderId);
+            modelAndView.addObject("order_id", orderId);
+            return modelAndView;
+
+        } catch (DebitCardPaymentException e) {
+
+            String message = "not managed to pay for the order";
+            logger.error(message, e);
+
+            ModelAndView modelAndViewError = new ModelAndView("order-payment-status");
+            modelAndViewError.addObject("order", order);
+            modelAndViewError.addObject("error_message", "Payment transaction failed. Not enough money");
+            return modelAndViewError;
+
+        } catch (ServiceException e) {
+
+            String message = "not managed to update order or order status while payment process";
+            logger.error(message, e);
             return ErrorHandling.getErrorPage(message);
         }
     }
@@ -377,4 +433,16 @@ public class OrdersController {
         }
     }
 
+    private double getTotalPrice(List<OrderItemDTO> orderItemDTOS, Map<Long, ProductDTO> productsMap) {
+        return orderItemDTOS
+                .stream()
+                .mapToDouble(orderItem -> productsMap.get(orderItem.getProductId()).getPrice() * orderItem.getProductsQuantity())
+                .sum();
+    }
+
+    private Map<Long, ProductDTO> getProductsMap(List<ProductDTO> productsList) {
+        return productsList
+                .stream()
+                .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
+    }
 }
