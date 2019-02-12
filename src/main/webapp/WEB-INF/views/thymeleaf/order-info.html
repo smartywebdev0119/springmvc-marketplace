@@ -48,9 +48,20 @@
 
         <th:block th:each="item : ${order_item_dtos}">
             <div class="product-in-order-div" th:inline="text">
-                <div class="product-picture-div">
-                    PRODUCT PIC
-                </div>
+                <th:block th:switch="${products_dto_map.get(item.getProductId()).getImageId()}">
+                    <div class="product-picture-div" th:case="null">
+
+                        <img th:src="@{/resources/image/default-product-picture.png}"
+                             alt="default product's picture" class="product-picture">
+
+                    </div>
+                    <div class="product-picture-div" th:case="*">
+
+                        <img th:src="@{/products/picture/{product_id}(product_id=${products_dto_map.get(item.getProductId()).getImageId()})}"
+                             alt="product's picture" class="product-picture">
+                    </div>
+
+                </th:block>
                 <div class="product-desc-div">
                     <ul>
                         <li class="product-name">

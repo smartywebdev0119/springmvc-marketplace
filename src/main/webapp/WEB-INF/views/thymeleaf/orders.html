@@ -51,9 +51,21 @@
                     <div class="products-in-order-div">
                         <th:block th:each="item, iterStat : ${mapWithOrderItems.get(order.getId())}">
                             <div class="product-in-order-div" th:inline="text">
-                                <div class="product-picture-div">
-                                    PRODUCT PIC
-                                </div>
+
+                                <th:block th:switch="${productsMap.get(item.getProductId()).getImageId()}">
+                                    <div class="product-picture-div" th:case="null">
+
+                                        <img th:src="@{/resources/image/default-product-picture.png}"
+                                             alt="default product's picture" class="product-picture">
+
+                                    </div>
+                                    <div class="product-picture-div" th:case="*">
+
+                                        <img th:src="@{/products/picture/{product_id}(product_id=${productsMap.get(item.getProductId()).getImageId()})}"
+                                             alt="product's picture" class="product-picture">
+                                    </div>
+
+                                </th:block>
                                 <div class="product-desc-div">
                                     <ul>
                                         <li class="product-name">
@@ -69,7 +81,7 @@
                                     </ul>
                                 </div>
                                 <div class="product-price-div">
-                                    <span>Price:<th:block
+                                    <span>Price, $:<th:block
                                             th:text="${item.getProductsQuantity() * productsMap.get(item.productId).getPrice()}"/></span>
                                 </div>
                             </div>

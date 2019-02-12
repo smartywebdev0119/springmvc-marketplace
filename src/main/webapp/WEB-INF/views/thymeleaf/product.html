@@ -33,7 +33,7 @@
             </div>
             <div th:case="*">
 
-                <img th:src="@{/products/picture/{product_id}(product_id=${user.id})}"
+                <img th:src="@{/products/picture/{product_id}(product_id=${product.getId()})}"
                      alt="product's picture" class="product-picture">
                 <br>
             </div>

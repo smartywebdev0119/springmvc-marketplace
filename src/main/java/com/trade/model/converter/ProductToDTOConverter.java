@@ -19,7 +19,13 @@ public class ProductToDTOConverter {
         dto.setPrice(product.getPrice());
         dto.setQuantity(product.getQuantity());
         dto.setSeller(product.getSeller());
-        dto.setImageId(product.getId());
+
+        if (product.getImage() != null){
+
+            dto.setImageId(product.getId());
+        } else {
+            dto.setImageId(null);
+        }
 
         return dto;
     }

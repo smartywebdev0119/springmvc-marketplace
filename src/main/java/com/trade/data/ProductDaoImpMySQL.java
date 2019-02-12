@@ -26,6 +26,7 @@ public class ProductDaoImpMySQL implements ProductDao {
     private static final String SELLER_C_L = "seller";
     private static final String PRICE_C_L = "price";
     private static final String QUANTITY_C_L = "quantity";
+    private static final String IMAGE = "image";
 
     private static final String FIND_ALL = "select * from product";
     private static final String FIND_BY_ID = "select * from product where id = ?";
@@ -244,6 +245,7 @@ public class ProductDaoImpMySQL implements ProductDao {
             product.setSeller(resultSet.getLong(SELLER_C_L));
             product.setPrice(resultSet.getDouble(PRICE_C_L));
             product.setQuantity(resultSet.getInt(QUANTITY_C_L));
+            product.setImage(resultSet.getBlob(IMAGE));
 
             return product;
         }
