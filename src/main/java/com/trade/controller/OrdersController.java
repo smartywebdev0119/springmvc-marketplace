@@ -107,9 +107,8 @@ public class OrdersController {
                 }
 
                 List<Product> productsList = productService.findAllByUserId(userID);
-                Map<Long, Product> productsMap = productsList
-                        .stream()
-                        .collect(Collectors.toMap(Product::getId, Function.identity()));
+                List<ProductDTO> productDTOS = productToDTOConverter.convert(productsList);
+                Map<Long, ProductDTO> productsMap = getProductsMap(productDTOS);
 
 
                 // count total price
@@ -121,10 +120,9 @@ public class OrdersController {
                             // get the list of order items this order contains
                             .flatMap(order1 -> orderIdAndListOfOrderItemsMap.get(order.getId()).stream())
                             // get products using product ids from order items
-                            .map(orderItemDTO -> productsMap.get(orderItemDTO.getProductId()))
+                            .mapToDouble(orderItemDTO -> productsMap.get(orderItemDTO.getProductId()).getPrice() * orderItemDTO.getProductsQuantity())
                             // sum up the prices of products to get order price
-                            .collect(Collectors.summarizingDouble(Product::getPrice))
-                            .getSum();
+                            .sum();
 
                     orderIdAndTotalPriceMap.put(order.getId(), orderPrice);
                 }
@@ -227,15 +225,10 @@ public class OrdersController {
             logger.info("order items found");
 
             List<Product> productsList = productService.findAllByOrderId(orderID);
-            Map<Long, Product> productsMap = productsList
-                    .stream()
-                    .collect(Collectors.toMap(Product::getId, Function.identity()));
+            List<ProductDTO> productDTOS = productToDTOConverter.convert(productsList);
+            Map<Long, ProductDTO> productsMap = getProductsMap(productDTOS);
 
-            double totalPrice = orderItems
-                    .stream()
-                    .map(orderItem -> productsMap.get(orderItem.getProductId()))
-                    .collect(Collectors.summarizingDouble(Product::getPrice))
-                    .getSum();
+            double totalPrice = getTotalPrice(orderItemDTOList, productsMap);
 
             logger.info("order total price calculated");
 
@@ -254,6 +247,19 @@ public class OrdersController {
             logger.error("not managed to find order by id. order id = " + orderID, e);
             return ErrorHandling.getErrorPage("not managed to find order by id");
         }
+    }
+
+    private double getTotalPrice(List<OrderItemDTO> orderItemDTOS, Map<Long, ProductDTO> productsMap) {
+        return orderItemDTOS
+                        .stream()
+                        .mapToDouble(orderItem -> productsMap.get(orderItem.getProductId()).getPrice() * orderItem.getProductsQuantity())
+                        .sum();
+    }
+
+    private Map<Long, ProductDTO> getProductsMap(List<ProductDTO> productsList) {
+        return productsList
+                .stream()
+                .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
     }
 
 
@@ -347,11 +353,7 @@ public class OrdersController {
                     .stream()
                     .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
 
-            double totalPrice = orderItemDTOS
-                    .stream()
-                    .mapToDouble(item -> productsDtoMap.get(item.getProductId()).getPrice() * item.getProductsQuantity())
-                    .sum();
-
+            double totalPrice = getTotalPrice(orderItemDTOS, productsDtoMap);
 
             Map<String, String> statusAndClassName = orderStatusConverterService.convertToMap(order);
 
