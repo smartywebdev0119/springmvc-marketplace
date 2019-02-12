@@ -1,16 +1,15 @@
 
 TODO:
 
-current: - add button 'Cancel order' on confirm order page
+current: - show small picture of product on orders page
 
-- create handler of double numbers with lots of digits after the dot
+- SearchController
 
 - check rights of users. now any logged user can get order page of other users.
 
 - fix issues in dao layer (returning nulls, general catch blocks)
-- refactor order status logic. now there is no way to close order or mark a step as failed
-- SearchController
-- PaymentController
+- refactor order status logic. now there is no way to mark a step as failed
+- create handler of double numbers with lots of digits after the dot
 - testing with Mockito
 - replace plain jdbc with JdbcTemplate (partially done)
 - when changing language all parameters in the url are deleted. it causes errors. add hidden inputs where necessary
@@ -19,6 +18,8 @@ current: - add button 'Cancel order' on confirm order page
 - make constants for paths to pages in controllers
 
 DONE:
+- 12.02.2019 - PaymentController (15m)
+- 12.02.2019 - add button 'close order' on confirm order page (30m)
 - 12.02.2019 - order payment status page implemented(1h)
 - 12.02.2019 - create validation of debit card info via js (1h)
 - 12.02.2019 - confirm page - wrong total price (20m)

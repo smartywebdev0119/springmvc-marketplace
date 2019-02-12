@@ -144,7 +144,7 @@
 
                 <div class="status-info-div" th:case="${orderStatusTypeClass[1].getCssClassName()}">
                     <span>You have not paid for the order.</span>
-                    <form th:action="@{/order/payment/{order_id}(order_id=${order_dto.getId()})}" method="get">
+                    <form th:action="@{/payment/order/{order_id}(order_id=${order_dto.getId()})}" method="get">
                         <input type="hidden" name="order_id" th:value="${order_dto.getId()}"/>
                         <button type="submit" class="pay-for-the-order-button">Open page to pay for the order</button>
                     </form>

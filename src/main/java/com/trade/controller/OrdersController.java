@@ -21,6 +21,7 @@ import com.trade.service.dao.OrderService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
 import com.trade.service.interfaces.DebitCardService;
+import com.trade.utils.DateTimeUtils;
 import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -215,6 +217,39 @@ public class OrdersController {
     }
 
 
+    @PostMapping("/order/close/{order_id}")
+    public ModelAndView closeOrder(@PathVariable("order_id") long orderID,
+                                   @CookieValue("userID") long userID){
+
+        try {
+
+            Order order = orderService.findById(orderID);
+            order.setPaid(false);
+            order.setStatus(OrderStage.CLOSED.asString());
+            order.setStage(OrderStage.CLOSED.asInt());
+            order.setOrderClosedDateTime(DateTimeUtils.dateTimeFormatter.format(LocalDateTime.now()));
+            orderService.update(order);
+
+            OrderStatus orderStatus = orderStatusService.findByOrderId(orderID);
+            orderStatus.setCreated(false);
+            orderStatus.setShippingDetailsProvided(false);
+            orderStatus.setOrderPaid(false);
+            orderStatus.setSentBySeller(false);
+            orderStatus.setDelivered(false);
+            orderStatusService.update(orderStatus);
+
+            ModelAndView modelAndView = new ModelAndView("redirect:/order/"+orderID);
+            modelAndView.addObject("order_id", orderID);
+            return modelAndView;
+
+        } catch (ServiceException e) {
+
+            logger.error("not managed to cancel order. order id = " + orderID, e);
+            return ErrorHandling.getErrorPage("not managed to cancel order");
+        }
+
+    }
+
     @GetMapping("/order/confirm")
     public ModelAndView getConfirmOrderPage(@RequestParam("order_id") long orderID,
                                             @CookieValue("userID") long userID) {
@@ -294,99 +329,6 @@ public class OrdersController {
         } catch (ServiceException e) {
             logger.error("", e);
             return new ModelAndView("redirect:/products");
-        }
-    }
-
-
-    @GetMapping("/order/payment/{order_id}")
-    @SuppressWarnings("Duplicates")
-    public ModelAndView getOrderPaymentPage(@PathVariable("order_id") long orderId,
-                                            @CookieValue("userID") long userID) {
-
-        try {
-
-            logger.info("getting order payment page");
-
-            Order order = orderService.findById(orderId);
-            OrderDTO orderDTO = orderToOrderDTOConverter.convert(order);
-
-            List<OrderItem> orderItems = orderItemService.findAllByOrderId(orderId);
-            List<OrderItemDTO> orderItemDTOS = orderItemToDTOConverter.convert(orderItems);
-
-            List<Product> productsFromOrder = productService.findAllByOrderId(orderId);
-            List<ProductDTO> productsDTOFromOrder = productToDTOConverter.convert(productsFromOrder);
-
-            Map<Long, ProductDTO> productsDtoMap = productsDTOFromOrder
-                    .stream()
-                    .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
-
-            double totalPrice = getTotalPrice(orderItemDTOS, productsDtoMap);
-
-            ModelAndView modelAndView = new ModelAndView("order-payment");
-
-            modelAndView.addObject("order_id", orderId);
-            modelAndView.addObject("orderDTO", orderDTO);
-            modelAndView.addObject("total_price", totalPrice);
-
-            return modelAndView;
-
-        } catch (ServiceException e) {
-
-            String message = "not managed to prepare order payment page";
-
-            logger.error(message, e);
-
-            return ErrorHandling.getErrorPage(message);
-        }
-    }
-
-    @PostMapping("/order/payment/{order_id}")
-    public ModelAndView submitOrderPayment(@PathVariable("order_id") long orderId,
-                                            @RequestParam("debit_card_number") String cardNumber,
-                                            @RequestParam("debit_card_cvv") String cardCvv,
-                                            @RequestParam("month") String month,
-                                            @RequestParam("year") String year,
-                                            @RequestParam("total_price") double amount,
-                                            @CookieValue("userID") long userID) {
-
-        Order order = null;
-
-        try {
-
-            logger.info("paying for the order");
-
-            order = orderService.findById(orderId);
-
-            debitCardService.pay(cardNumber, cardCvv, month, year, amount);
-
-            order.setStage(OrderStage.ORDER_PAID.asInt());
-            order.setStatus(OrderStage.ORDER_PAID.asString());
-            order.setPaid(true);
-            orderService.update(order);
-
-            OrderStatus orderStatus = orderStatusService.findByOrderId(orderId);
-            orderStatus.setOrderPaid(true);
-            orderStatusService.update(orderStatus);
-
-            ModelAndView modelAndView = new ModelAndView("redirect:/order/"+orderId);
-            modelAndView.addObject("order_id", orderId);
-            return modelAndView;
-
-        } catch (DebitCardPaymentException e) {
-
-            String message = "not managed to pay for the order";
-            logger.error(message, e);
-
-            ModelAndView modelAndViewError = new ModelAndView("order-payment-status");
-            modelAndViewError.addObject("order", order);
-            modelAndViewError.addObject("error_message", "Payment transaction failed. Not enough money");
-            return modelAndViewError;
-
-        } catch (ServiceException e) {
-
-            String message = "not managed to update order or order status while payment process";
-            logger.error(message, e);
-            return ErrorHandling.getErrorPage(message);
         }
     }
 

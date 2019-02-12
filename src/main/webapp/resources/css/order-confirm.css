@@ -3,6 +3,11 @@ table {
     border-collapse: collapse;
 }
 
+.confirm-shopping-cart-items-table{
+
+    width: 100%;
+}
+
 .confirm-shopping-cart-items-table td, th {
     border: 1px solid black;
     padding: 5px;
@@ -24,8 +29,30 @@ table {
 
 }
 
+#parent-buttons-div {
+
+    overflow: auto;
+}
+
+#next-to-shipping-details-div {
+
+    float: left;
+}
+
+#cancel-order-div {
+
+    padding-left: 10px;
+    float: left;
+}
+
 #next-to-shipping-details-button {
 
     padding: 15px 5px;
     width: 200px;
+}
+
+#cancel-order-button {
+
+    padding: 15px 5px;
+    width: 150px;
 }

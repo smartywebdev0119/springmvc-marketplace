@@ -16,7 +16,8 @@
         <h2>Order payment status:</h2>
     </div>
 
-    <div th:text="${error_message}">An error message about order payment</div>
+    <div th:if="${message != null}" class="message-div" th:text="${message}">A message about order payment</div>
+    <div th:if="${error != null}" class="message-div" th:text="${error}">An error message about order payment</div>
 
     <a th:href="@{/order/{order_id}(order_id=${order.getId()})}">Back to order info page</a>
 

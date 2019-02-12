@@ -33,7 +33,7 @@
 
             <form class="credit-card"
                   name="debit_credit_card_name"
-                  th:action="@{/order/payment/{order_id}(order_id=${order_id})}"
+                  th:action="@{/payment/order/{order_id}(order_id=${order_id})}"
                   method="post"
                   onsubmit="return validateDebitCard()" >
                 <div class="form-header">
@@ -85,7 +85,7 @@
                             <p>3 or 4 digits usually found <br> on the signature strip</p>
                         </div>
                     </div>
-                    <span id="debit-card-error-div"></span>
+                    <div id="debit-card-error-div"></div>
                     <input type="hidden" name="total_price" th:value="${total_price}"/>
                     <button type="submit" class="proceed-btn">
                         Pay for the order

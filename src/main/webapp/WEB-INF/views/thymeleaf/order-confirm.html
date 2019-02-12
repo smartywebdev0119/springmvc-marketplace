@@ -43,13 +43,20 @@
 
         <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>
 
-        <div>
-            <form action="/order/shipping-details" method="get">
+        <div id="parent-buttons-div">
+            <div id="next-to-shipping-details-div">
+                <form action="/order/shipping-details" method="get">
 
-                <input type="hidden" name="order_id" th:value="${order_id}">
+                    <input type="hidden" name="order_id" th:value="${order_id}">
 
-                <button id="next-to-shipping-details-button" type="submit">Next to shipping details</button>
-            </form>
+                    <button id="next-to-shipping-details-button" type="submit">Next to shipping details</button>
+                </form>
+            </div>
+            <div id="cancel-order-div">
+                <form th:action="@{/order/close/{order_id}(order_id=${order_id})}" method="post">
+                    <button id="cancel-order-button" type="submit">Close order</button>
+                </form>
+            </div>
         </div>
     </div>
     <div th:replace="common/footer :: footer"></div>

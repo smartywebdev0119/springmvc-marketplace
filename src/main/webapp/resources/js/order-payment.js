@@ -60,7 +60,7 @@ function validateDebitCard() {
         && isNumeric(debitCardNumber)) {
 
     } else {
-        errorDiv.textContent = "card number is not valid";
+        errorDiv.textContent = "Card number is not valid.";
         return false;
     }
 
@@ -69,7 +69,7 @@ function validateDebitCard() {
         && isNumeric(debitCardCvv)) {
 
     } else {
-        errorDiv.textContent = "card cvv is not valid";
+        errorDiv.textContent = "Card cvv is not valid";
         return false;
     }
 

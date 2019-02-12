@@ -9,7 +9,8 @@ public enum OrderStage {
     SHIPPING_DETAILS_PROVIDED(2, "shipping-details-provided"),
     ORDER_PAID(3, "order-paid"),
     SENT_BY_SELLER(4, "send-by-seller"),
-    DELIVERED(5, "buyer-got-the-order");
+    DELIVERED(5, "buyer-got-the-order"),
+    CLOSED(6, "order closed");
 
     private final int stage;
     private final String stageAsString;

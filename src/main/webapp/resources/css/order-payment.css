@@ -10,6 +10,15 @@
     padding-bottom: 10px;
 }
 
+#debit-card-error-div {
+
+    height: 30px;
+    width: 300px;
+    float: left;
+
+    color: red;
+}
+
 /* Style the button that is used to open and close the collapsible content */
 .collapsible {
     background-color: #eee;
