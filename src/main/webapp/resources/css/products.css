@@ -96,7 +96,7 @@ ul {
 .product-quantity {
     color: #aaadab;
 }
-.add-to-shopping-cart-div {
+.remove-from-shopping-cart-div {
     float: right;
     width: 20%;
 }

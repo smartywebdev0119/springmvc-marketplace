@@ -24,43 +24,111 @@
 
             <th:block th:case="*">
                 <div>
-                    <table class="shopping-cart-table">
-                        <tr>
-                            <th th:text="#{shopping_cart.name}">Name:</th>
-                            <th th:text="#{shopping_cart.desc}">Desc:</th>
-                            <th th:text="#{shopping_cart.quantity}">Quantity:</th>
-                            <th th:text="#{shopping_cart.to_product}">To product:</th>
-                            <th th:text="#{shopping_cart.seller}">Seller:</th>
-                            <th th:text="#{shopping_cart.price}">Price:</th>
-                            <th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>
-                        </tr>
-                        <tr
-                                th:class="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId()) == false ? 'regular-item' : 'out-of-stock-item'}"
-                                th:each="item : ${shoppingCartItemsList}">
-                            <td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>
-                            <td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>
-                            <td th:text="${item.getQuantity()}">100</td>
-                            <td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"
-                                   th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>
-                            <td>
-                                <a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a>
-                            </td>
-                            <td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>
-                            <td>
-                                <form method="post"
-                                      th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">
-                                    <button type="submit" class="remove-item-button"
-                                            th:text="#{shopping_cart.remove_button}">
-                                        remove
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    </table>
+                    <!--<table class="shopping-cart-table">-->
+                        <!--<tr>-->
+                            <!--<th th:text="#{shopping_cart.name}">Name:</th>-->
+                            <!--<th th:text="#{shopping_cart.desc}">Desc:</th>-->
+                            <!--<th th:text="#{shopping_cart.quantity}">Quantity:</th>-->
+                            <!--<th th:text="#{shopping_cart.to_product}">To product:</th>-->
+                            <!--<th th:text="#{shopping_cart.seller}">Seller:</th>-->
+                            <!--<th th:text="#{shopping_cart.price}">Price:</th>-->
+                            <!--<th th:text="#{shopping_cart.remove_from_cart}">Remove product:</th>-->
+                        <!--</tr>-->
+                        <!--<tr-->
+                                <!--th:class="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId()) == false ? 'regular-item' : 'out-of-stock-item'}"-->
+                                <!--th:each="item : ${shoppingCartItemsList}">-->
+                            <!--<td th:text="${productsDtoMap.get(item.getProductId()).getName()}">name</td>-->
+                            <!--<td th:text="${productsDtoMap.get(item.getProductId()).getDescription()}">desc</td>-->
+                            <!--<td th:text="${item.getQuantity()}">100</td>-->
+                            <!--<td><a th:href="@{/products/{product_id}(product_id=${item.getProductId()})}"-->
+                                   <!--th:text="#{shopping_cart.to_product_page_title}">to full desc</a></td>-->
+                            <!--<td>-->
+                                <!--<a th:href="@{/user/{product_seller}(product_seller=${productsDtoMap.get(item.getProductId()).getSeller()})}">seller</a>-->
+                            <!--</td>-->
+                            <!--<td th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"></td>-->
+                            <!--<td>-->
+                                <!--<form method="post"-->
+                                      <!--th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">-->
+                                    <!--<button type="submit" class="remove-item-button"-->
+                                            <!--th:text="#{shopping_cart.remove_button}">-->
+                                        <!--remove-->
+                                    <!--</button>-->
+                                <!--</form>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                    <!--</table>-->
+
+                    <!-- ------------------------------------ -->
+                    <div th:each="item : ${shoppingCartItemsList}">
+                        <!--th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">-->
+
+                        <div class="product-in-order-div">
+
+                            <th:block th:switch="${productsDtoMap.get(item.getProductId()).getImageId()}">
+                                <div class="product-picture-div" th:case="null">
+
+                                    <img th:src="@{/resources/image/default-product-picture.png}"
+                                         alt="default product's picture" class="product-picture">
+
+                                </div>
+                                <div class="product-picture-div" th:case="*">
+
+                                    <img th:src="@{/products/picture/{product_id}(product_id=${productsDtoMap.get(item.getProductId()).getImageId()})}"
+                                         alt="product's picture" class="product-picture">
+                                </div>
+
+                            </th:block>
+                            <div class="product-desc-div">
+                                <ul>
+                                    <li class="product-name">
+                                        <a th:text="${productsDtoMap.get(item.getProductId()).getName()}"
+                                           th:href="@{/products/{product_id}(product_id=${item.getProductId()})}">Product
+                                            name</a>
+                                    </li>
+                                    <li>
+                                        <div class="seller-username">
+                                            by
+                                            <th:block th:text="${sellersMap.get(productsDtoMap.get(item.getProductId()).getSeller()).getUsername()}">
+                                                username
+                                            </th:block>
+                                        </div>
+                                    </li>
+                                    <li class="product-desc"
+                                        th:text="${productsDtoMap.get(item.getProductId()).getDescription()}"></li>
+                                    <li class="product-quantity">Number is shopping cart:
+                                        <th:block th:text="${item.getQuantity()}">-1</th:block>
+                                    </li>
+                                    <li class="product-price-div">
+                                        <span>Price, $: <th:block th:text="${productsDtoMap.get(item.getProductId()).getPrice()}"/></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="remove-from-shopping-cart-div">
+                                <div>
+                                    <form method="post"
+                                          th:action="@{/shopping_cart/remove/{shopping_cart_item_id}(shopping_cart_item_id=${item.getId()})}">
+                                        <button type="submit" class="remove-from-shopping-cart-button"
+                                                th:text="#{shopping_cart.remove_button}">
+                                            remove
+                                        </button>
+                                    </form>
+                                </div>
+                                <div th:if="${productIDsWithQuantityNotEnoughToCreateOrder.contains(item.getProductId())}"
+                                     class="out-of-stock-div">
+                                    <span class="out-of-stock-item">Not enough to create order</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <!-- --------------------------- -->
+
                     <div
                             th:if="${productIDsWithQuantityNotEnoughToCreateOrder.isEmpty() == false}"
                             id="have-products-out-of-stock-message-div">
-                        *Products highlighted red are products with quantity in stock not enough to create order
+                        *Products highlighted red are products with quantity in stock not enough to create an order.
                     </div>
                 </div>
                 <div class="total-price-div" th:inline="text">Total price is [[${total_price}]]</div>

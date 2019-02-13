@@ -1,60 +1,102 @@
-.shopping-cart-div{
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
 
-    padding-top: 16px;
+.shopping-cart-div{
     padding-bottom: 16px;
 }
 
-.shopping-cart-table{
 
-    width: 100%;
-
+/* -------- product div css------------ */
+.product-in-order-div {
+    padding-left: 7px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+    border: 1px solid #e4e6e8;;
+    overflow: auto;
 }
-
-.shopping-cart-table th,
-.shopping-cart-table td {
-
-    border: 1px solid black;
-    padding: 5px;
+.product-picture-div {
+    max-width: 170px;
+    padding-right: 10px;
+    float: left;
+    width: 20%;
 }
-
-.regular-item{
-
-
+.product-picture{
+    max-width:100%;
 }
-
-.out-of-stock-item{
-
-    background-color: #f4918f;
-
+.product-desc-div {
+    margin-left: 10px;
+    float: left;
+    width: 50%;
 }
-
-#have-products-out-of-stock-message-div {
-
-    padding-top: 10px;
-    padding-bottom: 10px;
+.product-price-div {
+    margin-top: 5px;
 }
-
-.create-order-button {
-
-    padding: 14px 20px;
-    margin: 8px 0;
-    width: 200px;
+.order-separator {
+    border-bottom: 1px solid #e4e6e8;
+    padding-top: 20px;
+    margin-bottom: 20px;
 }
-
-.remove-item-button{
-
+.product-name {
+    font-weight: bold;
+    font-size: 20px;
+}
+.seller-username {
+    font-size: 13px;
+    color: #5d5d5d;
+    padding-bottom: 5px;
+}
+.product-desc {
+    color: #aaadab;
+}
+.product-quantity {
+    color: #aaadab;
+}
+.remove-from-shopping-cart-div {
+    float: right;
+    width: 20%;
+}
+.remove-from-shopping-cart-button{
     padding: 10px 5px;
     width: 100px;
 }
+.out-of-stock-div {
+    margin-top: 5px;
+}
+.out-of-stock-item{
+    background-color: #f4918f;
+    padding: 3px;
+}
+.not-added-to-shopping-cart{
 
+}
+.product-in-shopping-cart {
+    background: #afafaf;
+    color: #f9f5f3;
+    font-weight: bolder;
+    border: none;
+    border-radius: 4px;
+    padding: 3px;
+}
+/* -------- product div css------------ */
+
+#have-products-out-of-stock-message-div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 .total-price-div{
-
     padding-top: 16px;
     padding-bottom: 16px;
     float:right;
 }
-
 .create-order-button-div{
-
     padding-top: 16px;
+}
+.create-order-button {
+    padding: 14px 20px;
+    margin: 8px 0;
+    width: 200px;
 }
