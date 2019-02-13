@@ -20,6 +20,8 @@ public interface ProductDao {
 
     List<Product> findAllUniqueProductsFromUserShoppingCart(long userID) throws DaoException;
 
+    List<Product> findAllByPartInNameOrInDescription(String searchPhrase) throws DaoException;
+
     int findTotalProductsNumber() throws DaoException;
 
     long create(Product product) throws DaoException;
@@ -27,6 +29,5 @@ public interface ProductDao {
     void update(Product product) throws DaoException;
 
     void delete(Product product) throws DaoException;
-
 
 }

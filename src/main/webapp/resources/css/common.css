@@ -62,8 +62,7 @@ hr {
 }
 
 
-/* header. */
-
+/* ---------------- header ------------------- */
 .top-bar table,
 .top-bar th,
 .top-bar td {
@@ -72,91 +71,67 @@ hr {
     padding-right: 10px;
     font-weight: bold;
 }
-
 #header {
-
     width: 890px;
     height: 110px;
-
     margin: auto;
     background-color: #63b175;
     /*background-color: #4CAF50;*/
 }
-
 #header-menu {
-
     height: 50px;
-
     padding-left: 20px;
     padding-right: 20px;
-
 }
-
 #header-menu a:hover {
     text-decoration: none;
 }
-
 .site-logo {
     /*background-size: 100px 50px;*/
     /*background-image: url(/resources/image/logo.png);*/
     /*background-repeat: no-repeat;*/
-
-
     font-size: 18px;
     font-style: italic;
     font-family: Verdana, sans-serif;
-
 }
-
-
 #header-menu ul {
     margin: 0;
     padding: 0;
 }
-
 #header-menu li {
-
     height: 40px;
     width: auto;
-
     padding: 5px 10px;
-
     list-style-type: none;
     float: left;
     display: block;
-
     line-height: 2.5em;
     text-align: center;
     font-size: 16px;
 }
-
 #header-menu li a {
-
     display: block;
     color: #FFF;
     font-weight: bold;
 }
-
-
 #header-menu li:Hover {
     /*background-color: #55c159;*/
     background-color: #4e9960;
 }
+#user-profile-icon {
+
+    float: right;
+}
 
 #header-search {
-
     height: 50px;
-
     padding-top: 10px;
     padding-left: 20px;
     /*padding: 13px;*/
     /*background-color: #4CAF50;*/
     background-color: #63b175;
-
 }
-
 #header-search input {
-
     height: 35px;
     width: 550px;
     box-sizing: border-box;

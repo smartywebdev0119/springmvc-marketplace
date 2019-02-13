@@ -49,6 +49,9 @@ public class ProductDaoImpMySQL implements ProductDao {
     private static final String TOTAL_NUMBER_OF_PRODUCTS = "select COUNT(*) from product";
     private static final String FIND_BY_PAGE_NUMBER = "select*from product limit ? , ?";
 
+    private static final String FIND_ALL_BY_PART_IN_NAME_OR_IN_DESCRIPTION =
+            "select*from product where name like ? or description like ?";
+
 
     @Autowired
     private HikariDataSource hikariDataSource;
@@ -130,23 +133,6 @@ public class ProductDaoImpMySQL implements ProductDao {
         return findAllBy(orderId, FIND_ALL_BY_ORDER_ID);
     }
 
-    private List<Product> findAllBy(long userId, String findAllByWithOneParam) throws DaoException {
-
-        try {
-
-            List<Product> productList = jdbcTemplate.query(findAllByWithOneParam, new ProductRowMapper(), userId);
-
-            if (productList.isEmpty()) {
-                return Collections.emptyList();
-            }
-
-            return productList;
-
-        } catch (Throwable e) {
-            throw new DaoException(e);
-        }
-    }
-
     @Override
     public List<Product> findAllUniqueProductsFromUserShoppingCart(long userID) throws DaoException {
 
@@ -163,6 +149,48 @@ public class ProductDaoImpMySQL implements ProductDao {
     public int findTotalProductsNumber() throws DaoException {
 
         return jdbcTemplate.queryForObject(TOTAL_NUMBER_OF_PRODUCTS, Integer.class);
+    }
+
+    @Override
+    public List<Product> findAllByPartInNameOrInDescription(String searchPhrase) throws DaoException {
+
+        try {
+
+            final String percent = "%";
+
+            List<Product> productList = jdbcTemplate
+                    .query(FIND_ALL_BY_PART_IN_NAME_OR_IN_DESCRIPTION,
+                            new ProductRowMapper(),
+                            percent + searchPhrase + percent,
+                            percent + searchPhrase + percent);
+
+            if (productList.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return productList;
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
+
+    }
+
+    private List<Product> findAllBy(long userId, String findAllByWithOneParam) throws DaoException {
+
+        try {
+
+            List<Product> productList = jdbcTemplate.query(findAllByWithOneParam, new ProductRowMapper(), userId);
+
+            if (productList.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            return productList;
+
+        } catch (Throwable e) {
+            throw new DaoException(e);
+        }
     }
 
     @Override

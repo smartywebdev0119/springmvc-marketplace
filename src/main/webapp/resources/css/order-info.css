@@ -1,5 +1,4 @@
 a {
-
     color: black;
 }
 
@@ -16,17 +15,12 @@ ul {
 
     padding-bottom: 7px;
     border-bottom: 1px solid #e4e6e8;
-
 }
-
 .product-in-order-div {
-
     padding-left: 7px;
     padding-top: 7px;
     padding-bottom: 7px;
-
     border: 1px solid #e4e6e8;;
-
     overflow: auto;
 }
 

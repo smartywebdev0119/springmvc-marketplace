@@ -1,6 +1,7 @@
 package com.trade.service.dao;
 
 import com.trade.data.ProductDao;
+import com.trade.dto.ProductDTO;
 import com.trade.exception.DaoException;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
@@ -106,4 +107,11 @@ public class ProductService {
         }
     }
 
+    public List<Product> findAllByPartInNameOrInDescription(String searchPhrase) throws ServiceException{
+        try {
+            return productDao.findAllByPartInNameOrInDescription(searchPhrase);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

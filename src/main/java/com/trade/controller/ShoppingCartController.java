@@ -1,13 +1,17 @@
 package com.trade.controller;
 
 import com.trade.dto.ProductDTO;
+import com.trade.dto.UserDTO;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
+import com.trade.model.User;
 import com.trade.model.converter.ProductToDTOConverter;
+import com.trade.model.converter.UserToDTOConverter;
 import com.trade.service.ShoppingCartService;
 import com.trade.service.dao.ProductService;
 import com.trade.service.dao.ShoppingCartItemService;
+import com.trade.service.dao.UserService;
 import com.trade.utils.ErrorHandling;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +40,8 @@ public class ShoppingCartController {
 
     // cookie name
     private static final String NUMBER_OF_PRODUCTS_IN_SHOPPING_CART = "number_of_products_in_shopping_cart";
-
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ShoppingCartItemService shoppingCartItemService;
@@ -50,6 +55,9 @@ public class ShoppingCartController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserToDTOConverter userToDTOConverter;
+
     @GetMapping
     public ModelAndView getShoppingCart(@CookieValue("userID") long userId) {
 
@@ -62,7 +70,12 @@ public class ShoppingCartController {
 
                 logger.info("userID = " + userId + ". shopping cart is not empty");
 
-                Map<Long, ProductDTO> productsDtoMap = getProductDTOMap(userId);
+                List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
+                List<ProductDTO> productDTOList = productToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
+
+                Map<Long, ProductDTO> productsDtoMap = productDTOList
+                        .stream()
+                        .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
 
                 // to not allow user to create order when one of the products in
                 // the shopping cart is not in stock
@@ -72,9 +85,16 @@ public class ShoppingCartController {
                     int inStock = productsDtoMap.get(cartItem.getProductId()).getQuantity();
                     long required = cartItem.getQuantity();
 
-                    if (inStock < required){
+                    if (inStock < required) {
                         productIDsWithQuantityNotEnoughToCreateOrder.add(cartItem.getProductId());
                     }
+                }
+
+                Map<Long, UserDTO> idAndUserDTOMap = new HashMap<>();
+                for (ProductDTO productDTO : productDTOList) {
+                    User user = userService.findById(productDTO.getSeller());
+                    UserDTO userDTO = userToDTOConverter.convert(user);
+                    idAndUserDTOMap.put(userDTO.getId(), userDTO);
                 }
 
                 double totalPrice = shoppingCartItemList
@@ -88,6 +108,7 @@ public class ShoppingCartController {
                 modelAndView.addObject("shoppingCartItemsList", shoppingCartItemList);
                 modelAndView.addObject("productsDtoMap", productsDtoMap);
                 modelAndView.addObject("total_price", totalPrice);
+                modelAndView.addObject("sellersMap", idAndUserDTOMap);
 
                 return modelAndView;
 
@@ -104,21 +125,6 @@ public class ShoppingCartController {
             return ErrorHandling.getErrorPage("not managed to read all shopping cart items");
         }
 
-    }
-
-    private Map<Long, ProductDTO> getProductDTOMap(long userId) throws ServiceException {
-        List<Product> uniqueProductsFromUserShoppingCart = productService.findAllUniqueProductsFromUserShoppingCart(userId);
-        List<ProductDTO> productDTOList = productToDTOConverter.convert(uniqueProductsFromUserShoppingCart);
-
-        Map<Long, ProductDTO> map = productDTOList
-                .stream()
-                .collect(Collectors.toMap(ProductDTO::getId, Function.identity()));
-
-        if (map.isEmpty()){
-            return new HashMap<>();
-        }
-
-        return map;
     }
 
     @PostMapping("/add/{product_id}")
@@ -143,7 +149,7 @@ public class ShoppingCartController {
 
                 Product product = productService.findById(productID);
 
-                if (product.getQuantity() == 0){
+                if (product.getQuantity() == 0) {
 
                     return new ModelAndView("redirect:/products");
                 }

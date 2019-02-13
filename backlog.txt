@@ -1,19 +1,13 @@
 
 TODO:
 
-current: - SearchController
+current: - check rights of users. now any logged user can get order page of other users.
 
 - add categories of products (books, phones, cars, etc...)
-
 - dropdown menu to access profile and logout button in header menu
-
 - user wants to add product from the product page
-
 - 'add new product' page for users with type seller
 - 'manage ordered products' page for users with type seller
-
-- check rights of users. now any logged user can get order page of other users.
-
 - fix issues in dao layer (returning nulls, general catch blocks)
 - refactor order status logic. now there is no way to mark a step as failed
 - create handler of double numbers with lots of digits after the dot
@@ -25,6 +19,7 @@ current: - SearchController
 - make constants for paths to pages in controllers
 
 DONE:
+- 13.02.2019 - SearchController (1h)
 - 13.02.2019 - update css/html of shopping cart page (40m)
 - 13.02.2019 - update css/html of products page(1.5h)
 - 12.02.2019 - css for product page (20m)

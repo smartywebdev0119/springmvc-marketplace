@@ -110,6 +110,7 @@
     <bean name="authenticationService" class="com.trade.service.AuthenticationService"/>
     <bean name="paginationService" class="com.trade.service.PaginationService"/>
     <bean name="debitCardServiceMock" class="com.trade.service.DebitCardServiceMock"/>
+    <bean name="productSearchService" class="com.trade.service.ProductSearchService"/>
     <!-- services -->
 
     <!-- DTO converters-->

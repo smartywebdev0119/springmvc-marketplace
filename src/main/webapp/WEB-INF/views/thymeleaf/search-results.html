@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Search results</title>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/common.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/resources/css/search-results.css" media="screen"/>
+</head>
+
+<body>
+<div th:include="common/header-menu :: header"></div>
+<div class="main-div">
+    <div class="h2-div">
+        <h2>Search results:</h2>
+    </div>
+    <div id="products-in-order-div">
+        <th:block th:each="product : ${productDTOS}">
+            <div class="product-in-order-div" th:inline="text">
+                <th:block th:switch="${product.getImageId()}">
+                    <div class="product-picture-div" th:case="null">
+
+                        <img th:src="@{/resources/image/default-product-picture.png}"
+                             alt="default product's picture" class="product-picture">
+
+                    </div>
+                    <div class="product-picture-div" th:case="*">
+
+                        <img th:src="@{/search/{product_id}(product_id=${product.getImageId()})}"
+                             alt="product's picture" class="product-picture">
+                    </div>
+
+                </th:block>
+                <div class="product-desc-div">
+                    <ul>
+                        <li class="product-name">
+                            <a th:text="${product.getName()}"
+                               th:href="@{/products/{product_id}(product_id=${product.getId()})}">Product name</a>
+                        </li>
+                        <li class="product-desc"
+                            th:text="${product.getDescription()}"></li>
+                        <li class="product-quantity">quantity:
+                            <th:block th:text="${product.getQuantity()}">-1</th:block>
+                        </li>
+                    </ul>
+                </div>
+                <div class="product-price-div">
+                    <span>
+                        Price:
+                        <th:block
+                                th:text="${product.getPrice()}"/>
+                         $
+                    </span>
+                </div>
+            </div>
+
+            <div class="order-item-separator"></div>
+
+        </th:block>
+    </div>
+
+    <div th:replace="common/footer :: footer"></div>
+</div>
+</body>
+</html>
