@@ -1,9 +1,3 @@
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
 .all-orders-div {
     padding-bottom: 16px;
 }
@@ -20,27 +14,27 @@ ul {
     padding-bottom: 10px;
 }
 
-.product-in-order-div {
-    padding-left: 7px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    margin-bottom: 7px;
-    border: 1px solid #e4e6e8;;
-    overflow: auto;
-}
-.product-picture-div {
-    max-width: 170px;
-    padding-right: 10px;
-    float: left;
-    width: 20%;
-}
-.product-picture{
-    max-width:100%;
-}
-.product-desc-div {
-    float: left;
-    width: 50%;
-}
+/*.product-in-order-div {*/
+    /*padding-left: 7px;*/
+    /*padding-top: 7px;*/
+    /*padding-bottom: 7px;*/
+    /*margin-bottom: 7px;*/
+    /*border: 1px solid #e4e6e8;;*/
+    /*overflow: auto;*/
+/*}*/
+/*.product-picture-div {*/
+    /*max-width: 170px;*/
+    /*padding-right: 10px;*/
+    /*float: left;*/
+    /*width: 20%;*/
+/*}*/
+/*.product-picture{*/
+    /*max-width:100%;*/
+/*}*/
+/*.product-desc-div {*/
+    /*float: left;*/
+    /*width: 50%;*/
+/*}*/
 .product-price-div {
     float: right;
     width: 20%;
@@ -50,23 +44,24 @@ ul {
     padding-top: 20px;
     margin-bottom: 20px;
 }
-.product-name {
-    font-weight: bold;
-    font-size: 18px;
-    padding-bottom: 5px;
-}
-.product-desc {
-    color: #aaadab;
-}
-.product-quantity {
-    color: #aaadab;
-}
-#total-price-div {
-    float: right;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    width: 20%;
-}
+/*.product-name {*/
+    /*font-weight: bold;*/
+    /*font-size: 18px;*/
+    /*padding-bottom: 5px;*/
+/*}*/
+/*.product-desc {*/
+    /*padding-top: 5px;*/
+    /*color: #aaadab;*/
+/*}*/
+/*.product-quantity {*/
+    /*color: #aaadab;*/
+/*}*/
+/*#total-price-div {*/
+    /*float: right;*/
+    /*padding-top: 10px;*/
+    /*padding-bottom: 10px;*/
+    /*width: 20%;*/
+/*}*/
 
 .parent-of-order-price-div {
 
@@ -79,12 +74,3 @@ ul {
     float: right;
 
 }
-/*.to-full-order-description-button{*/
-/*background-color: #4CAF50;*/
-/*color: white;*/
-/*padding: 14px 20px;*/
-/*margin: 8px 0;*/
-/*border: none;*/
-/*cursor: pointer;*/
-/*width: 200px;*/
-/*}*/

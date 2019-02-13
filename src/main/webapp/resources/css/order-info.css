@@ -2,41 +2,34 @@ a {
     color: black;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
 #order-info-div {
 }
 
 #products-in-order-div {
-
     padding-bottom: 7px;
     border-bottom: 1px solid #e4e6e8;
 }
-.product-in-order-div {
-    padding-left: 7px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    border: 1px solid #e4e6e8;;
-    overflow: auto;
-}
+/*.product-in-order-div {*/
+    /*padding-left: 7px;*/
+    /*padding-top: 7px;*/
+    /*padding-bottom: 7px;*/
+    /*border: 1px solid #e4e6e8;;*/
+    /*overflow: auto;*/
+/*}*/
 
-.product-picture-div {
-    max-width: 170px;
-    padding-right: 10px;
-    float: left;
-    width: 20%;
-}
-.product-picture{
-    max-width:100%;
-}
-.product-desc-div {
-    float: left;
-    width: 50%;
-}
+/*.product-picture-div {*/
+    /*max-width: 170px;*/
+    /*padding-right: 10px;*/
+    /*float: left;*/
+    /*width: 20%;*/
+/*}*/
+/*.product-picture{*/
+    /*max-width:100%;*/
+/*}*/
+/*.product-desc-div {*/
+    /*float: left;*/
+    /*width: 50%;*/
+/*}*/
 .product-price-div {
     float: right;
     width: 20%;
@@ -45,30 +38,29 @@ ul {
     /*border-bottom: 1px solid #e4e6e8;*/
     padding-top: 7px;
 }
-.product-name {
-    font-weight: bold;
-    font-size: 18px;
-    padding-bottom: 5px;
-}
-.product-desc {
-    color: #aaadab;
-}
-.product-quantity {
-    color: #aaadab;
-}
-#total-price-div {
-    float: right;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    width: 20%;
-}
+/*.product-name {*/
+    /*font-weight: bold;*/
+    /*font-size: 18px;*/
+    /*padding-bottom: 5px;*/
+/*}*/
+/*.product-desc {*/
+    /*color: #aaadab;*/
+/*}*/
+/*.product-quantity {*/
+    /*color: #aaadab;*/
+/*}*/
+/*#total-price-div {*/
+    /*float: right;*/
+    /*padding-top: 10px;*/
+    /*padding-bottom: 10px;*/
+    /*width: 20%;*/
+/*}*/
 
 #order-status-div {
 
 }
 
 .parent-div-for-bullet-and-stage-name {
-
     overflow: auto;
 }
 
@@ -108,41 +100,32 @@ ul {
 }
 
 .not-yet-bullet{
-
     background-position: -10px -4px;
     height: 20px;
     width: 20px;
-
     float: left;
 }
 
 .passed-with-success-bullet{
-
     background-position: -32px -4px;
     height: 20px;
     width: 20px;
-
     float: left;
 }
 
 .fail-bullet{
-
     background-position: -54px -4px;
     height: 20px;
     width: 20px;
-
     float: left;
 }
 .in-progress-bullet{
-
     background-position: -76px -4px;
     height: 20px;
     width: 20px;
-
     float: left;
 }
 #order-status-header-div {
-
     clear: both;
 }
 

@@ -96,7 +96,7 @@
                     </ul>
                 </div>
                 <div class="add-to-shopping-cart-div">
-                    <div>
+                    <div th:if="${product.getQuantity() != 0}">
                         <form method="post" th:action="@{/shopping_cart/add/{product_id}(product_id=${product.id})}">
                             <button type="submit" class="add-to-shopping-cart-button"
                                     th:text="#{products.add_product_button}">

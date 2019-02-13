@@ -14,6 +14,7 @@ table {
 }
 
 .order-confirm-div{
+    overflow: auto;
 
 }
 
@@ -22,16 +23,16 @@ table {
     padding-bottom: 16px;
 }
 
-.total-price-div{
-
+.total-price-special-div{
     padding-top: 16px;
     padding-bottom: 16px;
-
+    float: right;
+    width: 100%;
 }
 
 #parent-buttons-div {
 
-    overflow: auto;
+    /*overflow: auto;*/
 }
 
 #next-to-shipping-details-div {

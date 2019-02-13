@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<div th:fragment="footer" class="footer">
+<div th:fragment="footer" id="footer">
     <label for="change-lang-dropdown-list">Change language: </label>
     <select id="change-lang-dropdown-list" name="lang" onchange="location = this.value;">
         <option value="${current_lang}"></option>
