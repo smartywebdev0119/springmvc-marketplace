@@ -3,7 +3,13 @@ TODO:
 
 current: - update css/html of products page
 
+- update css/html of shopping cart page
+
 - SearchController
+
+- add categories of products (books, phones, cars, etc...)
+
+- dropdown menu to access profile and logout button in header menu
 
 - user wants to add product from the product page
 

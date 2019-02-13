@@ -36,7 +36,7 @@ create table session
 create table product
 (
   id          int auto_increment,
-  name        varchar(70)   not null,
+  name        varchar(200)   not null,
   description varchar(1000) not null,
   seller      int           not null,
   price       double        not null,
@@ -117,6 +117,7 @@ values ("apple macbook 2013", "good though old", 1, 699.99, 1),
        ("iphone x", "previous year version", 3, 1000.99, 1),
        ("leather jacket", "by levis, durable and almost brand new", 1, 900, 1),
        ("steve jobs biography", "in nice condition", 3, 15.99, 10),
+       ("the longest product name that you have ever seen and it is the longest besause we need to test how out design reacts to such long names i think that is enough", "And this is going to be the longest description you have ever seen because we again need to test how out design reacts to such long descriptions and if something will go a wrong way we can fix it to make it perfectly cool from look i guess the description is long enough so we can stop here", 4, 950, 1),
        ("samsung flat tv, 45 inch", "wand to but this one because bought a rolling tv on the other day", 4, 950, 1);
 
 # insert into order_

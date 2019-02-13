@@ -3,6 +3,7 @@ package com.trade.controller;
 import com.trade.dto.OrderDTO;
 import com.trade.dto.OrderItemDTO;
 import com.trade.dto.ProductDTO;
+import com.trade.dto.UserDTO;
 import com.trade.enums.OrderStage;
 import com.trade.enums.OrderStatusTypeClass;
 import com.trade.exception.DebitCardPaymentException;
@@ -11,10 +12,13 @@ import com.trade.model.Order;
 import com.trade.model.OrderItem;
 import com.trade.model.OrderStatus;
 import com.trade.model.Product;
+import com.trade.model.User;
 import com.trade.model.converter.OrderItemToDTOConverter;
 import com.trade.model.converter.OrderToOrderDTOConverter;
 import com.trade.model.converter.ProductToDTOConverter;
+import com.trade.model.converter.UserToDTOConverter;
 import com.trade.service.dao.OrderStatusService;
+import com.trade.service.dao.UserService;
 import com.trade.service.handler.OrderStatusConverterService;
 import com.trade.service.dao.OrderItemService;
 import com.trade.service.dao.OrderService;
@@ -53,6 +57,9 @@ public class OrdersController {
     private ShoppingCartItemService shoppingCartItemService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ProductService productService;
 
     @Autowired
@@ -69,6 +76,9 @@ public class OrdersController {
 
     @Autowired
     private OrderStatusConverterService orderStatusConverterService;
+
+    @Autowired
+    private UserToDTOConverter userToDTOConverter;
 
     @Autowired
     private OrderToOrderDTOConverter orderToOrderDTOConverter;
@@ -272,9 +282,11 @@ public class OrdersController {
 
             logger.info("order total price calculated");
 
+            Map<Long, UserDTO> idAndUserDTOMap = createMapWithSellers(productDTOS);
 
             ModelAndView modelAndView = new ModelAndView("order-confirm");
 
+            modelAndView.addObject("sellersMap", idAndUserDTOMap);
             modelAndView.addObject("orderItems", orderItemDTOList);
             modelAndView.addObject("productsMap", productsMap);
             modelAndView.addObject("total_price", totalPrice);
@@ -373,6 +385,18 @@ public class OrdersController {
             logger.error(errorMessage, e);
             return ErrorHandling.getErrorPage(errorMessage);
         }
+    }
+
+    private Map<Long, UserDTO> createMapWithSellers(List<ProductDTO> productDTOS) throws ServiceException {
+
+        Map<Long, UserDTO> idAndUserDTOMap = new HashMap<>();
+        for (ProductDTO productDTO : productDTOS) {
+            User user = userService.findById(productDTO.getSeller());
+            UserDTO userDTO = userToDTOConverter.convert(user);
+            idAndUserDTOMap.put(userDTO.getId(), userDTO);
+        }
+
+        return idAndUserDTOMap;
     }
 
     private double getTotalPrice(List<OrderItemDTO> orderItemDTOS, Map<Long, ProductDTO> productsMap) {

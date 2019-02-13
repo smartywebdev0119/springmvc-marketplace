@@ -31,53 +31,38 @@ ul {
 }
 
 .product-picture-div {
-
-    max-width: 138px;
+    max-width: 170px;
     padding-right: 10px;
     float: left;
     width: 20%;
 }
-
 .product-picture{
     max-width:100%;
 }
-
 .product-desc-div {
-
     float: left;
     width: 50%;
 }
-
 .product-price-div {
-
     float: right;
     width: 20%;
 }
-
 .order-item-separator {
     /*border-bottom: 1px solid #e4e6e8;*/
     padding-top: 7px;
 }
-
 .product-name {
-
     font-weight: bold;
     font-size: 18px;
-
     padding-bottom: 5px;
 }
-
 .product-desc {
-
     color: #aaadab;
 }
-
 .product-quantity {
     color: #aaadab;
 }
-
 #total-price-div {
-
     float: right;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -94,11 +79,9 @@ ul {
 }
 
 .status-info-div {
-
     padding-left: 25px;
     padding-top: 5px;
     padding-bottom: 5px;
-
 }
 
 #order-created-status-div {
@@ -117,18 +100,15 @@ ul {
 }
 
 .stage-name-div {
-
     font-weight: bold;
     padding-left: 5px;
     float: left;
-
 }
 
 .not-yet-bullet,
 .passed-with-success-bullet,
 .fail-bullet,
 .in-progress-bullet{
-
     background-image: url('/resources/image/status-bullets-small.png');
     background-repeat: no-repeat;
 }

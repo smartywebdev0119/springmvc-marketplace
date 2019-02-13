@@ -69,6 +69,7 @@ public class ProductsController {
     }
 
     @GetMapping("/page/{page_number}")
+    @SuppressWarnings("Duplicates")
     public ModelAndView getProductsByPage(@PathVariable("page_number") Integer pageNumber,
                                           @CookieValue("userID") long userID) {
 
@@ -80,6 +81,13 @@ public class ProductsController {
 
             List<Product> productsOnPage = productService.findByPage(pageNumber);
             List<ProductDTO> productDTOsOnPageList = productToDTOConverter.convert(productsOnPage);
+
+            Map<Long, UserDTO> idAndUserDTOMap = new HashMap<>();
+            for (ProductDTO productDTO : productDTOsOnPageList) {
+                User user = userService.findById(productDTO.getSeller());
+                UserDTO userDTO = userToDTOConverter.convert(user);
+                idAndUserDTOMap.put(userDTO.getId(), userDTO);
+            }
 
             final int totalProductsNumber = productService.findTotalProductsNumber();
             final int numberOfPages = (int) Math.ceil(totalProductsNumber / (NUMBER_OF_PRODUCTS_ON_PAGE * 1.0));
@@ -117,6 +125,7 @@ public class ProductsController {
             modelAndView.addObject("productsInShoppingCartMap", productsInShoppingCartMap);
             modelAndView.addObject("number_of_pages", numberOfPages);
             modelAndView.addObject("current_page", pageNumber);
+            modelAndView.addObject("userDTOMap", idAndUserDTOMap);
 
             modelAndView.addObject("page_numbers", pageNumbers);
 

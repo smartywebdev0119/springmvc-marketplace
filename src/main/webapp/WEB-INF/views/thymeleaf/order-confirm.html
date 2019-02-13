@@ -35,7 +35,7 @@
                 </td>
                 <td>
                     <a th:href="@{/user/{user_id}(user_id=${productsMap.get(orderItem.getProductId()).getSeller()})}"
-                       th:text="#{products.to_seller_page_link}">seller</a>
+                       th:text="${sellersMap.get(productsMap.get(orderItem.getProductId()).getSeller()).getUsername()}">seller</a>
                 </td>
                 <td th:text="${productsMap.get(orderItem.getProductId()).getPrice()}"></td>
             </tr>
@@ -48,7 +48,6 @@
                 <form action="/order/shipping-details" method="get">
 
                     <input type="hidden" name="order_id" th:value="${order_id}">
-
                     <button id="next-to-shipping-details-button" type="submit">Next to shipping details</button>
                 </form>
             </div>

@@ -13,42 +13,107 @@
         <h2 th:text="#{products.desc}"></h2>
     </div>
 
-    <table class="products-table">
-        <tr>
-            <th th:text="#{products.name}">Name:</th>
-            <th th:text="#{products.product_desc}">Desc:</th>
-            <th th:text="#{products.quantity}">Quantity:</th>
-            <th th:text="#{products.price}">Price:</th>
-            <th th:text="#{products.to_product_page}">To product:</th>
-            <!--<th th:text="#{products.seller}">Seller:</th>-->
-            <th th:text="#{products.add_product}">Add</th>
-        </tr>
-        <tr th:each="product : ${products}"
-            th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">
+    <!--<table class="products-table">-->
+    <!--<tr>-->
+    <!--<th th:text="#{products.name}">Name:</th>-->
+    <!--<th th:text="#{products.product_desc}">Desc:</th>-->
+    <!--<th th:text="#{products.quantity}">Quantity:</th>-->
+    <!--<th th:text="#{products.price}">Price:</th>-->
+    <!--<th th:text="#{products.to_product_page}">To product:</th>-->
+    <!--&lt;!&ndash;<th th:text="#{products.seller}">Seller:</th>&ndash;&gt;-->
+    <!--<th th:text="#{products.add_product}">Add</th>-->
+    <!--</tr>-->
+    <!--<tr th:each="product : ${products}"-->
+    <!--th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">-->
 
-            <td th:text="${product.name}">name</td>
-            <td th:text="${product.description}">description</td>
-            <td th:text="${product.quantity}">100</td>
-            <td th:text="${product.price}">10$</td>
-            <td><a th:href="@{/products/{product_id}(product_id=${product.id})}"
-                   th:text="#{products.to_full_desc_link}">to
-                full desc</a></td>
-            <!--<td><a th:href="@{/user/{user_id}(user_id=${product.seller})}" -->
-                   <!--th:text="#{products.to_seller_page_link}">seller</a>-->
-            <!--</td>-->
-            <td>
+    <!--<td th:text="${product.name}">name</td>-->
+    <!--<td th:text="${product.description}">description</td>-->
+    <!--<td th:text="${product.quantity}">100</td>-->
+    <!--<td th:text="${product.price}">10$</td>-->
+    <!--<td><a th:href="@{/products/{product_id}(product_id=${product.id})}"-->
+    <!--th:text="#{products.to_full_desc_link}">to-->
+    <!--full desc</a></td>-->
+    <!--&lt;!&ndash;<td><a th:href="@{/user/{user_id}(user_id=${product.seller})}" &ndash;&gt;-->
+    <!--&lt;!&ndash;th:text="#{products.to_seller_page_link}">seller</a>&ndash;&gt;-->
+    <!--&lt;!&ndash;</td>&ndash;&gt;-->
+    <!--<td>-->
 
-                <th:block th:if="${product.getQuantity() > 0}">
-                    <form method="post" th:action="@{/shopping_cart/add/{product_id}(product_id=${product.id})}">
-                        <button type="submit" class="add-to-shopping-cart-button"
-                                th:text="#{products.add_product_button}">
-                            add to cart
-                        </button>
-                    </form>
+    <!--<th:block th:if="${product.getQuantity() > 0}">-->
+    <!--<form method="post" th:action="@{/shopping_cart/add/{product_id}(product_id=${product.id})}">-->
+    <!--<button type="submit" class="add-to-shopping-cart-button"-->
+    <!--th:text="#{products.add_product_button}">-->
+    <!--add to cart-->
+    <!--</button>-->
+    <!--</form>-->
+    <!--</th:block>-->
+    <!--</td>-->
+    <!--</tr>-->
+    <!--</table>-->
+
+    <div>
+
+        <div th:each="product : ${products}">
+             <!--th:class="${productsInShoppingCartMap.get(product.getId()) != null ? 'added-to-shopping-cart' : 'not-added-to-shopping-cart'}">-->
+
+            <div class="product-in-order-div">
+
+                <th:block th:switch="${product.getImageId()}">
+                    <div class="product-picture-div" th:case="null">
+
+                        <img th:src="@{/resources/image/default-product-picture.png}"
+                             alt="default product's picture" class="product-picture">
+
+                    </div>
+                    <div class="product-picture-div" th:case="*">
+
+                        <img th:src="@{/products/picture/{product_id}(product_id=${product.getImageId()})}"
+                             alt="product's picture" class="product-picture">
+                    </div>
+
                 </th:block>
-            </td>
-        </tr>
-    </table>
+                <div class="product-desc-div">
+                    <ul>
+                        <li class="product-name">
+                            <a th:text="${product.getName()}"
+                               th:href="@{/products/{product_id}(product_id=${product.getId()})}">Product
+                                name</a>
+                        </li>
+                        <li>
+                            <div class="seller-username">
+                                by
+                                <th:block th:text="${userDTOMap.get(product.getSeller()).getUsername()}">username
+                                </th:block>
+                            </div>
+                        </li>
+                        <li class="product-desc"
+                            th:text="${product.getDescription()}"></li>
+                        <li class="product-quantity">Quantity:
+                            <th:block th:text="${product.getQuantity()}">-1</th:block>
+                        </li>
+                        <li class="product-price-div">
+                            <span>Price, $: <th:block th:text="${product.getPrice()}"/></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="add-to-shopping-cart-div">
+                    <div>
+                        <form method="post" th:action="@{/shopping_cart/add/{product_id}(product_id=${product.id})}">
+                            <button type="submit" class="add-to-shopping-cart-button"
+                                    th:text="#{products.add_product_button}">
+                                add to cart
+                            </button>
+                        </form>
+                    </div>
+                    <div th:if="${productsInShoppingCartMap.get(product.getId()) != null}"
+                         class="added-to-shopping-cart">
+                        <span class="product-in-shopping-cart">In shopping cart</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 
     <div id="pagination-div">
         <ul>

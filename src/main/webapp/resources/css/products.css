@@ -1,71 +1,122 @@
-
-.products-table{
-
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-top: 15px;
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
-.products-table td, th {
-    border: 1px solid black;
-    padding: 5px;
-}
+/*.products-table{*/
 
-.add-to-shopping-cart-button {
+    /*padding-top: 5px;*/
+    /*padding-bottom: 5px;*/
+    /*margin-top: 15px;*/
+/*}*/
 
-    padding: 10px 5px;
-    width: 100px;
-}
+/*.products-table td, th {*/
+    /*border: 1px solid black;*/
+    /*padding: 5px;*/
+/*}*/
 
-.added-to-shopping-cart{
-    background-color: #99e3ae;
-}
 
-.not-added-to-shopping-cart{
-
-}
-
+/* -------- pagination ---------*/
 #pagination-div{
-
     padding-top: 20px;
 }
-
 #pagination-div ul{
-
     display:table;
     margin:0 auto;
-
     height: 40px;
     width: auto;
 }
-
 #pagination-div li{
-
     padding: 5px 10px;
-
     margin-right: 3px;
-
     list-style-type:none;
     display: block;
     float:left;
     text-align: center;
     font-size:15px;
 }
-
 #next-page-li {
-
 }
-
 #current-page-li{
-
     background: #e3e8e0;
 }
-
 #pagination-div li a{
-
     display: block;
 }
-
 #pagination-div li:Hover {
     background-color: #e3e8e0;
 }
+/* -------- pagination ---------*/
+
+
+/* -------- product div css------------ */
+.product-in-order-div {
+    padding-left: 7px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+    border: 1px solid #e4e6e8;;
+    overflow: auto;
+}
+.product-picture-div {
+    max-width: 170px;
+    padding-right: 10px;
+    float: left;
+    width: 20%;
+}
+.product-picture{
+    max-width:100%;
+}
+.product-desc-div {
+    margin-left: 10px;
+    float: left;
+    width: 50%;
+}
+.product-price-div {
+    margin-top: 5px;
+}
+.order-separator {
+    border-bottom: 1px solid #e4e6e8;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+.product-name {
+    font-weight: bold;
+    font-size: 20px;
+}
+.seller-username {
+    font-size: 13px;
+    color: #5d5d5d;
+    padding-bottom: 5px;
+}
+.product-desc {
+    color: #aaadab;
+}
+.product-quantity {
+    color: #aaadab;
+}
+.add-to-shopping-cart-div {
+    float: right;
+    width: 20%;
+}
+.added-to-shopping-cart{
+    /*background-color: #99e3ae;*/
+    padding-top: 10px;
+}
+.add-to-shopping-cart-button {
+    padding: 10px 5px;
+    width: 100px;
+}
+.not-added-to-shopping-cart{
+
+}
+.product-in-shopping-cart {
+    background: #afafaf;
+    color: #f9f5f3;
+    font-weight: bolder;
+    border: none;
+    border-radius: 4px;
+    padding: 3px;
+}
+/* -------------------- */
