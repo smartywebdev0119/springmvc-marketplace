@@ -1,14 +1,15 @@
 package com.trade.service.dao;
 
 import com.trade.data.ProductDao;
-import com.trade.dto.ProductDTO;
 import com.trade.exception.DaoException;
 import com.trade.exception.ServiceException;
 import com.trade.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ProductService {
 
     @Autowired

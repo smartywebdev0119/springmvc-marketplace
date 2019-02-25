@@ -3,8 +3,12 @@ TODO:
 
 current: - check rights of users. now any logged user can get order page of other users.
 
-- user page contains preview of a few products selling by this user and link to all products of this user
-
+- move exception handling from web.xml to servlet.xml and use one of ExceptionResolvers
+and add default error view
+- user page contains preview of a few products selling by this user and link to all
+products of this user
+- generate pdf report with brief info on user orders (the same info that is on the /orders page)
+via AbstractPdfView.
 - add categories of products (books, phones, cars, etc...)
 - user wants to add product from the product page
 - 'add new product' page for users with type seller

@@ -9,6 +9,7 @@ import com.trade.model.Product;
 import com.trade.model.ShoppingCartItem;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Service
 public class OrderService {
 
     private static final Logger logger = Logger.getLogger(OrderService.class);

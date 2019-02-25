@@ -6,9 +6,11 @@ import com.trade.exception.ServiceException;
 import com.trade.model.Session;
 import com.trade.utils.DateTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Service
 public class SessionService {
 
     @Autowired
